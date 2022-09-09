@@ -1,0 +1,6 @@
+^renv$
+^renv\.lock$
+^hidecan\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+^LICENSE\.md$
