@@ -4,12 +4,10 @@
 \alias{GWAS_data}
 \title{Creates a GWAS_data object}
 \usage{
-GWAS_data(dat, title = "GWAS", keep_rownames_as = NULL)
+GWAS_data(dat, keep_rownames_as = NULL)
 }
 \arguments{
 \item{dat}{Tibble, results from a GWAS analysis. See Details.}
-
-\item{title}{Character, the name of the analysis. Default value is \code{"GWAS"}.}
 
 \item{keep_rownames_as}{Character, the name of the column in which to save the
 rownames of the input data-frame. Default value is \code{NULL}, i.e. rownames will
@@ -25,7 +23,7 @@ following columns:
 \details{
 \itemize{
 \item \code{chromosome}: character column, chromosome on which the marker is located.
-\item \code{position}: numeric, the physical position of the marker along the chromosome.
+\item \code{position}: numeric, the physical position of the marker along the chromosome (in bp).
 \item \code{score}: numeric, the GWAS score of the marker.
 }
 }

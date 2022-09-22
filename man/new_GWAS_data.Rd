@@ -4,13 +4,11 @@
 \alias{new_GWAS_data}
 \title{GWAS_data constructor}
 \usage{
-new_GWAS_data(dat, title = "GWAS")
+new_GWAS_data(dat)
 }
 \arguments{
 \item{dat}{Tibble, results from a GWAS analysis, with at least columns
-\code{chromosome}. \code{position} and \code{score}.}
-
-\item{title}{Character, the name of the analysis. Default value is \code{"GWAS"}.}
+\code{chromosome}, \code{position} and \code{score}.}
 }
 \value{
 A \code{GWAS_data} object, i.e. a tibble.
