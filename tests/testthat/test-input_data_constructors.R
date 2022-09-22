@@ -53,7 +53,7 @@ test_that("GWAS_data works", {
 
 test_that("new_DE_data works", {
 
-  data <- tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5)
+  data <- tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5, log2FoldChange = 1:5)
 
   ## Expecting a tibble as input
   expect_error(new_DE_data(as.data.frame(data)))
@@ -69,19 +69,21 @@ test_that("new_DE_data works", {
 
 test_that("DE_data works", {
 
-  data <- tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5)
+  data <- tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5, log2FoldChange = 1:5)
 
   ## Need the correct columns
   expect_error(DE_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, score = 1:5)),
-               "Input data-frame is missing the following columns: 'chromosome', 'start', 'end'.")
+               "Input data-frame is missing the following columns: 'chromosome', 'start', 'end', 'log2FoldChange'.")
 
   ## Checking correct input type
-  expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = LETTERS[1:5], end = 2:6, score = 1:5)),
+  expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = LETTERS[1:5], end = 2:6, score = 1:5, log2FoldChange = 1:5)),
                "'start' and 'end' columns should contain numeric values.")
-  expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = LETTERS[1:5], score = 1:5)),
+  expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = LETTERS[1:5], score = 1:5, log2FoldChange = 1:5)),
                "'start' and 'end' columns should contain numeric values.")
-  expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = LETTERS[1:5])),
+  expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = LETTERS[1:5], log2FoldChange = 1:5)),
                "'score' column should contain numeric values.")
+  expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5, log2FoldChange = letters[1:5])),
+               "'log2FoldChange' column should contain numeric values.")
 
   ## Correct input should trigger no error
   expect_error(DE_data(data), NA)

@@ -1,4 +1,3 @@
-## code to prepare `DATASET` dataset goes here
 library(tidyverse)
 library(GWASpoly)
 
@@ -35,9 +34,9 @@ de_data <- de_results |>
          position = pos,
          score,
          padj,
-         log2FC = log2FoldChange_shrinkage,
-         tx_start,
-         tx_end,
+         log2FoldChange = log2FoldChange_shrinkage,
+         start = tx_start,
+         end = tx_end,
          label = description)
 
 
@@ -55,7 +54,7 @@ candidate_data <- candidate_genes |>
          position,
          start = Start,
          end = End,
-         label = gene_name_short,
+         name = gene_name_short,
          gene_name)
 
 

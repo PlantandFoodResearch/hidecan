@@ -24,6 +24,7 @@ following columns:
 \itemize{
 \item \code{chromosome}: character column, chromosome on which the gene/transcript is located.
 \item \code{score}: numeric, the DE score of the gene/transcript.
+\item \code{log2FoldChange}: numeric, the log2(fold-change) of the gene/transcript.
 \item \code{start}: numeric, starting position of the gene/transcript (in bp).
 \item \code{end}: numeric, end position of the gene/transcript (in bp).
 }

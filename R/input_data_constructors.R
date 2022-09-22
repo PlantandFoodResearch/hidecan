@@ -62,7 +62,7 @@ GWAS_data <- function(dat, keep_rownames_as = NULL){
 #' DE_data constructor
 #'
 #' @param dat Tibble, results from a differential expression analysis, with at least columns
-#' `chromosome`, `score`, `start` and `end`.
+#' `chromosome`, `score`, `log2FoldChange`, `start` and `end`.
 #' @returns A `DE_data` object, i.e. a tibble.
 #' @export
 new_DE_data <- function(dat){
@@ -81,11 +81,12 @@ new_DE_data <- function(dat){
 validate_DE_data <- function(x){
 
   ## A GWAS result table must at least contain these columns
-  .check_cols(x, c("chromosome", "start", "end", "score"))
+  .check_cols(x, c("chromosome", "start", "end", "score", "log2FoldChange"))
 
 
   if(!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) stop("'start' and 'end' columns should contain numeric values.", call. = FALSE)
   if(!is.numeric(x[["score"]])) stop("'score' column should contain numeric values.", call. = FALSE)
+  if(!is.numeric(x[["log2FoldChange"]])) stop("'log2FoldChange' column should contain numeric values.", call. = FALSE)
 
   x
 }
@@ -98,6 +99,8 @@ validate_DE_data <- function(x){
 #' * `chromosome`: character column, chromosome on which the gene/transcript is located.
 #'
 #' * `score`: numeric, the DE score of the gene/transcript.
+#'
+#' * `log2FoldChange`: numeric, the log2(fold-change) of the gene/transcript.
 #'
 #' * `start`: numeric, starting position of the gene/transcript (in bp).
 #'

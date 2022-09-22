@@ -8,7 +8,7 @@ new_DE_data(dat)
 }
 \arguments{
 \item{dat}{Tibble, results from a differential expression analysis, with at least columns
-\code{chromosome}, \code{score}, \code{start} and \code{end}.}
+\code{chromosome}, \code{score}, \code{log2FoldChange}, \code{start} and \code{end}.}
 }
 \value{
 A \code{DE_data} object, i.e. a tibble.
