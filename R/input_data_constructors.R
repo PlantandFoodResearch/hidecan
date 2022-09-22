@@ -119,3 +119,66 @@ DE_data <- function(dat, keep_rownames_as = NULL){
   dat <- new_DE_data(dat)
   validate_DE_data(dat)
 }
+
+
+
+#' CAN_data constructor
+#'
+#' @param dat Tibble, containing information about genes of interest, with at least columns
+#' `chromosome`, `start`, `end` and `name`.
+#' @returns A `CAN_data` object, i.e. a tibble.
+#' @export
+new_CAN_data <- function(dat){
+  ## Making sure that the input is a tibble
+  stopifnot(tibble::is_tibble(dat))
+
+  class(dat) <- c("CAN_data", class(dat))
+
+  dat
+}
+
+#' Check validity of input for CAN_data constructor
+#'
+#' @param x, a CAN_data object constructed via \link{new_CAN_data}.
+#' @returns A `CAN_data` object, i.e. a tibble.
+validate_CAN_data <- function(x){
+
+  ## A GWAS result table must at least contain these columns
+  .check_cols(x, c("chromosome", "start", "end", "name"))
+
+
+  if(!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) stop("'start' and 'end' columns should contain numeric values.", call. = FALSE)
+  if(!is.character(x[["name"]])) stop("'name' column should contain character values.", call. = FALSE)
+
+  x
+}
+
+#' Creates a CAN_data object
+#'
+#' The input data should have one row per gene, and at least the
+#' following columns:
+#'
+#' * `chromosome`: character column, chromosome on which the gene is located.
+#'
+#' * `start`: numeric, starting position of the gene (in bp).
+#'
+#' * `end`: numeric, end position of the gene (in bp).
+#'
+#' * `name`: character, the name of the candidate genes to be displayed.
+#'
+#' @param dat Tibble, set of candidate genes of interest. See Details.
+#' @param keep_rownames_as Character, the name of the column in which to save the
+#' rownames of the input data-frame. Default value is `NULL`, i.e. rownames will
+#' be discarded.
+#' @returns A `CAN_data` object, i.e. a tibble.
+#' @export
+CAN_data <- function(dat, keep_rownames_as = NULL){
+  ## If the data is not a tibble, transform it
+  if(!tibble::is_tibble(dat)){
+
+    dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
+  }
+
+  dat <- new_CAN_data(dat)
+  validate_CAN_data(dat)
+}
