@@ -3,12 +3,11 @@
 #' @param dat Tibble, results from a GWAS analysis, with at least columns
 #' `chromosome`, `position` and `score`.
 #' @returns A `GWAS_data` object, i.e. a tibble.
-#' @export
 new_GWAS_data <- function(dat){
   ## Making sure that the input is a tibble
   stopifnot(tibble::is_tibble(dat))
 
-  class(dat) <- c("GWAS_data", class(dat))
+  class(dat) <- c("GWAS_data", "genomics_data", class(dat))
 
   dat
 }
@@ -64,7 +63,6 @@ GWAS_data <- function(dat, keep_rownames_as = NULL){
 #' @param dat Tibble, results from a differential expression analysis, with at least columns
 #' `chromosome`, `score`, `log2FoldChange`, `start` and `end`.
 #' @returns A `DE_data` object, i.e. a tibble.
-#' @export
 new_DE_data <- function(dat){
   ## Making sure that the input is a tibble
   stopifnot(tibble::is_tibble(dat))
@@ -120,7 +118,12 @@ DE_data <- function(dat, keep_rownames_as = NULL){
   }
 
   dat <- new_DE_data(dat)
-  validate_DE_data(dat)
+  dat <- validate_DE_data(dat)
+
+  start <- end <- NULL
+
+  dat |>
+    dplyr::mutate(position = purrr::map2_dbl(start, end, mean))
 }
 
 
@@ -130,7 +133,6 @@ DE_data <- function(dat, keep_rownames_as = NULL){
 #' @param dat Tibble, containing information about genes of interest, with at least columns
 #' `chromosome`, `start`, `end` and `name`.
 #' @returns A `CAN_data` object, i.e. a tibble.
-#' @export
 new_CAN_data <- function(dat){
   ## Making sure that the input is a tibble
   stopifnot(tibble::is_tibble(dat))
@@ -183,5 +185,10 @@ CAN_data <- function(dat, keep_rownames_as = NULL){
   }
 
   dat <- new_CAN_data(dat)
-  validate_CAN_data(dat)
+  dat <- validate_CAN_data(dat)
+
+  start <- end <- NULL
+
+  dat |>
+    dplyr::mutate(position = purrr::map2_dbl(start, end, mean))
 }

@@ -65,6 +65,7 @@ test_that("new_DE_data works", {
 
   ## class should be DE_data
   expect_equal(class(res)[1], "DE_data")
+
 })
 
 test_that("DE_data works", {
@@ -88,15 +89,19 @@ test_that("DE_data works", {
   ## Correct input should trigger no error
   expect_error(DE_data(data), NA)
 
-  ## output should be equal to input
-  expect_equal(unclass(DE_data(data)), unclass(data))
+  ## output should be equal to input (except for the position column)
+  expect_equal(unclass(dplyr::select(DE_data(data), -position)), unclass(data))
+
+  ## position column should be the average of start and end position
+  expect_equal(DE_data(data)[["position"]], purrr::map2_dbl(data[["start"]], data[["end"]], mean))
 
   data_2 <- as.data.frame(data)
+
   rownames(data_2) <- letters[1:5]
 
   ## By default, rownames of a data-frame should be ignored
   res <- DE_data(data_2)
-  expect_equal(colnames(res),  colnames(data_2))
+  expect_equal(colnames(res),  c(colnames(data_2), "position"))
 
   ## If specified, rownames should be saved in new column
   res <- DE_data(data_2, keep_rownames_as = "rowname")
@@ -140,15 +145,18 @@ test_that("CAN_data works", {
   ## Correct input should trigger no error
   expect_error(CAN_data(data), NA)
 
-  ## output should be equal to input
-  expect_equal(unclass(CAN_data(data)), unclass(data))
+  ## output should be equal to input, except for the position column
+  expect_equal(unclass(dplyr::select(CAN_data(data), -position)), unclass(data))
+
+  ## position column should be the average of start and end position
+  expect_equal(CAN_data(data)[["position"]], purrr::map2_dbl(data[["start"]], data[["end"]], mean))
 
   data_2 <- as.data.frame(data)
   rownames(data_2) <- letters[1:5]
 
   ## By default, rownames of a data-frame should be ignored
   res <- CAN_data(data_2)
-  expect_equal(colnames(res),  colnames(data_2))
+  expect_equal(colnames(res),  c(colnames(data_2), "position"))
 
   ## If specified, rownames should be saved in new column
   res <- CAN_data(data_2, keep_rownames_as = "rowname")
