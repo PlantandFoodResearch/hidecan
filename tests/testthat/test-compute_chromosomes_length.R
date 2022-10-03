@@ -56,3 +56,27 @@ test_that("compute_chrom_length.CAN_data works", {
                manual_vals)
 
 })
+
+
+test_that("combine_chrom_length works", {
+  res <- combine_chrom_length(list(gwas_res, de_res, can_res))
+
+  expect_equal(res[["chromosome"]],
+               c(gwas_res[["chromosome"]], de_res[["chromosome"]], can_res[["chromosome"]]) |>
+                 unique() |>
+                 sort())
+
+  expect_equal(res[["length"]],
+               c(gwas_res[["chromosome"]], de_res[["chromosome"]], can_res[["chromosome"]]) |>
+                 unique() |>
+                 sort() |>
+                 purrr::map_dbl(function(x){
+                  max(
+                    gwas_res[["position"]][gwas_res[["chromosome"]] == x],
+                    de_res[["start"]][de_res[["chromosome"]] == x],
+                    de_res[["end"]][de_res[["chromosome"]] == x],
+                    can_res[["start"]][can_res[["chromosome"]] == x],
+                    can_res[["end"]][can_res[["chromosome"]] == x]
+                  )
+                 }))
+})

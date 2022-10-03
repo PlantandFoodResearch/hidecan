@@ -6,6 +6,7 @@
 #' @param x Either a `GWAS_data`, `DE_data` or `CAN_data` object.
 #' @returns A tibble with two columns: `chrom` (chromosome name) and
 #' `length` (chromosome length in base pair).
+#' @export
 compute_chrom_length <- function(x){
   UseMethod("compute_chrom_length")
 }
@@ -27,6 +28,29 @@ compute_chrom_length.GWAS_data <- function(x){
 #' @export
 compute_chrom_length.DE_data <- function(x){
 
+  .compute_chrom_length_genes(x)
+
+}
+
+#' @rdname compute_chrom_length
+#' @export
+compute_chrom_length.CAN_data <- function(x){
+
+  .compute_chrom_length_genes(x)
+
+}
+
+#' Computes chromosomes' length for a tibble of genes
+#'
+#' Computes the length (in bp) of each chromosome as the maximum
+#' position of genes on the chromosome.
+#'
+#' @param x Either a `DE_data` or `CAN_data` object.
+#' @returns A tibble with two columns: `chrom` (chromosome name) and
+#' `length` (chromosome length in base pair).
+#' @export
+.compute_chrom_length_genes <- function(x){
+
   chromosome <- start <- end <- position <- NULL
 
   x |>
@@ -35,20 +59,27 @@ compute_chrom_length.DE_data <- function(x){
     dplyr::group_by(chromosome) |>
     dplyr::summarise(length = max(position),
                      .groups = "drop")
-
 }
 
-#' @rdname compute_chrom_length
-#' @export
-compute_chrom_length.CAN_data <- function(x){
 
-  chromosome <- start <- end <- position <- NULL
+#' Computes chromosomes' length from list
+#'
+#' Computes the length (in bp) of each chromosome from a list of GWAS and
+#' DE results as well as candidate gene lists.
+#'
+#' @param x A list of `GWAS_data`, `DE_data` or `CAN_data` object.
+#' @returns A tibble with two columns: `chrom` (chromosome name) and
+#' `length` (chromosome length in base pair).
+#' @export
+combine_chrom_length <- function(x){
+
+  chromosome <- NULL
 
   x |>
-    ## To handle the case where start > end
-    dplyr::mutate(position = purrr::map2_dbl(start, end, max)) |>
+    purrr::map(compute_chrom_length) |>
+    purrr::reduce(dplyr::bind_rows) |>
     dplyr::group_by(chromosome) |>
-    dplyr::summarise(length = max(position),
+    dplyr::summarise(length = max(length),
                      .groups = "drop")
 
 }
