@@ -13,7 +13,8 @@
 ##' transcripts' log2(fold-change). Only genes/transcripts with an absolute
 ##' log2(fold-change) equal to or higher than this threshold will be retained.
 ##' Ignored for `GWAS_data` and `CAN_data`.
-##' @returns A filtered tibble.
+##' @returns A filtered tibble (of class `GWAS_data_thr`, `DE_data_thr` or
+##' `CAN_data_thr`).
 ##' @export
 apply_threshold <- function(x, score_thr = 0, log2fc_thr = 0){
   UseMethod("apply_threshold")
@@ -25,9 +26,12 @@ apply_threshold.GWAS_data <- function(x, score_thr = 0, log2fc_thr = 0){
 
   score <- NULL
 
-  x |>
+  res <- x |>
     dplyr::filter(score >= score_thr)
 
+  class(res)[1] <- "GWAS_data_thr"
+
+  return(res)
 }
 
 #' @rdname apply_threshold
@@ -36,17 +40,24 @@ apply_threshold.DE_data <- function(x, score_thr = 0, log2fc_thr = 0){
 
   score <- log2FoldChange <- NULL
 
-  x |>
+  res <- x |>
     dplyr::filter(score >= score_thr,
                   abs(log2FoldChange) >= log2fc_thr)
+
+  class(res)[1] <- "DE_data_thr"
+
+  return(res)
 }
 
 #' @rdname apply_threshold
 #' @export
 apply_threshold.CAN_data <- function(x, score_thr = 0, log2fc_thr = 0){
 
-  x
+  res <- x
 
+  class(res)[1] <- "CAN_data_thr"
+
+  return(res)
 }
 
 #' @rdname apply_threshold

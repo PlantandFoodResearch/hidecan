@@ -4,9 +4,10 @@ test_that("apply_threshold.GWAS_data works", {
 
   ## If no threshold is specified, returns the dataset without rows
   ## that have a missing score
-  expect_identical(apply_threshold(gwas_res),
+  expect_identical(unclass(apply_threshold(gwas_res)),
                    gwas_res |>
-                     dplyr::filter(!is.na(score)))
+                     dplyr::filter(!is.na(score)) |>
+                     unclass())
 
   ## applying the threshold should get rid of the rows with a score
   ## below the threshold
@@ -23,9 +24,10 @@ test_that("apply_threshold.DE_data works", {
 
   ## If no threshold is specified, returns the dataset without rows
   ## that have a missing score
-  expect_identical(apply_threshold(de_res),
+  expect_identical(unclass(apply_threshold(de_res)),
                    de_res |>
-                     dplyr::filter(!is.na(score)))
+                     dplyr::filter(!is.na(score)) |>
+                     unclass())
 
   ## applying the threshold should get rid of the rows with a score
   ## below the threshold
@@ -45,12 +47,12 @@ test_that("apply_threshold.DE_data works", {
 test_that("apply_threshold.CAN_data works", {
 
   ## Should return the dataset
-  expect_identical(apply_threshold(can_res),
-                   can_res)
+  expect_identical(unclass(apply_threshold(can_res)),
+                   unclass(can_res))
 
-  expect_identical(apply_threshold(can_res, score_thr = 2),
-                   can_res)
+  expect_identical(unclass(apply_threshold(can_res, score_thr = 2)),
+                   unclass(can_res))
 
-  expect_identical(apply_threshold(can_res, log2fc_thr = 2),
-                   can_res)
+  expect_identical(unclass(apply_threshold(can_res, log2fc_thr = 2)),
+                   unclass(can_res))
 })

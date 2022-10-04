@@ -31,7 +31,8 @@ log2(fold-change) equal to or higher than this threshold will be retained.
 Ignored for \code{GWAS_data} and \code{CAN_data}.}
 }
 \value{
-A filtered tibble.
+A filtered tibble (of class \code{GWAS_data_thr}, \code{DE_data_thr} or
+\code{CAN_data_thr}).
 }
 \description{
 Filters markers or genes/transcripts based on a threshold applied to their
