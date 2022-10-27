@@ -4,7 +4,7 @@
 #' position of markers or genes on the chromosome.
 #'
 #' @param x Either a `GWAS_data`, `DE_data` or `CAN_data` object.
-#' @returns A tibble with two columns: `chrom` (chromosome name) and
+#' @returns A tibble with two columns: `chromosome` (chromosome name) and
 #' `length` (chromosome length in base pair).
 #' @export
 compute_chrom_length <- function(x){
@@ -46,7 +46,7 @@ compute_chrom_length.CAN_data <- function(x){
 #' position of genes on the chromosome.
 #'
 #' @param x Either a `DE_data` or `CAN_data` object.
-#' @returns A tibble with two columns: `chrom` (chromosome name) and
+#' @returns A tibble with two columns: `chromosome` (chromosome name) and
 #' `length` (chromosome length in base pair).
 #' @export
 .compute_chrom_length_genes <- function(x){
@@ -67,8 +67,8 @@ compute_chrom_length.CAN_data <- function(x){
 #' Computes the length (in bp) of each chromosome from a list of GWAS and
 #' DE results as well as candidate gene lists.
 #'
-#' @param x A list of `GWAS_data`, `DE_data` or `CAN_data` object.
-#' @returns A tibble with two columns: `chrom` (chromosome name) and
+#' @param x A list of `GWAS_data`, `DE_data` or `CAN_data` objects.
+#' @returns A tibble with two columns: `chromosome` (chromosome name) and
 #' `length` (chromosome length in base pair).
 #' @export
 combine_chrom_length <- function(x){

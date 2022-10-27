@@ -20,13 +20,12 @@ create_hidecan_plot(
 }
 \arguments{
 \item{x}{A list of \code{GWAS_data_thr}, \code{DE_data_thr} and/or \code{CAN_data_thr}
-produced by the \link{apply_threshold}() function. If named, the names
-will be integrated to the y-axis labels (use \code{' '} to exclude the name
-for any element of the list).}
+produced by the \code{\link{apply_threshold}()} function. If named, the names
+will be appended to the y-axis labels (use \code{' '} as empty name in the list).}
 
 \item{chrom_length}{Tibble with columns \code{chromosome} and \code{length}, giving
-for each chromosome its length in bp (see \link{combine_chrom_length})()
-function.}
+for each chromosome its length in bp (see \code{\link{combine_chrom_length}()}
+function).}
 
 \item{colour_genes_by_score}{Logical, whether to colour the genes by score
 (\code{TRUE}) or by log2(fold-change) (\code{FALSE}). Default value is \code{TRUE}.}
@@ -37,19 +36,19 @@ no title will be added to the plot).}
 \item{subtitle}{Character, subtitle of the plot. Default value is \code{NULL}
 (i.e. no subtitle will be added to the plot).}
 
-\item{n_rows}{Integer, number of rows of facets to create in the plot.
+\item{n_rows}{Integer, number of rows of chromosomes to create in the plot.
 Default value is \code{NULL}.}
 
-\item{n_cols}{Integer, number of columns of facets to create in the plot.
+\item{n_cols}{Integer, number of columns of chromosomes to create in the plot.
 Default value is 2.}
 
 \item{legend_position}{Character, position of the legend in the plot. Can be
-\code{bottom} (default value), \code{top}, \code{right} or \code{left}.}
+\code{bottom} (default value), \code{top}, \code{right}, \code{left} or \code{none}.}
 
 \item{point_size}{Numeric, size of the points in the plot. Default value is 3.}
 
 \item{label_size}{Numeric, size of the gene labels in the plot. Default value is
-3.5 (for \link[ggrepel]{geom_label_repel}).}
+3.5 (for \code{\link[ggrepel]{geom_label_repel}}).}
 
 \item{label_padding}{Numeric, amount of padding around gene labels in the plot,
 as unit or number. Default value is 0.15

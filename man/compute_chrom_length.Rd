@@ -19,7 +19,7 @@ compute_chrom_length(x)
 \item{x}{Either a \code{GWAS_data}, \code{DE_data} or \code{CAN_data} object.}
 }
 \value{
-A tibble with two columns: \code{chrom} (chromosome name) and
+A tibble with two columns: \code{chromosome} (chromosome name) and
 \code{length} (chromosome length in base pair).
 }
 \description{
