@@ -49,7 +49,13 @@ candidate_data <- candidate_genes |>
          start = Start,
          end = End,
          name = gene_name_short,
-         gene_name)
+         gene_name) |>
+  ## Get rid of all the "PPO" labels, otherwise too many for ggrepel
+  mutate(name = case_when(name == "PPO" & start == 45676042 ~ "PPOs",
+                          name == "PPO" & start != 45676042 ~ NA_character_,
+                          TRUE ~ name)) |>
+  ## removing some candidate genes from chromosome 3 to avoid ggrepel warning
+  filter(!(chromosome == "ST4.03ch03") | name %in% c("PHO1A", "4CL", "KTPI", "4CL2"))
 
 
 usethis::use_data(gwas_data, de_data, candidate_data, internal = TRUE, overwrite = TRUE)

@@ -9,3 +9,4 @@ de_res <- hidecan::DE_data(de_data|>
 can_res <- hidecan::CAN_data(candidate_data)
 
 save(gwas_res, de_res, can_res, file = "tests/testthat/data-test/test_input.rda")
+
