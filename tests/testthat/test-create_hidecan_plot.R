@@ -79,10 +79,10 @@ test_that("hidecan_plot works", {
   expect_error(hidecan_plot(can_list = dplyr::rename(can_data, chrom = chromosome)), "In 'can_list' argument: Input data-frame is missing the following columns: 'chromosome'.")
 
   ## Check score and log2fc thresholds
-  expect_error(hidecan_plot(gwas_list = gwas_data, score_thr = "TEST"), "'score_thr' argument should be a named vector of length 2 with names 'GWAS' and 'DE'.")
-  expect_error(hidecan_plot(gwas_list = gwas_data, score_thr = c("Test" = 1, "DE" = 2)), "'score_thr' argument should be a named vector of length 2 with names 'GWAS' and 'DE'.")
-  expect_error(hidecan_plot(gwas_list = gwas_data, score_thr = c(2, 2)), "'score_thr' argument should be a named vector of length 2 with names 'GWAS' and 'DE'.")
-  expect_error(hidecan_plot(gwas_list = gwas_data, score_thr = c("GWAS" = "1", "DE" = "2")), "'score_thr' argument should be a numeric vector.")
+  expect_error(hidecan_plot(gwas_list = gwas_data, score_thr_gwas = "TEST"), "'score_thr_gwas' argument should be a numeric value.")
+  expect_error(hidecan_plot(gwas_list = gwas_data, score_thr_gwas = 1:2), "'score_thr_gwas' argument should be a single numeric value.")
+  expect_error(hidecan_plot(gwas_list = gwas_data, score_thr_de = "TEST"), "'score_thr_de' argument should be a numeric value.")
+  expect_error(hidecan_plot(gwas_list = gwas_data, score_thr_de = 1:2), "'score_thr_de' argument should be a single numeric value.")
   expect_error(hidecan_plot(gwas_list = gwas_data, log2fc_thr = "TEST"),"'log2fc_thr' argument should be a numeric value.")
   expect_error(hidecan_plot(gwas_list = gwas_data, log2fc_thr = c(1, 2)),"'log2fc_thr' argument should be a single numeric value.")
 

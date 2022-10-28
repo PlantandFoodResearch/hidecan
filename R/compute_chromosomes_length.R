@@ -6,6 +6,12 @@
 #' @param x Either a `GWAS_data`, `DE_data` or `CAN_data` object.
 #' @returns A tibble with two columns: `chromosome` (chromosome name) and
 #' `length` (chromosome length in base pair).
+#' @examples
+#' x <- get_example_data()
+#'
+#' compute_chrom_length(GWAS_data(x[["GWAS"]]))
+#' compute_chrom_length(DE_data(x[["DE"]]))
+#' compute_chrom_length(CAN_data(x[["CAN"]]))
 #' @export
 compute_chrom_length <- function(x){
   UseMethod("compute_chrom_length")
@@ -70,6 +76,13 @@ compute_chrom_length.CAN_data <- function(x){
 #' @param x A list of `GWAS_data`, `DE_data` or `CAN_data` objects.
 #' @returns A tibble with two columns: `chromosome` (chromosome name) and
 #' `length` (chromosome length in base pair).
+#' @examples
+#' x <- get_example_data()
+#' y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
+#'           "DE" = DE_data(x[["DE"]]),
+#'           "CAN" = CAN_data(x[["CAN"]]))
+#'
+#' combine_chrom_length(y)
 #' @export
 combine_chrom_length <- function(x){
 

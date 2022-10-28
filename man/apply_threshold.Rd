@@ -40,3 +40,17 @@ GWAS or DE score, and log2(fold-change) (if applicable). For a set of
 candidate genes, simply returns the list. Note that markers or genes with
 a missing score or log2(fold-change) will be removed from the dataset.
 }
+\examples{
+x <- get_example_data()
+
+## For GWAS results
+apply_threshold(GWAS_data(x[["GWAS"]]), score_thr = 4)
+
+## For DE results - in second line, no threshold is applied
+## on the log2(fold-change)
+apply_threshold(DE_data(x[["DE"]]), score_thr = -log10(0.05), log2fc_thr = 1)
+apply_threshold(DE_data(x[["DE"]]), score_thr = -log10(0.05), log2fc_thr = 0)
+
+## No effect on the Candidate genes
+apply_threshold(CAN_data(x[["CAN"]]))
+}

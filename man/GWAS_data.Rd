@@ -28,3 +28,8 @@ following columns:
 If column \code{score} column is missing, will be constructed as \code{-log10(padj)}.
 }
 }
+\examples{
+x <- get_example_data()
+
+GWAS_data(x[["GWAS"]])
+}

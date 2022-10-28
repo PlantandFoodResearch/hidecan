@@ -8,7 +8,8 @@ hidecan_plot(
   gwas_list = NULL,
   de_list = NULL,
   can_list = NULL,
-  score_thr = c(GWAS = 4, DE = 1.3),
+  score_thr_gwas = 4,
+  score_thr_de = 2,
   log2fc_thr = 1,
   chrom_length = NULL,
   colour_genes_by_score = TRUE,
@@ -36,12 +37,14 @@ the plot.}
 each with at least a \code{chromosome}, \code{start}, \code{end} and \code{name} columns. If a
 named list, the names will be used in the plot.}
 
-\item{score_thr}{Named numeric vector of length 2, with names \code{'GWAS'} and
-\code{'DE'}. The score threshold for GWAS and DE results that will be used to
-select which markers or genes will be plotted.}
+\item{score_thr_gwas}{Numeric, the score threshold for GWAS results that will be used to
+select which markers will be plotted. Default value is 4.}
+
+\item{score_thr_de}{Numeric, the score threshold for DE results that will be used to
+select which markers will be plotted. Default value is 2.}
 
 \item{log2fc_thr}{Numeric, the log2(fold-change) threshold that will be used
-to select which genes will be plotted.}
+to select which genes will be plotted. Default value is 1.}
 
 \item{chrom_length}{Optional, tibble with columns \code{chromosome} and \code{length},
 giving for each chromosome its length in bp. If \code{NULL} (the default), will
@@ -80,4 +83,27 @@ a ggplot.
 \description{
 Wrapper function to create a HIDECAN plot from GWAS results,
 DE results or candidate genes.
+}
+\examples{
+x <- get_example_data()
+
+## Typical example with one GWAs result table, one DE result table and
+## one table of candidate genes
+hidecan_plot(gwas_list = x[["GWAS"]],
+             de_list = x[["DE"]],
+             can_list = x[["CAN"]],
+             score_thr_gwas = -log10(0.0001),
+             score_thr_de = -log10(0.005),
+             log2fc_thr = 0,
+             label_size = 2)
+
+## Example with two sets of GWAS results
+hidecan_plot(gwas_list = list(x[["GWAS"]], x[["GWAS"]]),
+             score_thr_gwas = 4)
+
+## Example with two sets of DE results, with names
+hidecan_plot(de_list = list("X vs Y" = x[["DE"]],
+                            "X vs Z" = x[["DE"]]),
+             score_thr_de = -log10(0.05),
+             log2fc_thr = 0)
 }

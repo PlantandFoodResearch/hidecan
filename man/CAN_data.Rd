@@ -29,3 +29,8 @@ A column \code{position} will be constructed as the middle value (mean) between
 \item \code{name}: character, the name of the candidate genes to be displayed.
 }
 }
+\examples{
+x <- get_example_data()
+
+CAN_data(x[["CAN"]])
+}

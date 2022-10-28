@@ -17,3 +17,11 @@ A tibble with two columns: \code{chromosome} (chromosome name) and
 Computes the length (in bp) of each chromosome from a list of GWAS and
 DE results as well as candidate gene lists.
 }
+\examples{
+x <- get_example_data()
+y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
+          "DE" = DE_data(x[["DE"]]),
+          "CAN" = CAN_data(x[["CAN"]]))
+
+combine_chrom_length(y)
+}

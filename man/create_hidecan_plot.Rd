@@ -61,3 +61,39 @@ A ggplot.
 Creates a HIDECAN plot from a list of filtered GWAS or DE results
 and/or candidate genes.
 }
+\examples{
+x <- get_example_data()
+y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
+          "DE" = DE_data(x[["DE"]]),
+          "CAN" = CAN_data(x[["CAN"]]))
+
+chrom_length <- combine_chrom_length(y)
+
+z <- list(
+  apply_threshold(y[["GWAS"]], score_thr = 4),
+  apply_threshold(y[["DE"]], score_thr = 1.3, log2fc_thr = 0.5),
+  apply_threshold(y[["CAN"]])
+)
+
+create_hidecan_plot(z,
+                    chrom_length,
+                    label_size = 2)
+
+## Colour genes according to their fold-change
+create_hidecan_plot(z,
+                    chrom_length,
+                    colour_genes_by_score = FALSE,
+                    label_size = 2)
+
+## Add names to the datasets
+create_hidecan_plot(setNames(z, c("Genomics", "RNAseq", "My list")),
+                    chrom_length,
+                    colour_genes_by_score = FALSE,
+                    label_size = 2)
+
+## Add names to some of the datasets only (e.g. not for GWAS results)
+create_hidecan_plot(setNames(z, c(" ", "RNAseq", "My list")),
+                    chrom_length,
+                    colour_genes_by_score = FALSE,
+                    label_size = 2)
+}

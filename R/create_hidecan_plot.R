@@ -28,6 +28,41 @@
 #' as unit or number. Default value is 0.15
 #' (for \link[ggrepel]{geom_label_repel}).
 #' @returns A ggplot.
+#' @examples
+#' x <- get_example_data()
+#' y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
+#'           "DE" = DE_data(x[["DE"]]),
+#'           "CAN" = CAN_data(x[["CAN"]]))
+#'
+#' chrom_length <- combine_chrom_length(y)
+#'
+#' z <- list(
+#'   apply_threshold(y[["GWAS"]], score_thr = 4),
+#'   apply_threshold(y[["DE"]], score_thr = 1.3, log2fc_thr = 0.5),
+#'   apply_threshold(y[["CAN"]])
+#' )
+#'
+#' create_hidecan_plot(z,
+#'                     chrom_length,
+#'                     label_size = 2)
+#'
+#' ## Colour genes according to their fold-change
+#' create_hidecan_plot(z,
+#'                     chrom_length,
+#'                     colour_genes_by_score = FALSE,
+#'                     label_size = 2)
+#'
+#' ## Add names to the datasets
+#' create_hidecan_plot(setNames(z, c("Genomics", "RNAseq", "My list")),
+#'                     chrom_length,
+#'                     colour_genes_by_score = FALSE,
+#'                     label_size = 2)
+#'
+#' ## Add names to some of the datasets only (e.g. not for GWAS results)
+#' create_hidecan_plot(setNames(z, c(" ", "RNAseq", "My list")),
+#'                     chrom_length,
+#'                     colour_genes_by_score = FALSE,
+#'                     label_size = 2)
 #' @export
 create_hidecan_plot <- function(x,
                                 chrom_length,
@@ -215,21 +250,45 @@ create_hidecan_plot <- function(x,
 #' @param can_list Data-frame or list of data-frames containing candidate genes,
 #' each with at least a `chromosome`, `start`, `end` and `name` columns. If a
 #' named list, the names will be used in the plot.
-#' @param score_thr Named numeric vector of length 2, with names `'GWAS'` and
-#' `'DE'`. The score threshold for GWAS and DE results that will be used to
-#' select which markers or genes will be plotted.
+#' @param score_thr_gwas Numeric, the score threshold for GWAS results that will be used to
+#' select which markers will be plotted. Default value is 4.
+#' @param score_thr_de Numeric, the score threshold for DE results that will be used to
+#' select which markers will be plotted. Default value is 2.
 #' @param log2fc_thr Numeric, the log2(fold-change) threshold that will be used
-#' to select which genes will be plotted.
+#' to select which genes will be plotted. Default value is 1.
 #' @param chrom_length Optional, tibble with columns `chromosome` and `length`,
 #' giving for each chromosome its length in bp. If `NULL` (the default), will
 #' be inferred from the GWAS, DE and candidate gene data.
 #' @inheritParams create_hidecan_plot
 #' @returns a ggplot.
+#' @examples
+#' x <- get_example_data()
+#'
+#' ## Typical example with one GWAs result table, one DE result table and
+#' ## one table of candidate genes
+#' hidecan_plot(gwas_list = x[["GWAS"]],
+#'              de_list = x[["DE"]],
+#'              can_list = x[["CAN"]],
+#'              score_thr_gwas = -log10(0.0001),
+#'              score_thr_de = -log10(0.005),
+#'              log2fc_thr = 0,
+#'              label_size = 2)
+#'
+#' ## Example with two sets of GWAS results
+#' hidecan_plot(gwas_list = list(x[["GWAS"]], x[["GWAS"]]),
+#'              score_thr_gwas = 4)
+#'
+#' ## Example with two sets of DE results, with names
+#' hidecan_plot(de_list = list("X vs Y" = x[["DE"]],
+#'                             "X vs Z" = x[["DE"]]),
+#'              score_thr_de = -log10(0.05),
+#'              log2fc_thr = 0)
 #' @export
 hidecan_plot <- function(gwas_list = NULL,
                          de_list = NULL,
                          can_list = NULL,
-                         score_thr = c("GWAS" = 4, "DE" = 1.3),
+                         score_thr_gwas = 4,
+                         score_thr_de = 2,
                          log2fc_thr = 1,
                          chrom_length = NULL,
                          colour_genes_by_score = TRUE,
@@ -281,15 +340,18 @@ hidecan_plot <- function(gwas_list = NULL,
   }
 
   ## Check threshold values
-  if(length(setdiff(c("GWAS", "DE"), names(score_thr)))) stop("'score_thr' argument should be a named vector of length 2 with names 'GWAS' and 'DE'.")
-  if(!is.numeric(score_thr)) stop("'score_thr' argument should be a numeric vector.")
+  if(length(score_thr_gwas) != 1) stop("'score_thr_gwas' argument should be a single numeric value.")
+  if(!is.numeric(score_thr_gwas)) stop("'score_thr_gwas' argument should be a numeric value.")
+
+  if(length(score_thr_de) != 1) stop("'score_thr_de' argument should be a single numeric value.")
+  if(!is.numeric(score_thr_de)) stop("'score_thr_de' argument should be a numeric value.")
 
   if(length(log2fc_thr) != 1) stop("'log2fc_thr' argument should be a single numeric value.")
   if(!is.numeric(log2fc_thr)) stop("'log2fc_thr' argument should be a numeric value.")
 
 
   ## Apply threshold to datasets
-  score_thr <- c("GWAS_data" = score_thr[["GWAS"]], "DE_data" = score_thr[["DE"]], "CAN_data" = 0)
+  score_thr <- c("GWAS_data" = score_thr_gwas, "DE_data" = score_thr_de, "CAN_data" = 0)
 
   x <- purrr::map2(
     x,

@@ -26,3 +26,10 @@ A tibble with two columns: \code{chromosome} (chromosome name) and
 Computes the length (in bp) of each chromosome as the maximum
 position of markers or genes on the chromosome.
 }
+\examples{
+x <- get_example_data()
+
+compute_chrom_length(GWAS_data(x[["GWAS"]]))
+compute_chrom_length(DE_data(x[["DE"]]))
+compute_chrom_length(CAN_data(x[["CAN"]]))
+}

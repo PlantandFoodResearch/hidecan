@@ -1,8 +1,5 @@
 load_all()
 
-load("R/sysdata.rda")
-
-
 gwas_res <- GWAS_data(gwas_data)
 de_res <- DE_data(de_data)
 can_res <- CAN_data(candidate_data)

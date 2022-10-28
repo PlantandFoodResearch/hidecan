@@ -34,3 +34,8 @@ as \code{log2(foldChange)}.
 \code{start} and \code{end}.
 }
 }
+\examples{
+x <- get_example_data()
+
+DE_data(x[["DE"]])
+}

@@ -44,6 +44,10 @@ validate_GWAS_data <- function(x){
 #' rownames of the input data-frame. Default value is `NULL`, i.e. rownames will
 #' be discarded.
 #' @returns A `GWAS_data` object, i.e. a tibble.
+#' @examples
+#' x <- get_example_data()
+#'
+#' GWAS_data(x[["GWAS"]])
 #' @export
 GWAS_data <- function(dat, keep_rownames_as = NULL){
   ## If the data is not a tibble, transform it
@@ -127,6 +131,10 @@ validate_DE_data <- function(x){
 #' rownames of the input data-frame. Default value is `NULL`, i.e. rownames will
 #' be discarded.
 #' @returns A `DE_data` object, i.e. a tibble.
+#' @examples
+#' x <- get_example_data()
+#'
+#' DE_data(x[["DE"]])
 #' @export
 DE_data <- function(dat, keep_rownames_as = NULL){
   ## If the data is not a tibble, transform it
@@ -226,6 +234,10 @@ validate_CAN_data <- function(x){
 #' rownames of the input data-frame. Default value is `NULL`, i.e. rownames will
 #' be discarded.
 #' @returns A `CAN_data` object, i.e. a tibble.
+#' @examples
+#' x <- get_example_data()
+#'
+#' CAN_data(x[["CAN"]])
 #' @export
 CAN_data <- function(dat, keep_rownames_as = NULL){
   ## If the data is not a tibble, transform it
