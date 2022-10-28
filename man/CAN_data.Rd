@@ -23,8 +23,9 @@ following columns:
 \details{
 \itemize{
 \item \code{chromosome}: character column, chromosome on which the gene is located.
-\item \code{start}: numeric, starting position of the gene (in bp).
-\item \code{end}: numeric, end position of the gene (in bp).
+\item \code{start} and \code{end}: numeric, starting and end position of the gene (in bp).
+A column \code{position} will be constructed as the middle value (mean) between
+\code{start} and \code{end}.
 \item \code{name}: character, the name of the candidate genes to be displayed.
 }
 }

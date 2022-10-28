@@ -23,6 +23,14 @@ test_that("GWAS_data works", {
   ## Need the correct columns
   expect_error(GWAS_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, score = 1:5)),
                "Input data-frame is missing the following columns: 'chromosome', 'position'.")
+  expect_error(GWAS_data(tibble::tibble(a = LETTERS[1:5], b = 1:5)),
+               "Input data-frame should have either a 'score' or a 'padj' column.")
+  expect_error(GWAS_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, padj = LETTERS[1:5])),
+               "'padj' column in input data-frame should contain numeric values.")
+  expect_error(GWAS_data(tibble::tibble(chromosome = LETTERS[1:5], position = 1:5, padj = 1:5)),
+               NA) ## no error if no score but padj
+  expect_equal(GWAS_data(tibble::tibble(chromosome = LETTERS[1:5], position = 1:5, padj = 1:5))[["score"]],
+               -log10(1:5))
 
   ## Checking correct input type
   expect_error(GWAS_data(tibble::tibble(chromosome = LETTERS[1:5], position = LETTERS[1:5], score = 1:5)),
@@ -73,14 +81,34 @@ test_that("DE_data works", {
   data <- tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5, log2FoldChange = 1:5)
 
   ## Need the correct columns
+  expect_error(DE_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, start = 1:5, end = 2:6, log2FoldChange = 1:5, score = 1:5)),
+               "Input data-frame is missing the following columns: 'chromosome'.")
+  expect_error(DE_data(tibble::tibble(a = LETTERS[1:5], b = 1:5)),
+               "Input data-frame should have either a 'score' or a 'padj' column.")
+  expect_error(DE_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, padj = LETTERS[1:5])),
+               "'padj' column in input data-frame should contain numeric values.")
+  expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, padj = 1:5, log2FoldChange = 1:5)),
+               NA) ## no error if no score but padj
+  expect_equal(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, padj = 1:5, log2FoldChange = 1:5))[["score"]],
+               -log10(1:5))
   expect_error(DE_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, score = 1:5)),
-               "Input data-frame is missing the following columns: 'chromosome', 'start', 'end', 'log2FoldChange'.")
-
-  ## Checking correct input type
+               "Input data-frame should have either a 'log2FoldChange' or a 'foldChange' column.")
+  expect_error(DE_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, score = 1:5, foldChange = LETTERS[1:5])),
+               "'foldChange' column in input data-frame should contain numeric values.")
+  expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5, foldChange = 1:5)),
+                       NA) ## no error if no score but padj
+  expect_equal(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5, foldChange = 1:5))[["log2FoldChange"]],
+               log2(1:5))
+  expect_error(DE_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, score = 1:5, log2FoldChange = 1:5)),
+               "Input data-frame should have a 'start' and an 'end' column.")
   expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = LETTERS[1:5], end = 2:6, score = 1:5, log2FoldChange = 1:5)),
                "'start' and 'end' columns should contain numeric values.")
   expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = LETTERS[1:5], score = 1:5, log2FoldChange = 1:5)),
                "'start' and 'end' columns should contain numeric values.")
+  expect_equal(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5, foldChange = 1:5))[["position"]],
+               seq(1.5, 5.5, 1))
+
+  ## Checking correct input type
   expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = LETTERS[1:5], log2FoldChange = 1:5)),
                "'score' column should contain numeric values.")
   expect_error(DE_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, score = 1:5, log2FoldChange = letters[1:5])),
@@ -91,9 +119,6 @@ test_that("DE_data works", {
 
   ## output should be equal to input (except for the position column)
   expect_equal(unclass(dplyr::select(DE_data(data), -position)), unclass(data))
-
-  ## position column should be the average of start and end position
-  expect_equal(DE_data(data)[["position"]], purrr::map2_dbl(data[["start"]], data[["end"]], mean))
 
   data_2 <- as.data.frame(data)
 
@@ -131,14 +156,16 @@ test_that("CAN_data works", {
   data <- tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, name = letters[1:5])
 
   ## Need the correct columns
-  expect_error(CAN_data(tibble::tibble(chromosome = LETTERS[1:5], b = 1:5, score = 1:5)),
-               "Input data-frame is missing the following columns: 'start', 'end', 'name'.")
+  expect_error(CAN_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, start = 1:5, end = 2:6)),
+               "Input data-frame is missing the following columns: 'chromosome', 'name'.")
+  expect_error(CAN_data(tibble::tibble(a = LETTERS[1:5], b = 1:5)),
+               "Input data-frame should have a 'start' and an 'end' column.")
+  expect_error(CAN_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, start = LETTERS[1:5], end = LETTERS[1:5])),
+               "'start' and 'end' columns should contain numeric values.")
+  expect_equal(CAN_data(tibble::tibble(chromosome = LETTERS[1:5], name = letters[1:5], start = 1:5, end = 2:6))[["position"]],
+               seq(1.5, 5.5, 1))
 
   ## Checking correct input type
-  expect_error(CAN_data(tibble::tibble(chromosome = LETTERS[1:5], start = LETTERS[1:5], end = 2:6, name = letters[1:5])),
-               "'start' and 'end' columns should contain numeric values.")
-  expect_error(CAN_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = LETTERS[1:5], name = letters[1:5])),
-               "'start' and 'end' columns should contain numeric values.")
   expect_error(CAN_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 2:6, name = 1:5)),
                "'name' column should contain character values.")
 
@@ -147,9 +174,6 @@ test_that("CAN_data works", {
 
   ## output should be equal to input, except for the position column
   expect_equal(unclass(dplyr::select(CAN_data(data), -position)), unclass(data))
-
-  ## position column should be the average of start and end position
-  expect_equal(CAN_data(data)[["position"]], purrr::map2_dbl(data[["start"]], data[["end"]], mean))
 
   data_2 <- as.data.frame(data)
   rownames(data_2) <- letters[1:5]

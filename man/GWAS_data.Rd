@@ -24,6 +24,7 @@ following columns:
 \itemize{
 \item \code{chromosome}: character column, chromosome on which the marker is located.
 \item \code{position}: numeric, the physical position of the marker along the chromosome (in bp).
-\item \code{score}: numeric, the GWAS score of the marker.
+\item \code{score} or \code{padj}: numeric, the GWAS score or adjusted p-value of the marker.
+If column \code{score} column is missing, will be constructed as \code{-log10(padj)}.
 }
 }

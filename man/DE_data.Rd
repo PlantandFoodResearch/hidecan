@@ -23,9 +23,14 @@ following columns:
 \details{
 \itemize{
 \item \code{chromosome}: character column, chromosome on which the gene/transcript is located.
-\item \code{score}: numeric, the DE score of the gene/transcript.
-\item \code{log2FoldChange}: numeric, the log2(fold-change) of the gene/transcript.
-\item \code{start}: numeric, starting position of the gene/transcript (in bp).
-\item \code{end}: numeric, end position of the gene/transcript (in bp).
+\item \code{score} or \code{padj}: numeric, the DE score or adjusted p-value of the
+gene/transcript. If column \code{score} column is missing, will be constructed
+as \code{-log10(padj)}.
+\item \code{foldChange} or \code{log2FoldChange}: numeric, the fold-change or log2(fold-change)
+of the gene/transcript. If column \code{log2FoldChange} is missing, will be constructed
+as \code{log2(foldChange)}.
+\item \code{start} and \code{end}: numeric, starting and end position of the gene/transcript
+(in bp). A column \code{position} will be constructed as the middle value (mean) between
+\code{start} and \code{end}.
 }
 }

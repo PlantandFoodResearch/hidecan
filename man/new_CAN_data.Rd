@@ -8,7 +8,7 @@ new_CAN_data(dat)
 }
 \arguments{
 \item{dat}{Tibble, containing information about genes of interest, with at least columns
-\code{chromosome}, \code{start}, \code{end} and \code{name}.}
+\code{chromosome}, \code{start}, \code{end}, \code{position} and \code{name}.}
 }
 \value{
 A \code{CAN_data} object, i.e. a tibble.

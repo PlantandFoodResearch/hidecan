@@ -36,7 +36,8 @@ validate_GWAS_data <- function(x){
 #'
 #' * `position`: numeric, the physical position of the marker along the chromosome (in bp).
 #'
-#' * `score`: numeric, the GWAS score of the marker.
+#' * `score` or `padj`: numeric, the GWAS score or adjusted p-value of the marker.
+#' If column `score` column is missing, will be constructed as `-log10(padj)`.
 #'
 #' @param dat Tibble, results from a GWAS analysis. See Details.
 #' @param keep_rownames_as Character, the name of the column in which to save the
@@ -51,6 +52,19 @@ GWAS_data <- function(dat, keep_rownames_as = NULL){
     dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
   }
 
+  ## If missing score column, construct it from adjusted p-value
+  if(!("score" %in% colnames(dat))){
+
+    if(!("padj" %in% colnames(dat))) stop("Input data-frame should have either a 'score' or a 'padj' column.")
+    if(!is.numeric(dat[["padj"]])) stop("'padj' column in input data-frame should contain numeric values.")
+
+    ## for devtools::check
+    score <- padj <- NULL
+
+    dat <- dat |>
+      dplyr::mutate(score = -log10(padj))
+  }
+
   dat <- new_GWAS_data(dat)
   validate_GWAS_data(dat)
 }
@@ -61,7 +75,7 @@ GWAS_data <- function(dat, keep_rownames_as = NULL){
 #' DE_data constructor
 #'
 #' @param dat Tibble, results from a differential expression analysis, with at least columns
-#' `chromosome`, `score`, `log2FoldChange`, `start` and `end`.
+#' `chromosome`, `score`, `log2FoldChange`, `start`, `end` and `position`.
 #' @returns A `DE_data` object, i.e. a tibble.
 new_DE_data <- function(dat){
   ## Making sure that the input is a tibble
@@ -79,10 +93,10 @@ new_DE_data <- function(dat){
 validate_DE_data <- function(x){
 
   ## A GWAS result table must at least contain these columns
-  .check_cols(x, c("chromosome", "start", "end", "score", "log2FoldChange"))
+  .check_cols(x, c("chromosome", "start", "end", "position", "score", "log2FoldChange"))
 
-
-  if(!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) stop("'start' and 'end' columns should contain numeric values.", call. = FALSE)
+  if(!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) stop("'start' and 'end' columns should contain numeric values.")
+  if(!is.numeric(x[["position"]])) stop("'position' column should contain numeric values.", call. = FALSE)
   if(!is.numeric(x[["score"]])) stop("'score' column should contain numeric values.", call. = FALSE)
   if(!is.numeric(x[["log2FoldChange"]])) stop("'log2FoldChange' column should contain numeric values.", call. = FALSE)
 
@@ -96,13 +110,17 @@ validate_DE_data <- function(x){
 #'
 #' * `chromosome`: character column, chromosome on which the gene/transcript is located.
 #'
-#' * `score`: numeric, the DE score of the gene/transcript.
+#' * `score` or `padj`: numeric, the DE score or adjusted p-value of the
+#' gene/transcript. If column `score` column is missing, will be constructed
+#' as `-log10(padj)`.
 #'
-#' * `log2FoldChange`: numeric, the log2(fold-change) of the gene/transcript.
+#' * `foldChange` or `log2FoldChange`: numeric, the fold-change or log2(fold-change)
+#' of the gene/transcript. If column `log2FoldChange` is missing, will be constructed
+#' as `log2(foldChange)`.
 #'
-#' * `start`: numeric, starting position of the gene/transcript (in bp).
-#'
-#' * `end`: numeric, end position of the gene/transcript (in bp).
+#' * `start` and `end`: numeric, starting and end position of the gene/transcript
+#' (in bp). A column `position` will be constructed as the middle value (mean) between
+#' `start` and `end`.
 #'
 #' @param dat Tibble, results from a GWAS analysis. See Details.
 #' @param keep_rownames_as Character, the name of the column in which to save the
@@ -117,13 +135,44 @@ DE_data <- function(dat, keep_rownames_as = NULL){
     dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
   }
 
-  dat <- new_DE_data(dat)
-  dat <- validate_DE_data(dat)
+  ## If missing score column, construct it from adjusted p-value
+  if(!("score" %in% colnames(dat))){
 
+    if(!("padj" %in% colnames(dat))) stop("Input data-frame should have either a 'score' or a 'padj' column.")
+    if(!is.numeric(dat[["padj"]])) stop("'padj' column in input data-frame should contain numeric values.")
+
+    ## for devtools::check
+    score <- padj <- NULL
+
+    dat <- dat |>
+      dplyr::mutate(score = -log10(padj))
+  }
+
+  ## If missing log2FoldChange column, construct it from fold-change
+  if(!("log2FoldChange" %in% colnames(dat))){
+
+    if(!("foldChange" %in% colnames(dat))) stop("Input data-frame should have either a 'log2FoldChange' or a 'foldChange' column.")
+    if(!is.numeric(dat[["foldChange"]])) stop("'foldChange' column in input data-frame should contain numeric values.")
+
+    ## for devtools::check
+    log2FoldChange <- foldChange <- NULL
+
+    dat <- dat |>
+      dplyr::mutate(log2FoldChange = log2(foldChange))
+  }
+
+  ## Construct the position column from start and end
+  if(length(setdiff(c("start", "end"), colnames(dat)))) stop("Input data-frame should have a 'start' and an 'end' column.")
+  if(!is.numeric(dat[["start"]]) | !is.numeric(dat[["end"]])) stop("'start' and 'end' columns should contain numeric values.")
+
+  ## for devtools::check
   start <- end <- NULL
 
-  dat |>
-    dplyr::mutate(position = purrr::map2_dbl(start, end, mean))
+  dat <- dat |>
+    dplyr::mutate(position = (start + end) / 2)
+
+  dat <- new_DE_data(dat)
+  validate_DE_data(dat)
 }
 
 
@@ -131,7 +180,7 @@ DE_data <- function(dat, keep_rownames_as = NULL){
 #' CAN_data constructor
 #'
 #' @param dat Tibble, containing information about genes of interest, with at least columns
-#' `chromosome`, `start`, `end` and `name`.
+#' `chromosome`, `start`, `end`, `position` and `name`.
 #' @returns A `CAN_data` object, i.e. a tibble.
 new_CAN_data <- function(dat){
   ## Making sure that the input is a tibble
@@ -149,10 +198,11 @@ new_CAN_data <- function(dat){
 validate_CAN_data <- function(x){
 
   ## A GWAS result table must at least contain these columns
-  .check_cols(x, c("chromosome", "start", "end", "name"))
+  .check_cols(x, c("chromosome", "start", "end", "position", "name"))
 
 
   if(!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) stop("'start' and 'end' columns should contain numeric values.", call. = FALSE)
+  if(!is.numeric(x[["position"]])) stop("'position' column should contain numeric values.", call. = FALSE)
   if(!is.character(x[["name"]])) stop("'name' column should contain character values.", call. = FALSE)
 
   x
@@ -165,9 +215,9 @@ validate_CAN_data <- function(x){
 #'
 #' * `chromosome`: character column, chromosome on which the gene is located.
 #'
-#' * `start`: numeric, starting position of the gene (in bp).
-#'
-#' * `end`: numeric, end position of the gene (in bp).
+#' * `start` and `end`: numeric, starting and end position of the gene (in bp).
+#' A column `position` will be constructed as the middle value (mean) between
+#' `start` and `end`.
 #'
 #' * `name`: character, the name of the candidate genes to be displayed.
 #'
@@ -184,11 +234,16 @@ CAN_data <- function(dat, keep_rownames_as = NULL){
     dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
   }
 
-  dat <- new_CAN_data(dat)
-  dat <- validate_CAN_data(dat)
+  ## Construct the position column from start and end
+  if(length(setdiff(c("start", "end"), colnames(dat)))) stop("Input data-frame should have a 'start' and an 'end' column.")
+  if(!is.numeric(dat[["start"]]) | !is.numeric(dat[["end"]])) stop("'start' and 'end' columns should contain numeric values.")
 
+  ## for devtools::check
   start <- end <- NULL
 
-  dat |>
-    dplyr::mutate(position = purrr::map2_dbl(start, end, mean))
+  dat <- dat |>
+    dplyr::mutate(position = (start + end) / 2)
+
+  dat <- new_CAN_data(dat)
+  validate_CAN_data(dat)
 }
