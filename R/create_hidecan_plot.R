@@ -29,6 +29,7 @@
 #' (for \link[ggrepel]{geom_label_repel}).
 #' @returns A ggplot.
 #' @examples
+#' \dontrun{
 #' x <- get_example_data()
 #' y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
 #'           "DE" = DE_data(x[["DE"]]),
@@ -63,6 +64,7 @@
 #'                     chrom_length,
 #'                     colour_genes_by_score = FALSE,
 #'                     label_size = 2)
+#' }
 #' @export
 create_hidecan_plot <- function(x,
                                 chrom_length,
@@ -262,6 +264,7 @@ create_hidecan_plot <- function(x,
 #' @inheritParams create_hidecan_plot
 #' @returns a ggplot.
 #' @examples
+#' \dontrun{
 #' x <- get_example_data()
 #'
 #' ## Typical example with one GWAs result table, one DE result table and
@@ -283,6 +286,7 @@ create_hidecan_plot <- function(x,
 #'                             "X vs Z" = x[["DE"]]),
 #'              score_thr_de = -log10(0.05),
 #'              log2fc_thr = 0)
+#' }
 #' @export
 hidecan_plot <- function(gwas_list = NULL,
                          de_list = NULL,

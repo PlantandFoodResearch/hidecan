@@ -62,6 +62,7 @@ Creates a HIDECAN plot from a list of filtered GWAS or DE results
 and/or candidate genes.
 }
 \examples{
+\dontrun{
 x <- get_example_data()
 y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
           "DE" = DE_data(x[["DE"]]),
@@ -96,4 +97,5 @@ create_hidecan_plot(setNames(z, c(" ", "RNAseq", "My list")),
                     chrom_length,
                     colour_genes_by_score = FALSE,
                     label_size = 2)
+}
 }
