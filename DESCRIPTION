@@ -19,9 +19,11 @@ Imports:
     ggplot2,
     ggrepel,
     purrr,
+    shiny,
     tibble,
     tidyr,
-    viridis
+    viridis,
+    vroom
 Suggests: 
     knitr,
     rmarkdown,
