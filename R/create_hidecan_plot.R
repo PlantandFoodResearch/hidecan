@@ -318,7 +318,6 @@ hidecan_plot <- function(gwas_list = NULL,
   error_func <- function(arg){
     res <- substitute(function(err){
       msg <- conditionMessage(err)
-      msg <- sub("FALSE$", "", msg)
       stop("In '", arg, "' argument: ", msg, call. = FALSE)
     })
 

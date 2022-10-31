@@ -9,7 +9,7 @@
   missing_cols <- setdiff(col_names, colnames(x))
 
   if(length(missing_cols)){
-    stop("", param_name, " is missing the following columns: '", paste0(missing_cols, collapse = "', '"), "'.", .call = FALSE)
+    stop("", param_name, " is missing the following columns: '", paste0(missing_cols, collapse = "', '"), "'.", call. = FALSE)
   }
 
   return(invisible(NULL))
