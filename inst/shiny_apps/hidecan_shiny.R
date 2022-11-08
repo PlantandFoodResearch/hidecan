@@ -94,16 +94,17 @@ de_threshold_tabs <- tabsetPanel(
 )
 
 
-download_params <- tabsetPanel(
-  id = "download_param",
-  type = "hidden",
-  tabPanel(
-    "download_param",
-    tags$div(downloadButton("download_plot"),  style="display:inline-block"),
-    tags$div(numericInput("download_plot_width", "Width (in)", value = 16, min = 0, max = Inf),  style="display:inline-block"),
-    tags$div(numericInput("download_plot_height", "Height (in)", value = 10, min = 0, max = Inf),  style="display:inline-block")
-  )
-)
+# download_params <- tabsetPanel(
+#   id = "download_param",
+#   type = "hidden",
+#   tabPanel(
+#     "download_param",
+#     tags$div(selectInput("download_format", "Format", c("PNG", "PDF")),  style="display:inline-block; width: 20%"),
+#     tags$div(numericInput("download_plot_width", "Width (in)", value = 16, min = 0, max = Inf),  style="display:inline-block; width: 20%"),
+#     tags$div(numericInput("download_plot_height", "Height (in)", value = 10, min = 0, max = Inf),  style="display:inline-block; width: 20%"),
+#     tags$div(downloadButton("download_plot"),  style="display:inline-block")
+#   )
+# )
 
 ################################################################################
 ##                                  UI                                        ##
@@ -152,7 +153,26 @@ ui <- fluidPage(
         de_threshold_tabs,
 
         ## Parameters for downloading the data
-        download_params
+        #download_params
+        fluidRow(
+          column(
+            3,
+            selectInput("download_format", "Format", c("png", "pdf"))
+          ),
+          column(
+            3,
+            numericInput("download_plot_width", "Width (in)", value = 16, min = 0, max = Inf)
+          ),
+          column(
+            3,
+            numericInput("download_plot_height", "Height (in)", value = 10, min = 0, max = Inf)
+          ),
+          column(
+            3,
+            style = "margin-top: 25px;",
+            downloadButton("download_plot")
+          )
+        )
     ),
 
     ## ---------------------------------------------------------------------- ##
@@ -276,11 +296,14 @@ server <- function(input, output, session){
   })
 
   output$download_plot <- downloadHandler(
-    filename = "hidecan_plot.png",
+    filename = function(){
+      paste0("hidecan_plot_", Sys.Date(), ".", input$download_format)
+    },
     content = function(file){
+      print(file)
       ggplot2::ggsave(file,
                       hidecan_plot(),
-                      device = "png",
+                      device = input$download_format,
                       width = input$download_plot_width,
                       height = input$download_plot_height)
     }
