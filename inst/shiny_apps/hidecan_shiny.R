@@ -99,7 +99,7 @@ de_threshold_tabs <- tabsetPanel(
 #   type = "hidden",
 #   tabPanel(
 #     "download_param",
-#     tags$div(selectInput("download_format", "Format", c("PNG", "PDF")),  style="display:inline-block; width: 20%"),
+#     tags$div(selectInput("download_format", "Format", c("PNG", "PDF")),  style="display:inline-block; width: 20%; margin-bottom: 0px"),
 #     tags$div(numericInput("download_plot_width", "Width (in)", value = 16, min = 0, max = Inf),  style="display:inline-block; width: 20%"),
 #     tags$div(numericInput("download_plot_height", "Height (in)", value = 10, min = 0, max = Inf),  style="display:inline-block; width: 20%"),
 #     tags$div(downloadButton("download_plot"),  style="display:inline-block")
@@ -126,53 +126,46 @@ ui <- fluidPage(
 
     sidebarPanel(
 
-        ## Select GWAS results
-        fileInput("upload_gwas",
-                  "Upload one or more GWAS results file",
-                  accept = ".csv",
-                  multiple = TRUE),
+      tabsetPanel(
+        id = "sidebar_panel",
+
+        tabPanel(
+          title = "Import data",
+
+          ## Select GWAS results
+          fileInput("upload_gwas",
+                    "Upload one or more GWAS results file",
+                    accept = ".csv",
+                    multiple = TRUE),
 
 
-        ## Select DE results
-        fileInput("upload_de",
-                  "Upload one or more DE results file",
-                  accept = ".csv",
-                  multiple = TRUE),
+          ## Select DE results
+          fileInput("upload_de",
+                    "Upload one or more DE results file",
+                    accept = ".csv",
+                    multiple = TRUE),
 
 
-        ## Select CAN results
-        fileInput("upload_can",
-                  "Upload one or more candidate genes list file",
-                  accept = ".csv",
-                  multiple = TRUE),
+          ## Select CAN results
+          fileInput("upload_can",
+                    "Upload one or more candidate genes list file",
+                    accept = ".csv",
+                    multiple = TRUE)
+        ),
 
-        ## Input sliders for GWAS score threshold
-        gwas_threshold_tabs,
+        tabPanel(
+          title = "Thresholds",
 
-        ## Input sliders for DE score and log2FC threshold
-        de_threshold_tabs,
+          ## Input sliders for GWAS score threshold
+          gwas_threshold_tabs,
 
-        ## Parameters for downloading the data
-        #download_params
-        fluidRow(
-          column(
-            3,
-            selectInput("download_format", "Format", c("png", "pdf"))
-          ),
-          column(
-            3,
-            numericInput("download_plot_width", "Width (in)", value = 16, min = 0, max = Inf)
-          ),
-          column(
-            3,
-            numericInput("download_plot_height", "Height (in)", value = 10, min = 0, max = Inf)
-          ),
-          column(
-            3,
-            style = "margin-top: 25px;",
-            downloadButton("download_plot")
-          )
-        )
+          ## Input sliders for DE score and log2FC threshold
+          de_threshold_tabs
+        ),
+
+      ),
+
+      uiOutput("download_params")
     ),
 
     ## ---------------------------------------------------------------------- ##
@@ -185,7 +178,7 @@ ui <- fluidPage(
       # verbatimTextOutput("head_all"),
       # tableOutput("chrom_length")
 
-     plotOutput("hidecan_plot", height = "800px")
+      plotOutput("hidecan_plot", height = "800px")
 
     )
   )
@@ -236,13 +229,13 @@ server <- function(input, output, session){
     }
   })
 
-  observeEvent(any_data(), {
-    if(any_data()){
-      showTab(inputId = "download_param", target = "download_param", select = TRUE)
-    } else {
-      hideTab(inputId = "download_param", target = "download_param")
-    }
-  })
+  # observeEvent(any_data(), {
+  #   if(any_data()){
+  #     showTab(inputId = "download_param", target = "download_param", select = TRUE)
+  #   } else {
+  #     hideTab(inputId = "download_param", target = "download_param")
+  #   }
+  # })
 
 
   ## Check whether there is any input data
@@ -273,6 +266,40 @@ server <- function(input, output, session){
     )
 
     create_hidecan_plot(x, chrom_length())
+  })
+
+  ## Display the download button
+  output$download_params <- renderUI({
+    req(any_data())
+
+    tabPanel(
+      title = "Download",
+
+      h3("Download"),
+
+      ## Parameters for downloading the data
+      #download_params
+      fluidRow(
+        column(
+          3,
+          selectInput("download_format", "Format", c("png", "pdf"))
+        ),
+        column(
+          3,
+          numericInput("download_plot_width", "Width (in)", value = 16, min = 0, max = Inf)
+        ),
+        column(
+          3,
+          numericInput("download_plot_height", "Height (in)", value = 10, min = 0, max = Inf)
+        ),
+        column(
+          3,
+          style = "margin-top: 25px;",
+          downloadButton("download_plot")
+        )
+      )
+    )
+
   })
 
   ## ------------------------------------------------------------------------ ##
