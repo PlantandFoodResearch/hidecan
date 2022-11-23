@@ -58,4 +58,39 @@ candidate_data <- candidate_genes |>
   filter(!(chromosome == "ST4.03ch03") | name %in% c("PHO1A", "4CL", "KTPI", "4CL2"))
 
 
-usethis::use_data(gwas_data, de_data, candidate_data, internal = TRUE, overwrite = TRUE)
+## --------------------------------- ##
+## Getting example data for GWASpoly ##
+## --------------------------------- ##
+
+## Code taken from the GWASpoly vignette (https://jendelman.github.io/GWASpoly/GWASpoly.html)
+## with the first example data from GWASpoly
+
+genofile <- system.file("extdata", "TableS1.csv", package = "GWASpoly")
+phenofile <- system.file("extdata", "TableS2.csv", package = "GWASpoly")
+
+data <- read.GWASpoly(ploidy = 4,
+                      pheno.file = phenofile,
+                      geno.file = genofile,
+                      format = "ACGT",
+                      n.traits = 13,
+                      delim = ",")
+
+data.original <- set.K(data,
+                       LOCO = FALSE,
+                       n.core = 2)
+
+gwaspoly_res <- GWASpoly(data.original,
+                         models = c("general", "additive", "1-dom"),
+                         traits = c("tuber_eye_depth", "tuber_shape", "sucrose"),
+                         n.core = 2)
+
+gwaspoly_res_thr <- set.threshold(gwaspoly_res, method = "M.eff", level = 0.05)
+
+#manhattan.plot(gwaspoly_res_thr)
+
+
+## ----------------- ##
+## Saving everything ##
+## ----------------- ##
+
+usethis::use_data(gwas_data, de_data, candidate_data, gwaspoly_res, gwaspoly_res_thr, internal = TRUE, overwrite = TRUE)
