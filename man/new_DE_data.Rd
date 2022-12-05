@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_data_constructors.R
 \name{new_DE_data}
 \alias{new_DE_data}
-\title{DE_data constructor}
+\title{\code{DE_data} constructor}
 \usage{
 new_DE_data(dat)
 }
@@ -14,5 +14,5 @@ new_DE_data(dat)
 A \code{DE_data} object, i.e. a tibble.
 }
 \description{
-DE_data constructor
+\code{DE_data} constructor
 }

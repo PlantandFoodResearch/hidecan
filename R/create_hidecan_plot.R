@@ -1,4 +1,4 @@
-#' creates a HIDECAN plot
+#' Creates a HIDECAN plot
 #'
 #' Creates a HIDECAN plot from a list of filtered GWAS or DE results
 #' and/or candidate genes.

@@ -2,16 +2,16 @@
 % Please edit documentation in R/input_data_constructors.R
 \name{validate_CAN_data}
 \alias{validate_CAN_data}
-\title{Check validity of input for CAN_data constructor}
+\title{Checks validity of input for \code{CAN_data} constructor}
 \usage{
 validate_CAN_data(x)
 }
 \arguments{
-\item{x, }{a CAN_data object constructed via \link{new_CAN_data}.}
+\item{x, }{a \code{CAN_data} object constructed via \link{new_CAN_data}.}
 }
 \value{
 A \code{CAN_data} object, i.e. a tibble.
 }
 \description{
-Check validity of input for CAN_data constructor
+Checks validity of input for \code{CAN_data} constructor
 }

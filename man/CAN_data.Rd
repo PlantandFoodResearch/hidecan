@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_data_constructors.R
 \name{CAN_data}
 \alias{CAN_data}
-\title{Creates a CAN_data object}
+\title{Creates a \code{CAN_data} object}
 \usage{
 CAN_data(dat, keep_rownames_as = NULL)
 }

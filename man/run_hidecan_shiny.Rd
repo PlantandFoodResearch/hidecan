@@ -2,7 +2,7 @@
 % Please edit documentation in R/shiny_app.R
 \name{run_hidecan_shiny}
 \alias{run_hidecan_shiny}
-\title{Launch HIDECAN shiny app}
+\title{Launches the HIDECAN shiny app}
 \usage{
 run_hidecan_shiny()
 }

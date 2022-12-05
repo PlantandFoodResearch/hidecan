@@ -2,16 +2,16 @@
 % Please edit documentation in R/input_data_constructors.R
 \name{validate_GWAS_data}
 \alias{validate_GWAS_data}
-\title{Check validity of input for GWAS_data constructor}
+\title{Checks validity of input for \code{GWAS_data} constructor}
 \usage{
 validate_GWAS_data(x)
 }
 \arguments{
-\item{x, }{a GWAS_data object constructed via \link{new_GWAS_data}.}
+\item{x, }{a \code{GWAS_data} object constructed via \link{new_GWAS_data}.}
 }
 \value{
 A \code{GWAS_data} object, i.e. a tibble.
 }
 \description{
-Check validity of input for GWAS_data constructor
+Checks validity of input for \code{GWAS_data} constructor
 }

@@ -2,3 +2,46 @@ url: https://shiny-adventure-acfe02d1.pages.github.io/
 template:
   bootstrap: 5
 
+reference:
+
+- title:  "Internal constructors"
+  contents:
+  - starts_with("new_")
+  - starts_with("validate_")
+
+- title: "Constructors from tibbles"
+  contents:
+  - GWAS_data
+  - DE_data
+  - CAN_data
+
+- title: "Constructors from packages output"
+  contents:
+  - GWAS_data_from_gwaspoly
+
+- title: "Computing chromosome length"
+  contents:
+  - compute_chrom_length
+  - combine_chrom_length
+  - .compute_chrom_length_genes
+
+- title: "Applying threshold"
+  contents:
+  - apply_threshold
+
+- title: "Generating a hidecan plot"
+  contents:
+  - hidecan_plot
+  - create_hidecan_plot
+  - run_hidecan_shiny
+  - hidecan_plot_from_gwaspoly
+
+- title: "Example datasets"
+  contents:
+  - get_example_data
+  - get_gwaspoly_example_data
+
+- title: "Utils"
+  contents:
+  - .check_cols
+

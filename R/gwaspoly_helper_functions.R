@@ -1,4 +1,4 @@
-#' Extract information from GWASpoly output
+#' Extracts information from GWASpoly output
 #'
 #' Extracts GWAS results and chomosome length from GWASpoly output.
 #'
@@ -118,9 +118,9 @@ GWAS_data_from_gwaspoly <- function(gwaspoly_input,
               chrom_length = chrom_length))
 }
 
-#' Create a hidecan plot from a GWASpoly output
+#' Creates a HIDECAN plot from GWASpoly output
 #'
-#' Creates a hidecan plot from the GWAS results from GWASpoly.
+#' Creates a HIDECAN plot from the GWAS results from GWASpoly.
 #'
 #' @param gwaspoly_input A `GWASpoly.thresh` object
 #' (returned by the `GWASpoly::set.threshold()` function).

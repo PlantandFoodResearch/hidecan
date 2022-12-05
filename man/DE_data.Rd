@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_data_constructors.R
 \name{DE_data}
 \alias{DE_data}
-\title{Creates a DE_data object}
+\title{Creates a \code{DE_data} object}
 \usage{
 DE_data(dat, keep_rownames_as = NULL)
 }

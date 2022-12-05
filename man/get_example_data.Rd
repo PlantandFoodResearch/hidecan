@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{get_example_data}
 \alias{get_example_data}
-\title{Get set of example data}
+\title{Example dataset}
 \usage{
 get_example_data()
 }

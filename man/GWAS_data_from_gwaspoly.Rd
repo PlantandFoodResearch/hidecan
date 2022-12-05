@@ -2,7 +2,7 @@
 % Please edit documentation in R/gwaspoly_helper_functions.R
 \name{GWAS_data_from_gwaspoly}
 \alias{GWAS_data_from_gwaspoly}
-\title{Extract information from GWASpoly output}
+\title{Extracts information from GWASpoly output}
 \usage{
 GWAS_data_from_gwaspoly(gwaspoly_input, traits = NULL, models = NULL)
 }

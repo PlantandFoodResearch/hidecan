@@ -2,7 +2,7 @@
 % Please edit documentation in R/gwaspoly_helper_functions.R
 \name{hidecan_plot_from_gwaspoly}
 \alias{hidecan_plot_from_gwaspoly}
-\title{Create a hidecan plot from a GWASpoly output}
+\title{Creates a HIDECAN plot from GWASpoly output}
 \usage{
 hidecan_plot_from_gwaspoly(gwaspoly_input, ...)
 }
@@ -17,7 +17,7 @@ function.}
 A ggplot.
 }
 \description{
-Creates a hidecan plot from the GWAS results from GWASpoly.
+Creates a HIDECAN plot from the GWAS results from GWASpoly.
 }
 \examples{
 \dontrun{

@@ -2,16 +2,16 @@
 % Please edit documentation in R/input_data_constructors.R
 \name{validate_DE_data}
 \alias{validate_DE_data}
-\title{Check validity of input for DE_data constructor}
+\title{Checks validity of input for \code{DE_data} constructor}
 \usage{
 validate_DE_data(x)
 }
 \arguments{
-\item{x, }{a DE_data object constructed via \link{new_DE_data}.}
+\item{x, }{a \code{DE_data} object constructed via \link{new_DE_data}.}
 }
 \value{
 A \code{DE_data} object, i.e. a tibble.
 }
 \description{
-Check validity of input for DE_data constructor
+Checks validity of input for \code{DE_data} constructor
 }

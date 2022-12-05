@@ -15,7 +15,7 @@
   return(invisible(NULL))
 }
 
-#' Get set of example data
+#' Example dataset
 #'
 #' Returns a list of example datasets.
 #'
@@ -35,7 +35,7 @@ get_example_data <- function(){
   )
 }
 
-#' Get set of GWASpoly example data
+#' GWASpoly example dataset
 #'
 #' Returns a list of GWASpoly example datasets.
 #'

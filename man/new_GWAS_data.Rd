@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_data_constructors.R
 \name{new_GWAS_data}
 \alias{new_GWAS_data}
-\title{GWAS_data constructor}
+\title{\code{GWAS_data} constructor}
 \usage{
 new_GWAS_data(dat)
 }
@@ -14,5 +14,5 @@ new_GWAS_data(dat)
 A \code{GWAS_data} object, i.e. a tibble.
 }
 \description{
-GWAS_data constructor
+\code{GWAS_data} constructor
 }

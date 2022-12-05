@@ -1,4 +1,4 @@
-#' Launch HIDECAN shiny app
+#' Launches the HIDECAN shiny app
 #'
 #' Starts the HIDECAN shiny app. The app reads in csv data to produce
 #' a HIDECAN plot.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_data_constructors.R
 \name{new_CAN_data}
 \alias{new_CAN_data}
-\title{CAN_data constructor}
+\title{\code{CAN_data} constructor}
 \usage{
 new_CAN_data(dat)
 }
@@ -14,5 +14,5 @@ new_CAN_data(dat)
 A \code{CAN_data} object, i.e. a tibble.
 }
 \description{
-CAN_data constructor
+\code{CAN_data} constructor
 }

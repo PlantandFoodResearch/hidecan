@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{get_gwaspoly_example_data}
 \alias{get_gwaspoly_example_data}
-\title{Get set of GWASpoly example data}
+\title{GWASpoly example dataset}
 \usage{
 get_gwaspoly_example_data(with_thresholds = TRUE)
 }

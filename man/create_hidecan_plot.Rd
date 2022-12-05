@@ -2,7 +2,7 @@
 % Please edit documentation in R/create_hidecan_plot.R
 \name{create_hidecan_plot}
 \alias{create_hidecan_plot}
-\title{creates a HIDECAN plot}
+\title{Creates a HIDECAN plot}
 \usage{
 create_hidecan_plot(
   x,

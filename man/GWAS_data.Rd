@@ -2,7 +2,7 @@
 % Please edit documentation in R/input_data_constructors.R
 \name{GWAS_data}
 \alias{GWAS_data}
-\title{Creates a GWAS_data object}
+\title{Creates a \code{GWAS_data} object}
 \usage{
 GWAS_data(dat, keep_rownames_as = NULL)
 }

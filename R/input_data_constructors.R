@@ -1,4 +1,4 @@
-#' GWAS_data constructor
+#' `GWAS_data` constructor
 #'
 #' @param dat Tibble, results from a GWAS analysis, with at least columns
 #' `chromosome`, `position` and `score`.
@@ -12,9 +12,9 @@ new_GWAS_data <- function(dat){
   dat
 }
 
-#' Check validity of input for GWAS_data constructor
+#' Checks validity of input for `GWAS_data` constructor
 #'
-#' @param x, a GWAS_data object constructed via \link{new_GWAS_data}.
+#' @param x, a `GWAS_data` object constructed via \link{new_GWAS_data}.
 #' @returns A `GWAS_data` object, i.e. a tibble.
 validate_GWAS_data <- function(x){
 
@@ -27,7 +27,7 @@ validate_GWAS_data <- function(x){
   x
 }
 
-#' Creates a GWAS_data object
+#' Creates a `GWAS_data` object
 #'
 #' The input data should have one row per marker, and at least the
 #' following columns:
@@ -76,7 +76,7 @@ GWAS_data <- function(dat, keep_rownames_as = NULL){
 
 
 
-#' DE_data constructor
+#' `DE_data` constructor
 #'
 #' @param dat Tibble, results from a differential expression analysis, with at least columns
 #' `chromosome`, `score`, `log2FoldChange`, `start`, `end` and `position`.
@@ -90,9 +90,9 @@ new_DE_data <- function(dat){
   dat
 }
 
-#' Check validity of input for DE_data constructor
+#' Checks validity of input for `DE_data` constructor
 #'
-#' @param x, a DE_data object constructed via \link{new_DE_data}.
+#' @param x, a `DE_data` object constructed via \link{new_DE_data}.
 #' @returns A `DE_data` object, i.e. a tibble.
 validate_DE_data <- function(x){
 
@@ -107,7 +107,7 @@ validate_DE_data <- function(x){
   x
 }
 
-#' Creates a DE_data object
+#' Creates a `DE_data` object
 #'
 #' The input data should have one row per gene or transcript, and at least the
 #' following columns:
@@ -185,7 +185,7 @@ DE_data <- function(dat, keep_rownames_as = NULL){
 
 
 
-#' CAN_data constructor
+#' `CAN_data` constructor
 #'
 #' @param dat Tibble, containing information about genes of interest, with at least columns
 #' `chromosome`, `start`, `end`, `position` and `name`.
@@ -199,9 +199,9 @@ new_CAN_data <- function(dat){
   dat
 }
 
-#' Check validity of input for CAN_data constructor
+#' Checks validity of input for `CAN_data` constructor
 #'
-#' @param x, a CAN_data object constructed via \link{new_CAN_data}.
+#' @param x, a `CAN_data` object constructed via \link{new_CAN_data}.
 #' @returns A `CAN_data` object, i.e. a tibble.
 validate_CAN_data <- function(x){
 
@@ -216,7 +216,7 @@ validate_CAN_data <- function(x){
   x
 }
 
-#' Creates a CAN_data object
+#' Creates a `CAN_data` object
 #'
 #' The input data should have one row per gene, and at least the
 #' following columns:
