@@ -29,6 +29,8 @@ validate_GWAS_data <- function(x){
 
 #' Creates a `GWAS_data` object
 #'
+#' Creates a `GWAS_data` object from a tibble or data-frame of GWAS results.
+#'
 #' The input data should have one row per marker, and at least the
 #' following columns:
 #'
@@ -109,10 +111,17 @@ validate_DE_data <- function(x){
 
 #' Creates a `DE_data` object
 #'
+#' Creates a `DE_data` object from a tibble or data-frame of differential expression
+#' results.
+#'
 #' The input data should have one row per gene or transcript, and at least the
 #' following columns:
 #'
 #' * `chromosome`: character column, chromosome on which the gene/transcript is located.
+#'
+#' * `start` and `end`: numeric, starting and end position of the gene/transcript
+#' (in bp). A column `position` will be constructed as the middle value (mean) between
+#' `start` and `end`.
 #'
 #' * `score` or `padj`: numeric, the DE score or adjusted p-value of the
 #' gene/transcript. If column `score` column is missing, will be constructed
@@ -121,10 +130,6 @@ validate_DE_data <- function(x){
 #' * `foldChange` or `log2FoldChange`: numeric, the fold-change or log2(fold-change)
 #' of the gene/transcript. If column `log2FoldChange` is missing, will be constructed
 #' as `log2(foldChange)`.
-#'
-#' * `start` and `end`: numeric, starting and end position of the gene/transcript
-#' (in bp). A column `position` will be constructed as the middle value (mean) between
-#' `start` and `end`.
 #'
 #' @param dat Tibble, results from a GWAS analysis. See Details.
 #' @param keep_rownames_as Character, the name of the column in which to save the

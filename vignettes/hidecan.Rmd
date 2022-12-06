@@ -1,0 +1,116 @@
+---
+title: "hidecan"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{hidecan}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(hidecan)
+```
+
+## Input data
+
+The `hidecan` package takes as input tibbles (data-frames) of GWAS and DE results or candidate genes. The input data-frames should contain some mandatory columns, depending on the type of data.
+
+A list of example input datasets can be obtained via the `get_example_data()` function:
+
+```{r get-example-data}
+x <- get_example_data()
+
+str(x, max.level = 1)
+```
+
+### GWAS results
+
+GWAS results should be provided as a tibble or data-frame, with one row per genetic marker. The data-frame should contain at least the following columns:
+
+-   `chromosome`: character column, giving the ID of the chromosome on which each marker is located;
+
+-   `position`: numeric column, the physical position along the chromosome (in base pairs) of the marker;
+
+-   either `score` or `padj`: numeric column, providing either the score (i.e. `-log10(p-value)`) or the adjusted p-value of the marker. If a `score` column is provided, the `padj` column will be ignored. If only a `padj` column is provided, a `score` column will be constructed as `-log10(padj)`.
+
+Any other columns present in the data-frame will be ignored. An example of valid input is shown below:
+
+```{r example-data-gwas}
+head(x[["GWAS"]])
+```
+
+### Differential expression results
+
+Differential expression results should be provided as a tibble or data-frame, with one row per gene. The data-frame should contain at least the following columns:
+
+-   `chromosome`: character column, giving the ID of the chromosome on which each gene is located;
+
+-   `start` and `end`: numeric columns, giving the starting and end position of the gene along the chromosome (in base pairs). These two columns will be used to calculate the position of the gene (column `position`) as the half-way point between the start and end of the gene.
+
+-   either `score` or `padj`: numeric column, providing either the score (i.e. `-log10(p-value)`) or the adjusted p-value of the gene. If a `score` column is provided, the `padj` column will be ignored. If only a `padj` column is provided, a `score` column will be constructed as `-log10(padj)`.
+
+-   either `foldChange` or `log2FoldChange`: numeric column, giving either the fold-change or log2(fold-change) of the gene. If a `log2FoldChange` column is provided, the `foldChange` column will be ignored. If only a `foldChange` column is provided, a `log2FoldChange` will be constructed as `log2(foldChange)`.
+
+Any other columns present in the data-frame will be ignored. An example of valid input is shown below:
+
+```{r example-data-de}
+head(x[["DE"]])
+```
+
+(Note that in the example dataset, some genes have missing values in the `padj` column; this corresponds to genes that have been filtered out via [independent filtering in the DEseq2 package](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pvaluesNA)).
+
+### Candidate genes
+
+A list of candidate genes (e.g. genes previously found associated with a trait of interest based on literature search) can be provided as a tibble or data-frame, with one row per gene. This data-frame can also contain variants of interest (see below). The data-frame should contain at least the following columns:
+
+-   `chromosome`: character column, giving the ID of the chromosome on which each gene is located;
+
+-   `start` and `end`: numeric columns, giving the starting and end position of the gene along the chromosome (in base pairs). These two columns will be used to calculate the position of the gene (column `position`) as the half-way point between the start and end of the gene. To specify a genomic variant, simply set the `start` and `end` columns to the physical position of the variant.
+
+-   `name`: character column, giving the name of the candidate gene that will be displayed in the HIDECAN plot. Set to `NA` for any subset of genes to remove their label in the plot (can help if many genes are very close, to avoid cluttering the plot).
+
+Any other columns present in the data-frame will be ignored. An example of valid input is shown below:
+
+```{r example-data-can}
+head(x[["CAN"]])
+```
+
+## Creating a HIDECAN plot
+
+For each type of input data (i.e. GWAS results, differential expression results or list of candidate genes), the `hidecan_plot()` function
+
+## Viewport error
+
+If you are working on RStudio, you may encounter the following error:
+
+```{r show-window-size-error, echo = FALSE, error = TRUE, fig.width = 0, fig.height = 0}
+hidecan_plot(gwas_list = x[["GWAS"]],
+             de_list = x[["DE"]],
+             can_list = x[["CAN"]],
+             score_thr_gwas = -log10(0.0001),
+             score_thr_de = -log10(0.005),
+             log2fc_thr = 0,
+             label_size = 2)
+```
+
+This is caused by the plotting window being too small. Try increasing the size of the plotting window on the RStudio console. Alternatively, you can save the plot into an object, then use `ggplot2::ggsave()` to save it into a file:
+
+```{r use-ggsave, eval = FALSE}
+p <- hidecan_plot(gwas_list = x[["GWAS"]],
+             de_list = x[["DE"]],
+             can_list = x[["CAN"]],
+             score_thr_gwas = -log10(0.0001),
+             score_thr_de = -log10(0.005),
+             log2fc_thr = 0,
+             label_size = 2)
+
+ggplot2::ggsave("hidecan_plot.pdf", p, width = 10, height = 10)
+```
+

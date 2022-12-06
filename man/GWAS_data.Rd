@@ -17,10 +17,11 @@ be discarded.}
 A \code{GWAS_data} object, i.e. a tibble.
 }
 \description{
-The input data should have one row per marker, and at least the
-following columns:
+Creates a \code{GWAS_data} object from a tibble or data-frame of GWAS results.
 }
 \details{
+The input data should have one row per marker, and at least the
+following columns:
 \itemize{
 \item \code{chromosome}: character column, chromosome on which the marker is located.
 \item \code{position}: numeric, the physical position of the marker along the chromosome (in bp).
