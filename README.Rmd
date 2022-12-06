@@ -35,9 +35,9 @@ The hidecan package works as follows:
 
 * it takes as an input one of more data-frames containing GWAS results, differential expression results and list of candidate genes of interest;
 
-* it computes the length of each chromosome based on the genomic position of the markers or genes provided in the input data;
+* it computes the length of each chromosome based on the genomic position of the markers and genes provided in the input data;
 
-* it filters the datasets to retain significant markers or differentially expressed genes, according to a threshold on their score or log2-fold change. The fold-change is set by the user, and can be different for GWAS and differential expression results.
+* it filters the datasets to retain significant markers or differentially expressed genes, according to a threshold on their score and/or log2-fold change. The fold-change is set by the user, and can be different for GWAS and differential expression results.
 
 * it displays the position of the significant markers and genes alongside candidate genes (HIDECAN plot). The plot can be customised by the user via a number of parameters (e.g. legend position or label size).
 
@@ -50,11 +50,11 @@ library(hidecan)
 x <- get_example_data()
 
 hidecan_plot(
-  gwas_list = x[["GWAS"]],          ## list of GWAS results
-  de_list = x[["DE"]],              ## list of DE results
-  can_list = x[["CAN"]],            ## list of candidate genes
+  gwas_list = x[["GWAS"]],          ## data-frame of GWAS results
+  de_list = x[["DE"]],              ## data-frame of DE results
+  can_list = x[["CAN"]],            ## data-frame of candidate genes
   score_thr_gwas = -log10(0.0001),  ## sign. threshold for GWAS
-  score_thr_de = -log10(0.005),     ## sign. threshold for DE
+  score_thr_de = -log10(0.05),      ## sign. threshold for DE
   log2fc_thr = 0,                   ## log2FC threshold for DE
   label_size = 2                    ## label size for candidate genes
 )

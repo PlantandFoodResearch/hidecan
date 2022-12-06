@@ -18,7 +18,7 @@
 #' @param n_rows Integer, number of rows of chromosomes to create in the plot.
 #' Default value is `NULL`.
 #' @param n_cols Integer, number of columns of chromosomes to create in the plot.
-#' Default value is 2.
+#' Default value is 2. Will be set to `NULL` if `n_rows` is not `NULL`.
 #' @param legend_position Character, position of the legend in the plot. Can be
 #' `bottom` (default value), `top`, `right`, `left` or `none`.
 #' @param point_size Numeric, size of the points in the plot. Default value is 3.
@@ -118,6 +118,9 @@ create_hidecan_plot <- function(x,
     names(x) <- sub("^  - ", "", names(x))
     names(x) <- make.unique(names(x), ", ")
   }
+
+  ## Making sure that only one of n_rows and n_cols is not NULL
+  if(!is.null(n_rows)) n_cols <- NULL
 
   datasets_levels <- rev(names(x))
 
@@ -226,7 +229,9 @@ create_hidecan_plot <- function(x,
     ## Themes and labs
     ggplot2::scale_x_continuous(expand = ggplot2::expansion(mult = 0.01)) +
     ggplot2::theme_bw() +
-    ggplot2::theme(legend.position = legend_position) +
+    ggplot2::theme(legend.position = legend_position,
+                   plot.title = ggplot2::element_text(hjust = 0.5),
+                   plot.subtitle = ggplot2::element_text(hjust = 0.5)) +
     ggplot2::labs(title = title,
                   subtitle = subtitle,
                   x = "Position (Mb)",
