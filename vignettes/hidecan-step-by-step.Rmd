@@ -1,0 +1,176 @@
+---
+title: "Creating a HIDECAN plot step by step"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{hidecan-step-by-step}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(tibble)
+library(dplyr)
+library(purrr)
+```
+
+```{r setup}
+library(hidecan)
+library(tibble)
+library(dplyr)
+library(purrr)
+```
+
+The `hidecan_plot()` function is really a wrapper that performs a series of steps to go from GWAS/DE results and candidate genes data-frames to a HIDECAN (gg)plot. In this vignette, we present the different steps performed by the wrapper function. This can be useful for users who want more control over the process. We'll work with the example dataset provided with the package
+
+```{r get-example-data}
+x <- get_example_data()
+
+str(x)
+```
+
+## Formatting input data
+
+Under the hood, the `hidecan` package relies on S3 classes, which are really just tibbles with specific columns. The constructors for these S3 classes perform a series of checks and computations to make sure that all of the required columns (such as chromosome, score, position) are present in the data.
+
+-   GWAS results data-frames are turned into `GWAS_data` objects through the `GWAS_data()` constructor:
+
+```{r gwas-data-constructor}
+gwas_data <- GWAS_data(x[["GWAS"]])
+
+class(gwas_data)
+
+head(gwas_data)
+```
+
+-   DE results data-frames are turned into `DE_data` objects through the `DE_data()` constructor:
+
+```{r de-data-constructor}
+de_data <- DE_data(x[["DE"]])
+
+class(de_data)
+
+head(de_data)
+```
+
+-   Candidate genes data-frames are turned into `CAN_data` objects through the `CAN_data()` constructor:
+
+```{r can-data-constructor}
+## CAN_data constructor
+can_data <- CAN_data(x[["CAN"]])
+
+class(can_data)
+
+head(can_data)
+```
+
+These constructors will throw an error if a required column is missing from the input data (e.g. no chromosome column):
+
+```{r gwas-data-no-chromosome-column, error = TRUE}
+gwas_wrong_input <- x[["GWAS"]] |> 
+  select(-chromosome)
+
+GWAS_data(gwas_wrong_input)
+```
+
+They will also compute marker or gene scores from adjusted p-values if necessary (see the [Input data](hidecan.html#input-data) section of the hidecan vignette). For example, for DE results, if we provide a `padj` column (with the adjusted p-values of the genes) rather than a `score` column, the constructor will compute the `score` column based on the `padj` column. You can also notice that a `position` column is computed based on the start and end of the genes:
+
+```{r show-de-data-new-columns}
+## Input tibble
+head(x[["DE"]])
+
+## Output of the DE_data constructor
+head(de_data)
+```
+
+## Computing chromosome length
+
+Once the input datasets have been formatted appropriately, they are used to compute the length of the chromosomes present in the data. This is done through the `combine_chrom_length()` function, which is applied to a list of `GWAS_data`, `DE_data` or `CAN_data` objects:
+
+```{r combine-chrom-length}
+chrom_length <- combine_chrom_length(list(gwas_data,
+                                          de_data,
+                                          can_data))
+
+chrom_length
+```
+
+The function works by calling for each element in the list the `compute_chrom_length()` function. The function, according to whether the input is a tibble of markers (`GWAS_data`) or genes (`DE_data` or `CAN_data`), looks for the maximum value in either the `position` column (for markers) or the `end` column (for genes).
+
+```{r compute-chrom-length}
+head(compute_chrom_length(gwas_data), 3)
+
+head(compute_chrom_length(de_data), 3)
+```
+
+## Applying threshold
+
+Next, the GWAS and DE results tibbles are filtered according to a threshold, in order to retain the significant markers or genes. This is done through the `apply_threshold()` function. This function has two (rather self-explanatory) arguments: `score_thr` and `log2fc_thr`.
+
+When applied to a `GWAS_data` object, the function filters markers with a score above the value set with `score_thr` argument (the `log2fc_thr` argument is ignored), and returns an object of class `GWAS_data_thr`:
+
+```{r apply-threshold-gwas}
+dim(gwas_data)
+
+gwas_data_thr <- apply_threshold(gwas_data, 
+                                 score_thr = 4)
+
+class(gwas_data_thr)
+
+dim(gwas_data_thr)
+
+head(gwas_data_thr)
+```
+
+For a `DE_data` object, the apply_threshold function filters genes based on both their score and log2(fold-change), and returns an object of class `DE_data_thr`:
+
+```{r apply-threshold-de}
+dim(de_data)
+
+de_data_thr <- apply_threshold(de_data, 
+                               score_thr = 2,
+                               log2fc_thr = 0.5)
+
+class(de_data_thr)
+
+dim(de_data_thr)
+
+head(de_data_thr)
+```
+
+Finally, if applied to a CAN_data object, the `apply_threshold()` function simply returns the input tibble as an object of class `CAN_data_thr`:
+
+```{r apply-threshold-can}
+dim(can_data)
+
+can_data_thr <- apply_threshold(can_data, 
+                                score_thr = 2,
+                                log2fc_thr = 0.5)
+
+class(can_data_thr)
+
+dim(can_data_thr)
+
+head(can_data_thr)
+```
+
+As for the `GWAS_data`, `DE_data` or `CAN_data` objects, the `GWAS_data_thr`, `DE_data_thr` and `CAN_data_thr` objects are really just tibbles.
+
+## Creating the HIDECAN plot
+
+Finally, the filtered datasets are combined into a list and passed on to the `create_hidecan_plot()` function, along with the tibble of chromosome length. This is the function that generates the HIDECAN ggplot:
+
+```{r create-hidecan-plot, fig.width = 10, fig.height = 10}
+create_hidecan_plot(
+  list(gwas_data_thr,
+       de_data_thr,
+       can_data_thr),
+  chrom_length
+)
+```
+
+This function shares most of its arguments with the `hidecan_plot()` wrapper for controlling different aspects of the plot.

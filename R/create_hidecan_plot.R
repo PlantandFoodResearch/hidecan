@@ -9,6 +9,10 @@
 #' @param chrom_length Tibble with columns `chromosome` and `length`, giving
 #' for each chromosome its length in bp (see \code{\link{combine_chrom_length}()}
 #' function).
+#' @param remove_empty_chrom Logical, should chromosomes with no significant
+#' markers/genes nor candidate genes be removed from the plot? Default value
+#' if `FALSE`.
+#' @param chroms Character vector, name of chromosomes to include in the plot.
 #' @param colour_genes_by_score Logical, whether to colour the genes by score
 #' (`TRUE`) or by log2(fold-change) (`FALSE`). Default value is `TRUE`.
 #' @param title Character, title of the plot. Default value is `NULL` (i.e.
@@ -69,6 +73,8 @@
 create_hidecan_plot <- function(x,
                                 chrom_length,
                                 colour_genes_by_score = TRUE,
+                                remove_empty_chrom = FALSE,
+                                chroms = NULL,
                                 title = NULL,
                                 subtitle = NULL,
                                 n_rows = NULL,
@@ -100,15 +106,47 @@ create_hidecan_plot <- function(x,
 
   if(!all(unique(x_types) %in% c("GWAS_data_thr", "DE_data_thr", "CAN_data_thr"))) stop("Expecting a list of 'GWAS_data_thr', 'DE_data_thr' and/or 'CAN_data_thr' objects (see apply_threshold() function).")
 
-  ## Checking chrom_length input
-  if(length(setdiff(c("chromosome", "length"), names(chrom_length)))) stop("'chrom_length' argument should be a data-frame with columns 'chromosome' ad length.")
-  if(dplyr::n_distinct(chrom_length$chromosome) != nrow(chrom_length)) stop("Duplicated chromosome names in 'chrom_length' data-frame.")
+  ## Chromosomes present in the input data
   x_chroms <- x |>
     purrr::map(~ unique(.x[["chromosome"]])) |>
     unlist() |>
     unique()
+
+  if(!is.null(chroms)){
+    ## Checking whether the chroms input is valid
+    wrong_chroms <- setdiff(chroms, x_chroms)
+    if(length(wrong_chroms)) stop("In 'chroms' argument, the following values are not valid chromosome names: '",
+                                  paste0(wrong_chroms, collapse = "', '"),
+                                  ". Possible values are: '",
+                                  paste0(x_chroms, collapse = "', '"),
+                                  ".")
+
+    ## Selecting only requested chromosomes in data
+    x_chroms <- chroms
+
+    x <- x |>
+      purrr::map(
+        ~ dplyr::filter(.x, chromosome %in% x_chroms)
+      )
+  }
+
+  ## Checking chrom_length input
+  if(length(setdiff(c("chromosome", "length"), names(chrom_length)))) stop("'chrom_length' argument should be a data-frame with columns 'chromosome' ad length.")
+  if(dplyr::n_distinct(chrom_length$chromosome) != nrow(chrom_length)) stop("Duplicated chromosome names in 'chrom_length' data-frame.")
+
+  chrom_length <- chrom_length |>
+    dplyr::filter(chromosome %in% x_chroms)
+
   missing_chroms <- setdiff(x_chroms, chrom_length$chromosome)
-  if(length(missing_chroms)) stop("The following chromosomes are present in the data but missing from 'chrom_length' data-frame: '", paste0(missing_chroms, collapse = "', '"))
+  if(length(missing_chroms)) stop("The following chromosomes are present in the data but missing from 'chrom_length' data-frame: '", paste0(missing_chroms, collapse = "', '"), ".")
+
+  ## Removing chromosomes with no significant markers or genes
+  if(remove_empty_chrom){
+    chrom_length <- chrom_length |>
+      dplyr::filter(chromosome %in% x_chroms)
+
+    if(is.factor(chrom_length$chromosome)) chrom_length$chromosome <- droplevels(chrom_length$chromosome)
+  }
 
   ## Making y labels
   if(is.null(names(x))){
@@ -139,7 +177,14 @@ create_hidecan_plot <- function(x,
     dplyr::rename(position_mb_end = position_mb) |>
     dplyr::mutate(position_mb = 0)
 
-  unique_data_types <- unique(toplot$data_type)
+  ## Making sure that the order of the "Position of" legends matches the order
+  ## in which the different data types appear in the y-axis
+  unique_data_types <- toplot |>
+    dplyr::select(dataset, data_type) |>
+    dplyr::distinct() |>
+    dplyr::arrange(dplyr::desc(dataset)) |>
+    dplyr::pull(data_type) |>
+    unique()
 
   p <- toplot |>
     ggplot2::ggplot(ggplot2::aes(x = position_mb, y = dataset)) +
@@ -176,24 +221,9 @@ create_hidecan_plot <- function(x,
                           size = point_size)
   }
 
-  if("GWAS_data_thr" %in% x_types){
-    p <- p +
-      ## GWAS points
-      ggplot2::geom_point(data = dplyr::filter(toplot, data_type == "GWAS_data_thr"),
-                          mapping = ggplot2::aes(shape = data_type, fill = score),
-                          size = point_size) +
-      viridis::scale_fill_viridis("GWAS marker score",
-                                  option = "plasma",
-                                  guide = ggplot2::guide_colourbar(title.position="top",
-                                                                   title.hjust = 0.5,
-                                                                   order = 2))
-  }
-
   if("DE_data_thr" %in% x_types){
 
     if(colour_genes_by_score){
-
-      if("GWAS_data_thr" %in% x_types) p <- p + ggnewscale::new_scale_fill()
 
       p <- p +
         ## DE points
@@ -206,8 +236,6 @@ create_hidecan_plot <- function(x,
                                                                      title.hjust = 0.5,
                                                                      order = 3))
     } else {
-
-      if("GWAS_data_thr" %in% x_types) p <- p + ggnewscale::new_scale_fill()
 
       p <- p  +
         ## DE points
@@ -223,6 +251,22 @@ create_hidecan_plot <- function(x,
                                                                        order = 3))
     }
 
+  }
+
+  if("GWAS_data_thr" %in% x_types){
+
+    if("DE_data_thr" %in% x_types) p <- p + ggnewscale::new_scale_fill()
+
+    p <- p +
+      ## GWAS points
+      ggplot2::geom_point(data = dplyr::filter(toplot, data_type == "GWAS_data_thr"),
+                          mapping = ggplot2::aes(shape = data_type, fill = score),
+                          size = point_size) +
+      viridis::scale_fill_viridis("GWAS marker score",
+                                  option = "plasma",
+                                  guide = ggplot2::guide_colourbar(title.position="top",
+                                                                   title.hjust = 0.5,
+                                                                   order = 2))
   }
 
   p +
@@ -301,6 +345,8 @@ hidecan_plot <- function(gwas_list = NULL,
                          log2fc_thr = 1,
                          chrom_length = NULL,
                          colour_genes_by_score = TRUE,
+                         remove_empty_chrom = FALSE,
+                         chroms = NULL,
                          title = NULL,
                          subtitle = NULL,
                          n_rows = NULL,
@@ -340,7 +386,7 @@ hidecan_plot <- function(gwas_list = NULL,
 
   x <- c(gwas_list, de_list, can_list)
 
-  if(!length(x)) stop("Should provide at least one non-empty list for 'gwas_list', 'de_list' or 'ca_list' argument.")
+  if(!length(x)) stop("Should provide at least one non-empty list for 'gwas_list', 'de_list' or 'can_list' argument.")
 
   ## if not provided, compute the chromosome length
   if(is.null(chrom_length)){
@@ -371,6 +417,8 @@ hidecan_plot <- function(gwas_list = NULL,
   create_hidecan_plot(x,
                       chrom_length,
                       colour_genes_by_score,
+                      remove_empty_chrom,
+                      chroms,
                       title,
                       subtitle,
                       n_rows,

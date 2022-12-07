@@ -71,7 +71,7 @@ test_that("hidecan_plot works", {
                             can_list = can_data), NA)
 
   ## Checking GWAS, DE and CAN input
-  expect_error(hidecan_plot(), "Should provide at least one non-empty list for 'gwas_list', 'de_list' or 'ca_list' argument.")
+  expect_error(hidecan_plot(), "Should provide at least one non-empty list for 'gwas_list', 'de_list' or 'can_list' argument.")
   expect_error(hidecan_plot(gwas_list = "TEST"), "Arguments 'gwas_list', 'de_list' or 'can_list' should either be a data-frame or a list, or NULL.")
 
   expect_error(hidecan_plot(gwas_list = dplyr::rename(gwas_data, chrom = chromosome)), "In 'gwas_list' argument: Input data-frame is missing the following columns: 'chromosome'.")

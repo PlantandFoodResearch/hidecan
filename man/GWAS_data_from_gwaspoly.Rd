@@ -4,10 +4,10 @@
 \alias{GWAS_data_from_gwaspoly}
 \title{Extracts information from GWASpoly output}
 \usage{
-GWAS_data_from_gwaspoly(gwaspoly_input, traits = NULL, models = NULL)
+GWAS_data_from_gwaspoly(gwaspoly_output, traits = NULL, models = NULL)
 }
 \arguments{
-\item{gwaspoly_input}{A \code{GWASpoly.fitted} or \code{GWASpoly.thresh} object
+\item{gwaspoly_output}{A \code{GWASpoly.fitted} or \code{GWASpoly.thresh} object
 (returned by \code{GWASpoly::GWASpoly()} or \code{GWASpoly::set.threshold()} functions).}
 
 \item{traits}{Character vector, traits for which GWAS results should be
@@ -19,7 +19,7 @@ extracted. If \code{NULL} (default value), all genetic models present are consid
 \value{
 A list with the following elements:
 \itemize{
-\item \code{gwas_data_list}: A named list of \code{GWAS_data} object, giving the markers score for
+\item \code{gwas_data_list}: A named list of \code{GWAS_data} objects, giving the markers score for
 each possible trait/genetic model combination. The names of the list are in
 the form \verb{trait (genetic model)}.
 \item \code{gwas_data_thr_list}: if the input data is a \code{GWASpoly.thresh} object

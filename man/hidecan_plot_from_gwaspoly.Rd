@@ -4,11 +4,17 @@
 \alias{hidecan_plot_from_gwaspoly}
 \title{Creates a HIDECAN plot from GWASpoly output}
 \usage{
-hidecan_plot_from_gwaspoly(gwaspoly_input, ...)
+hidecan_plot_from_gwaspoly(gwaspoly_output, traits = NULL, models = NULL, ...)
 }
 \arguments{
-\item{gwaspoly_input}{A \code{GWASpoly.thresh} object
+\item{gwaspoly_output}{A \code{GWASpoly.thresh} object
 (returned by the \code{GWASpoly::set.threshold()} function).}
+
+\item{traits}{Character vector, traits for which GWAS results should be
+extracted. If \code{NULL} (default value), all traits present are considered.}
+
+\item{models}{Character vector, genetic models for which GWAS results should be
+extracted. If \code{NULL} (default value), all genetic models present are considered.}
 
 \item{...}{Further arguments passed to the \code{\link{create_hidecan_plot}()}
 function.}

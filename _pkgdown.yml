@@ -2,6 +2,17 @@ url: https://shiny-adventure-acfe02d1.pages.github.io/
 template:
   bootstrap: 5
 
+navbar:
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: Step-by-step
+        href: articles/hidecan-step-by-step.html
+      - text: GWASpoly output
+        href: articles/gwaspoly_output.html
+
+
 reference:
 
 - title:  "Internal constructors"

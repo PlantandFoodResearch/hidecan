@@ -13,6 +13,8 @@ hidecan_plot(
   log2fc_thr = 1,
   chrom_length = NULL,
   colour_genes_by_score = TRUE,
+  remove_empty_chrom = FALSE,
+  chroms = NULL,
   title = NULL,
   subtitle = NULL,
   n_rows = NULL,
@@ -53,6 +55,12 @@ be inferred from the GWAS, DE and candidate gene data.}
 \item{colour_genes_by_score}{Logical, whether to colour the genes by score
 (\code{TRUE}) or by log2(fold-change) (\code{FALSE}). Default value is \code{TRUE}.}
 
+\item{remove_empty_chrom}{Logical, should chromosomes with no significant
+markers/genes nor candidate genes be removed from the plot? Default value
+if \code{FALSE}.}
+
+\item{chroms}{Character vector, name of chromosomes to include in the plot.}
+
 \item{title}{Character, title of the plot. Default value is \code{NULL} (i.e.
 no title will be added to the plot).}
 
@@ -63,7 +71,7 @@ no title will be added to the plot).}
 Default value is \code{NULL}.}
 
 \item{n_cols}{Integer, number of columns of chromosomes to create in the plot.
-Default value is 2.}
+Default value is 2. Will be set to \code{NULL} if \code{n_rows} is not \code{NULL}.}
 
 \item{legend_position}{Character, position of the legend in the plot. Can be
 \code{bottom} (default value), \code{top}, \code{right}, \code{left} or \code{none}.}

@@ -7,7 +7,7 @@ new_GWAS_data <- function(dat){
   ## Making sure that the input is a tibble
   stopifnot(tibble::is_tibble(dat))
 
-  class(dat) <- c("GWAS_data", "genomics_data", class(dat))
+  class(dat) <- c("GWAS_data", class(dat))
 
   dat
 }

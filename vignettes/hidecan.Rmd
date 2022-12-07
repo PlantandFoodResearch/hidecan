@@ -45,7 +45,7 @@ GWAS results should be provided as a tibble or data-frame, with one row per gene
 
 -   either `score` or `padj`: numeric column, providing either the score (i.e. `-log10(p-value)`) or the adjusted p-value of the marker. If a `score` column is provided, the `padj` column will be ignored. If only a `padj` column is provided, a `score` column will be constructed as `-log10(padj)`.
 
-Any other columns present in the data-frame will be ignored. An example of valid input is shown below:
+Any other column present in the data-frame will be ignored. An example of valid input is shown below:
 
 ```{r example-data-gwas}
 head(x[["GWAS"]])
@@ -57,13 +57,13 @@ DE results should be provided as a tibble or data-frame, with one row per gene. 
 
 -   `chromosome`: character column, giving the ID of the chromosome on which each gene is located;
 
--   `start` and `end`: numeric columns, giving the starting and end position of the gene along the chromosome (in bp). These two columns will be used to calculate the position of the gene (column `position`) as the half-way point between the start and end of the gene.
+-   `start` and `end`: numeric columns, giving the starting and end position of the gene along the chromosome (in bp). These two columns will be used to calculate the position of the gene as the half-way point between the start and end of the gene.
 
 -   either `score` or `padj`: numeric column, providing either the score (i.e. `-log10(p-value)`) or the adjusted p-value of the gene. If a `score` column is provided, the `padj` column will be ignored. If only a `padj` column is provided, a `score` column will be constructed as `-log10(padj)`.
 
 -   either `foldChange` or `log2FoldChange`: numeric column, giving either the fold-change or log2(fold-change) of the gene. If a `log2FoldChange` column is provided, the `foldChange` column will be ignored. If only a `foldChange` column is provided, a `log2FoldChange` will be constructed as `log2(foldChange)`.
 
-Any other columns present in the data-frame will be ignored. An example of valid input is shown below:
+Any other column present in the data-frame will be ignored. An example of valid input is shown below:
 
 ```{r example-data-de}
 head(x[["DE"]])
@@ -77,11 +77,11 @@ A list of candidate genes (e.g. genes previously found associated with a trait o
 
 -   `chromosome`: character column, giving the ID of the chromosome on which each gene is located;
 
--   `start` and `end`: numeric columns, giving the starting and end position of the gene along the chromosome (in bp). These two columns will be used to calculate the position of the gene (column `position`) as the half-way point between the start and end of the gene. To specify a genomic variant, simply set the `start` and `end` columns to the physical position of the variant.
+-   `start` and `end`: numeric columns, giving the starting and end position of the gene along the chromosome (in bp). These two columns will be used to calculate the position of the gene as the half-way point between the start and end of the gene. For genomic variants or markers, simply set both the `start` and `end` columns to the physical position of the marker.
 
 -   `name`: character column, giving the name of the candidate gene that will be displayed in the HIDECAN plot. Set to `NA` for any subset of genes to remove their label in the plot (can help if many genes are very close, to avoid cluttering the plot).
 
-Any other columns present in the data-frame will be ignored. An example of valid input is shown below:
+Any other column present in the data-frame will be ignored. An example of valid input is shown below:
 
 ```{r example-data-can}
 head(x[["CAN"]])
@@ -89,13 +89,15 @@ head(x[["CAN"]])
 
 ## Creating a HIDECAN plot
 
-The `hidecan_plot()` function is the main function that generates the HIDECAN plots. It takes as input the data-frames presented above, as well as the score and log2(fold-change) thresholds used to select the significant markers and genes.
+The `hidecan_plot()` function creates a HIDECAN plot. It takes as input the data-frames presented above, as well as the score and log2(fold-change) thresholds used to select the significant markers and genes.
+
+In this example, we only show markers with a score above 4, which corresponds to a p-value below $1\times10^{-4}$, and genes with a score above 1.3, which corresponds to a p-value of 0.05. We don't place any threshold on the log2(fold-change) of the genes:
 
 ```{r hidecan-plot, fig.width = 10, fig.height = 10}
 hidecan_plot(
-  gwas_list = x[["GWAS"]],          
-  de_list = x[["DE"]],              
-  can_list = x[["CAN"]],            
+  gwas_list = x[["GWAS"]],          ## data-frame of GWAS results          
+  de_list = x[["DE"]],              ## data-frame of DE results              
+  can_list = x[["CAN"]],            ## data-frame of candidate genes            
   score_thr_gwas = -log10(0.0001),  ## sign. threshold for GWAS
   score_thr_de = -log10(0.05),      ## sign. threshold for DE
   log2fc_thr = 0                    ## log2FC threshold for DE
@@ -108,13 +110,57 @@ Note that it is possible to provide only a subset of the possible input data, e.
 hidecan_plot(
   gwas_list = x[["GWAS"]],          
   can_list = x[["CAN"]],            
-  score_thr_gwas = -log10(0.0001)
+  score_thr_gwas = 4
 )
 ```
 
+
+## Removing empty chromosomes
+
+By default, the HIDECAN plot shows all chromosomes present in the input data. However, it is possible that some of the chromosomes appear empty, as they do not contain any significant gene or marker, nor any candidate gene. In this case, it is possible to exclude such "empty" chromosomes from the HIDECAN plot, through the `remove_empty_chrom` argument. 
+
+We will demonstrate that by increasing the score threshold applied to the GWAS results, in order to get fewer significant markers. In this case, chromosomes 0, 6, 9 and 10 do not contain any significant marker of gene of interest:
+
+```{r hidecan-plot-with-empty-chrom, fig.width = 10, fig.height = 10}
+## Chromosomes 0, 6, 9 and 10 are empty
+hidecan_plot(
+  gwas_list = x[["GWAS"]],          
+  can_list = x[["CAN"]],            
+  score_thr_gwas = 5
+)
+```
+
+
+```{r hidecan-plot-without-empty-chrom, fig.width = 10, fig.height = 8}
+hidecan_plot(
+  gwas_list = x[["GWAS"]],          
+  can_list = x[["CAN"]],            
+  score_thr_gwas = 5,
+  remove_empty_chrom = TRUE
+)
+```
+
+
+## Selecting chromosomes and genomic positions
+
+It is possible to specify which chromosomes should be represented in the HIDECAN plot, via the `chroms` argument. For example, with the following command we restrict the plot to chromosomes 7 and 8:
+
+```{r hidecan-select-chroms, fig.width = 10, fig.height = 3}
+hidecan_plot(
+  gwas_list = x[["GWAS"]],                    
+  de_list = x[["DE"]],                          
+  can_list = x[["CAN"]],                  
+  score_thr_gwas = -log10(0.0001),  
+  score_thr_de = -log10(0.05),      
+  log2fc_thr = 0,
+  chroms = c("ST4.03ch07", "ST4.03ch08")
+)
+```
+
+
 ## Colour genes by log2(fold-change)
 
-By default, in a HIDECAN plot, the points representing both significant markers and DE genes are coloured according to their GWAS/DE score. However, it is possible to colour the DE genes by their log2(fold-change) value instead, by setting the `colour_genes_by_score` argument of the `hidecan_plot()` function to `FALSE`:
+By default, in a HIDECAN plot, the points representing both significant markers and DE genes are coloured according to their GWAS/DE score. However, it is possible to colour the DE genes by their log2(fold-change) value instead, by setting the `colour_genes_by_score` argument to `FALSE`:
 
 ```{r hidecan-genes-colour-log2fc, fig.width = 10, fig.height = 10}
 hidecan_plot(
@@ -134,9 +180,9 @@ Genes with a negative log2(fold-change) will be represented with a shade of blue
 
 The `hidecan_plot()` function can take as an input lists of data-frames for GWAS results, DE results or candidate genes. This way, it is possible to visualise more than one GWAS or DE analyses at once, for example if investigating several traits at once or comparing more than two treatment groups.
 
-For this example, we'll focus on chromosomes 7 and 8.
+For this example, we'll focus on chromosomes 7 and 8 (only for clarity of the plot):
 
-```{r multiple-gwas-input, fig.width = 10, fig.height = 3}
+```{r making-small-dataset}
 library(dplyr)
 library(purrr)
 library(stringr)
@@ -144,13 +190,22 @@ library(stringr)
 ## Retaining only markers and genes on chromosomes 7 and 8
 x_small <- x |> 
   map(~ filter(.x, str_detect(chromosome, "(07|08)")))
+```
 
+We'll create a second data-frame of GWAS results by shuffling the marker scores in the example dataset:
+
+```{r creating-second-gwas-tibble}
 ## Creating a second GWAS result tibble by shuffling 
 ## the marker scores from the original data
 gwas_1 <- x_small[["GWAS"]]
 gwas_2 <- gwas_1 |> 
   mutate(score = sample(score))
+```
 
+
+We can pass both GWAS results data-frames to the `hidecan_plot()` function as a list:
+
+```{r hidecan-multiple-gwas-input, fig.width = 10, fig.height = 3}
 hidecan_plot(
   gwas_list = list(gwas_1, gwas_2),
   score_thr_gwas = -log10(0.0001),
@@ -159,7 +214,8 @@ hidecan_plot(
 )
 ```
 
-By default, the two GWAS tracks on the y-axis will be given unique names, as can be seen above. It is possible to customise this by naming the elements in the input list:
+
+By default, the two GWAS tracks will be given unique y-axis labels, as can be seen above. It is possible to customise this by naming the elements in the input list:
 
 ```{r multiple-gwas-input-named, fig.width = 10, fig.height = 3}
 hidecan_plot(
@@ -173,12 +229,12 @@ hidecan_plot(
 
 ## Defining chromosomes length
 
-By default, the `hidecan_plot()` function calculates the length of the different chromosomes based on the input data, by looking at the maximum position of genes and markers in each chromosome. However, it is also possible to pass on a tibble of chromosome length (in bp) through the `chrom_length` argument.
+By default, the `hidecan_plot()` function calculates the length of the different chromosomes based on the input data, by looking at the maximum position of genes and markers on each chromosome. However, it is also possible to pass on a tibble of chromosome length (in bp) through the `chrom_length` argument.
 
-```{r show-chrom-length, fig.width = 10, fig.height = 10}
+```{r make-potato-chrom-length}
 library(tibble)
 
-## Tibble of chromosomes length as recorded in Ensembl Plants
+## Chromosomes length as recorded in Ensembl Plants
 potato_chrom_length <- c(
   ST4.03ch00 = 45813526,
   ST4.03ch01 = 88663952,
@@ -194,9 +250,15 @@ potato_chrom_length <- c(
   ST4.03ch11 = 45475667,
   ST4.03ch12 = 61165649
 ) |> 
+  ## turn a named vector into a tibble
   enframe(name = "chromosome",
           value = "length")
 
+head(potato_chrom_length)
+```
+
+
+```{r hidecan-chrom-length, fig.width = 10, fig.height = 10}
 hidecan_plot(
   gwas_list = x[["GWAS"]],          
   de_list = x[["DE"]],              
@@ -208,7 +270,8 @@ hidecan_plot(
 )
 ```
 
-Note that in this case the difference is not huge.
+Note that in this case we can't really see the difference with the computed chromosome length values.
+
 
 ## Controlling the plot properties
 
@@ -248,23 +311,23 @@ In addition, it is possible to:
 
 -   control the size of the points (`point_size` argument);
 
--   control the size of the labels and padding around the text for the candidate genes (`label_size` and `label_padding` arguments).
+-   control the size of the labels and padding around the text for the candidate genes labels (`label_size` and `label_padding` arguments).
 
 ## Viewport error
 
 If you are working on RStudio, you may encounter the following error:
 
-```{r show-window-size-error, echo = FALSE, error = TRUE, fig.width = 0, fig.height = 0}
+```{r show-window-size-error, echo = FALSE, error = TRUE, fig.width = 0.00001, fig.height = 0.00001}
 hidecan_plot(gwas_list = x[["GWAS"]],
              de_list = x[["DE"]],
              can_list = x[["CAN"]],
              score_thr_gwas = -log10(0.0001),
-             score_thr_de = -log10(0.005),
+             score_thr_de = -log10(0.05),
              log2fc_thr = 0,
              label_size = 2)
 ```
 
-This is caused by the plotting window being too small. Try increasing the size of the plotting window on the RStudio console. Alternatively, you can save the plot into an object, then use `ggplot2::ggsave()` to save it into a file:
+This is caused by the plotting window being too small. Try increasing the size of the plotting window in the RStudio console. Alternatively, you can save the plot into an R object, then use `ggplot2::ggsave()` to save it into a file:
 
 ```{r use-ggsave, eval = FALSE}
 p <- hidecan_plot(
@@ -272,7 +335,7 @@ p <- hidecan_plot(
   de_list = x[["DE"]],
   can_list = x[["CAN"]],
   score_thr_gwas = -log10(0.0001),
-  score_thr_de = -log10(0.005),
+  score_thr_de = -log10(0.05),
   log2fc_thr = 0,
   label_size = 2
 )

@@ -1,0 +1,137 @@
+---
+title: "HIDECAN plot from GWASpoly output"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{gwaspoly_output}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(hidecan)
+library(GWASpoly)
+```
+
+The [GWASpoly](https://github.com/jendelman/GWASpoly) package is designed to perform GWAS analyses for autopolyploid organisms. It allows the simultaneous analysis of several traits or phenotypes, and can compute markers association scores with different genetic models. The package also includes a function to compute the significance threshold for each trait and genetic model.
+
+The `hidecan` package provides functions to generate a HIDECAN plot directly from a `GWASpoly` output object (object of class `GWASpoly.thresh` obtained with the `GWASpoly::set.threshold()`).
+
+## GWASpoly example data
+
+An example of GWASpoly output, based on the [original example dataset](https://acsess.onlinelibrary.wiley.com/doi/10.3835/plantgenome2015.08.0073) from the GWASpoly package, can be obtained with the `get_gwaspoly_example_data()` function:
+
+```{r get-gwaspoly-example-dataset}
+gwaspoly_output <- get_gwaspoly_example_data()
+
+class(gwaspoly_output)
+```
+
+In this example, three traits were analysed: `tuber_eye_depth`, `tuber_shape` and `sucrose`. For each trait, GWAS scores were computed with four different genetic models: `general`, `additive`, `1-dom-alt` and `1-dom-ref`:
+
+```{r show-traits-genetic-models}
+## Traits analysed
+names(gwaspoly_output@scores)
+
+## Genetic models tests
+head(gwaspoly_output@scores[[1]])
+```
+
+See the Appendix section at the bottom of this vignette for the code used to generate this example data.
+
+## HIDECAN plot from GWASpoly output
+
+The `hidecan_plot_from_gwaspoly()` function reads in a `GWASpoly.thresh` object, extracts from it the marker scores for each combination of trait and genetic model, and uses them to construct a HIDECAN plot. In the y-axis, the trait is indicated first, and the genetic model next in brackets:
+
+```{r hidecan-plot-from-gwaspoly, fig.width = 8, fig.height = 5}
+hidecan_plot_from_gwaspoly(
+  gwaspoly_output,
+  remove_empty_chrom = TRUE  
+)
+```
+
+From the HIDECAN plot, we can easily see that there is a genomic region around 50Mb on chromosome 10 that is significantly associated with both tuber eye depth and shape, when using either the general or additive model. This region is not significantly associated with either of these traits when considering one of the simplex dominant models. For the sucrose phenotype, only the general model detected any significant markers.
+
+It is possible to specify which traits and/or genetic models are represented in the HIDECAN plot, via the `traits` and `models` arguments:
+
+```{r selecting-traits-and-models, fig.width = 8, fig.height = 3}
+hidecan_plot_from_gwaspoly(
+  gwaspoly_output,
+  traits = c("tuber_eye_depth", "tuber_shape"),
+  models = "general",
+  remove_empty_chrom = TRUE  
+)
+```
+
+## The GWASpoly constructor
+
+Under the hood, the `hidecan_plot_from_gwaspoly()` function relies on the `GWAS_data_from_gwaspoly()` constructor, which takes as an input either:
+
+-   a `GWASpoly.fitted` object (returned by the `GWASpoly::GWASpoly()` function), or
+
+-   a `GWASpoly.thresh` object (returned by the `GWASpoly::set.threshold()` function).
+
+The function extracts the marker scores for all traits and genetic models present in the GWASpoly output, as well as the length of all chromosomes. In addition, if the input data is a `GWASpoly.thresh` object, it extracts the significance threshold for each combination of trait and genetic model, and uses it to filter significant markers.
+
+```{r gwas-data-from-gwaspoly}
+gwaspoly_data <- GWAS_data_from_gwaspoly(gwaspoly_output)
+
+## GWAS_data objects, i.e. tibbles of marker scores
+str(gwaspoly_data$gwas_data_list, max.level = 1)
+
+## GWAS_data_thr objects, i.e. tibbles of significant markers
+str(gwaspoly_data$gwas_data_thr_list, max.level = 1)
+
+## Chromosomes length
+str(gwaspoly_data$chrom_length)
+```
+
+## Appendix: reproducing the GWASpoly example data
+
+The example dataset provided through `get_gwaspoly_example_data()` can be reproduced with the following code:
+
+```{r reproduce-gwaspoly-example-data, eval = FALSE}
+library(GWASpoly)
+
+genofile <- system.file("extdata", "TableS1.csv", package = "GWASpoly")
+phenofile <- system.file("extdata", "TableS2.csv", package = "GWASpoly")
+
+## Reading example data
+data <- read.GWASpoly(
+  ploidy = 4,
+  pheno.file = phenofile,
+  geno.file = genofile,
+  format = "ACGT",
+  n.traits = 13,
+  delim = ","
+)
+
+## Computing K matrix
+data.original <- set.K(
+  data,
+  LOCO = FALSE,
+  n.core = 2
+)
+
+## Performing GWAS
+gwaspoly_res <- GWASpoly(
+  data.original,
+  models = c("general", "additive", "1-dom"),
+  traits = c("tuber_eye_depth", "tuber_shape", "sucrose"),
+  n.core = 2
+)
+
+## Computing significance threshold
+## Object returned by get_gwaspoly_example_data()
+gwaspoly_res_thr <- set.threshold(
+  gwaspoly_res, 
+  method = "M.eff", 
+  level = 0.05
+)
+```
