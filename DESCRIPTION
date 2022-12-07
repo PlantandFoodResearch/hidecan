@@ -30,6 +30,7 @@ Suggests:
     rmarkdown,
     stringr,
     testthat (>= 3.0.0)
+Remotes: jendelman/GWASpoly
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://shiny-adventure-acfe02d1.pages.github.io/
