@@ -1,0 +1,12 @@
+pandoc: 2.19.2
+pkgdown: 2.0.6
+pkgdown_sha: ~
+articles:
+  gwaspoly_output: gwaspoly_output.html
+  hidecan-step-by-step: hidecan-step-by-step.html
+  hidecan: hidecan.html
+last_built: 2022-12-08T04:46Z
+urls:
+  reference: https://shiny-adventure-acfe02d1.pages.github.io/reference
+  article: https://shiny-adventure-acfe02d1.pages.github.io/articles
+
