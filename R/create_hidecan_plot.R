@@ -106,47 +106,9 @@ create_hidecan_plot <- function(x,
 
   if(!all(unique(x_types) %in% c("GWAS_data_thr", "DE_data_thr", "CAN_data_thr"))) stop("Expecting a list of 'GWAS_data_thr', 'DE_data_thr' and/or 'CAN_data_thr' objects (see apply_threshold() function).")
 
-  ## Chromosomes present in the input data
-  x_chroms <- x |>
-    purrr::map(~ unique(.x[["chromosome"]])) |>
-    unlist() |>
-    unique()
-
-  if(!is.null(chroms)){
-    ## Checking whether the chroms input is valid
-    wrong_chroms <- setdiff(chroms, x_chroms)
-    if(length(wrong_chroms)) stop("In 'chroms' argument, the following values are not valid chromosome names: '",
-                                  paste0(wrong_chroms, collapse = "', '"),
-                                  ". Possible values are: '",
-                                  paste0(x_chroms, collapse = "', '"),
-                                  ".")
-
-    ## Selecting only requested chromosomes in data
-    x_chroms <- chroms
-
-    x <- x |>
-      purrr::map(
-        ~ dplyr::filter(.x, chromosome %in% x_chroms)
-      )
-  }
-
   ## Checking chrom_length input
   if(length(setdiff(c("chromosome", "length"), names(chrom_length)))) stop("'chrom_length' argument should be a data-frame with columns 'chromosome' ad length.")
   if(dplyr::n_distinct(chrom_length$chromosome) != nrow(chrom_length)) stop("Duplicated chromosome names in 'chrom_length' data-frame.")
-
-  chrom_length <- chrom_length |>
-    dplyr::filter(chromosome %in% x_chroms)
-
-  missing_chroms <- setdiff(x_chroms, chrom_length$chromosome)
-  if(length(missing_chroms)) stop("The following chromosomes are present in the data but missing from 'chrom_length' data-frame: '", paste0(missing_chroms, collapse = "', '"), ".")
-
-  ## Removing chromosomes with no significant markers or genes
-  if(remove_empty_chrom){
-    chrom_length <- chrom_length |>
-      dplyr::filter(chromosome %in% x_chroms)
-
-    if(is.factor(chrom_length$chromosome)) chrom_length$chromosome <- droplevels(chrom_length$chromosome)
-  }
 
   ## Making y labels
   if(is.null(names(x))){
@@ -169,6 +131,45 @@ create_hidecan_plot <- function(x,
                   dataset = factor(dataset, levels = datasets_levels))
 
   if('score' %in% names(toplot)) toplot <- toplot |> dplyr::arrange(score)
+
+  ## chromosomes present in dataset and chrom_length
+  cl_chroms <- unique(chrom_length$chromosome)
+  tp_chroms <- unique(toplot$chromosome)
+  all_chrom <- union(cl_chroms, tp_chroms)
+
+  if(is.null(chroms)){
+
+    chroms <- all_chrom
+
+  } else {
+
+    wrong_chroms <- setdiff(chroms, all_chrom)
+    if(length(wrong_chroms)) stop("In 'chroms' argument, the following values are not valid chromosome names: '",
+                                  paste0(wrong_chroms, collapse = "', '"),
+                                  ". Possible values are: '",
+                                  paste0(all_chrom, collapse = "', '"),
+                                  ".")
+
+  }
+
+  ## If want to remove empty chromosomes, look only at the ones that are in toplot
+  if(remove_empty_chrom) chroms <- intersect(chroms, tp_chroms)
+
+  ## checking whether some chromosomes in toplot are missing from chrom_length
+  ## check happens after selecting the specified chromosomes (so then if we don't have info about a chromosome
+  ## but don't want to plot it it's fine), and also after having removed the empty chromosomes if needed
+  ## for the same reason
+  missing_chroms <- setdiff(chroms, cl_chroms)
+  if(length(missing_chroms)) stop("The following chromosomes are present in the data but missing from 'chrom_length' data-frame: '", paste0(missing_chroms, collapse = "', '"), ".")
+
+  ## Now filter both toplot and chrom_lenght to only the desired chromosomes
+  toplot <- toplot |>
+    dplyr::filter(chromosome %in% chroms) |>
+    dplyr::mutate(chromosome = factor(chromosome, levels = chroms))
+
+  chrom_length <- chrom_length |>
+    dplyr::filter(chromosome %in% chroms) |>
+    dplyr::mutate(chromosome = factor(chromosome, levels = chroms))
 
   toplot_chroms <- chrom_length |>
     dplyr::mutate(position_mb = length / 1e6) |>
