@@ -23,7 +23,7 @@ GWAS_data_from_gwaspoly <- function(gwaspoly_output,
                                     traits = NULL,
                                     models = NULL){
 
-  if(!inherits(gwaspoly_output, "GWASpoly.fitted") | !inherits(gwaspoly_output, "GWASpoly.thresh")){
+  if(!inherits(gwaspoly_output, "GWASpoly.fitted") & !inherits(gwaspoly_output, "GWASpoly.thresh")){
     stop("'gwaspoly_output' should be a `GWASpoly.fitted` or `GWASpoly.thresh` object (returned by GWASpoly() or set.threshold() functions).")
   }
 
