@@ -11,6 +11,8 @@ navbar:
         href: articles/hidecan-step-by-step.html
       - text: GWASpoly output
         href: articles/gwaspoly_output.html
+      - text: Shiny app
+        href: articles/shiny-app.html
 
 
 reference:
