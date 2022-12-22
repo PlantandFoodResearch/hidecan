@@ -13,6 +13,13 @@
 #' markers/genes nor candidate genes be removed from the plot? Default value
 #' if `FALSE`.
 #' @param chroms Character vector, name of chromosomes to include in the plot.
+#' @param chrom_limits Integer vector of length 2, or named list where the
+#' elements are integer vectors of length 2. If vector, gives the lower and upper
+#' limit of the chromosomes (in bp) to use in the plot. If a named list, names
+#' should correspond to chromosome names. Gives for each chromosome the lower
+#' and upper limits (in bp) to use in the plot. Doesn't have to be specified
+#' for all chromosomes. Default value is `NULL`, i.e. no limits are applied
+#' to the chromosomes (they will be plotted in their entirety).
 #' @param colour_genes_by_score Logical, whether to colour the genes by score
 #' (`TRUE`) or by log2(fold-change) (`FALSE`). Default value is `TRUE`.
 #' @param title Character, title of the plot. Default value is `NULL` (i.e.
@@ -68,6 +75,19 @@
 #'                     chrom_length,
 #'                     colour_genes_by_score = FALSE,
 #'                     label_size = 2)
+#'
+#' ## Set limits on all chromosomes (to "zoom in" to the 10-20Mb region)
+#' create_hidecan_plot(z,
+#'                     chrom_length,
+#'                     label_size = 2,
+#'                     chrom_limits = c(10e6, 20e6))
+#'
+#' ## Set limits on some chromosomes only
+#' create_hidecan_plot(z,
+#'                     chrom_length
+#'                     label_size = 2,
+#'                     chrom_limits = list("ST4.03ch00" = c(10e6, 20e6),
+#'                                         "ST4.03ch02" = c(15e6, 25e6)))
 #' }
 #' @export
 create_hidecan_plot <- function(x,
@@ -75,6 +95,7 @@ create_hidecan_plot <- function(x,
                                 colour_genes_by_score = TRUE,
                                 remove_empty_chrom = FALSE,
                                 chroms = NULL,
+                                chrom_limits = NULL,
                                 title = NULL,
                                 subtitle = NULL,
                                 n_rows = NULL,
@@ -85,7 +106,7 @@ create_hidecan_plot <- function(x,
                                 label_padding = 0.15){
 
   ## for devtools::check()
-  position <- dataset <- score <- chromosome <- position_mb <- position_mb_end <- data_type <- name <- log2FoldChange <- NULL
+  position <- dataset <- score <- chromosome <- position_mb <- position_mb_end <- data_type <- name <- log2FoldChange <- upper_limit_mb <- lower_limit_mb <- NULL
 
   ## Labels, colours and shapes
   data_type_labels <- c("GWAS_data_thr" = "GWAS peaks",
@@ -177,6 +198,60 @@ create_hidecan_plot <- function(x,
     tidyr::expand_grid(dataset = factor(names(x), levels = datasets_levels)) |>
     dplyr::rename(position_mb_end = position_mb) |>
     dplyr::mutate(position_mb = 0)
+
+  if(!is.null(chrom_limits)){
+    if(is.numeric(chrom_limits) & length(chrom_limits) == 2){
+
+      ## Apply the limits to all chromosomes
+      chrom_limits <- purrr::map(chroms, ~ chrom_limits) |>
+        stats::setNames(chroms)
+
+    } else if (is.list(chrom_limits)){
+
+      if(is.null(names(chrom_limits))) stop("The chrom_limits argument should be a named list, with the names corresponding to chromosomes' name.")
+      if(!all(purrr::map_lgl(chrom_limits, is.numeric)) | !all(purrr::map_lgl(chrom_limits, ~length(.x) == 2))) stop("The chrom_limits argument should be a named list where each element is an integer vector of length 2.")
+
+      bad_chroms <- setdiff(names(chrom_limits), chroms)
+      if(length(bad_chroms)) stop("In chrom_limits argument: '",
+                                  paste0(bad_chroms, collapse = "', '"),
+                                  "' are not valid chromosome names. Possible names are: '",
+                                  paste0(chroms, collapse = "', '"),
+                                  "'.")
+      chrom_limits <- chrom_limits[intersect(names(chrom_limits), chroms)]
+
+    } else {
+      stop("The chrom_limits argument should either be an integer vector of length 2 or a named list where each element is an integer vector of length 2.")
+    }
+
+    chrom_limits_df <- chrom_length |>
+      dplyr::left_join(
+        purrr::map_dfr(
+          chrom_limits,
+          ~ tibble::tibble(lower_limit_mb = .x[[1]],
+                           upper_limit_mb = .x[[2]]),
+          .id = "chromosome"
+        ),
+        by = "chromosome"
+      ) |>
+      tidyr::replace_na(list(lower_limit_mb = 0)) |>
+      dplyr::mutate(upper_limit_mb = dplyr::coalesce(upper_limit_mb, length),
+                    upper_limit_mb = purrr::map2_dbl(length, upper_limit_mb, ~ min(c(.x, .y))),
+                    lower_limit_mb = lower_limit_mb / 1e6,
+                    upper_limit_mb = upper_limit_mb / 1e6) |>
+      dplyr::select(-length)
+
+    toplot <- toplot |>
+      dplyr::left_join(chrom_limits_df, by = "chromosome") |>
+      dplyr::filter(position_mb >= lower_limit_mb, position_mb <= upper_limit_mb) |>
+      dplyr::select(-lower_limit_mb, -upper_limit_mb)
+
+    toplot_chroms <- toplot_chroms |>
+      dplyr::left_join(chrom_limits_df, by = "chromosome") |>
+      dplyr::mutate(position_mb = lower_limit_mb,
+                    position_mb_end = upper_limit_mb) |>
+      dplyr::select(-lower_limit_mb, -upper_limit_mb)
+
+  }
 
   ## Making sure that the order of the "Position of" legends matches the order
   ## in which the different data types appear in the y-axis
@@ -336,6 +411,27 @@ create_hidecan_plot <- function(x,
 #'                             "X vs Z" = x[["DE"]]),
 #'              score_thr_de = -log10(0.05),
 #'              log2fc_thr = 0)
+#'
+#' ## Set limits on all chromosomes (to "zoom in" to the 10-20Mb region)
+#' hidecan_plot(gwas_list = x[["GWAS"]],
+#'              de_list = x[["DE"]],
+#'              can_list = x[["CAN"]],
+#'              score_thr_gwas = -log10(0.0001),
+#'              score_thr_de = -log10(0.005),
+#'              log2fc_thr = 0,
+#'              label_size = 2,
+#'              chrom_limits = c(10e6, 20e6))
+#'
+#' ## Set limits on some chromosomes only
+#' hidecan_plot(gwas_list = x[["GWAS"]],
+#'              de_list = x[["DE"]],
+#'              can_list = x[["CAN"]],
+#'              score_thr_gwas = -log10(0.0001),
+#'              score_thr_de = -log10(0.005),
+#'              log2fc_thr = 0,
+#'              label_size = 2,
+#'              chrom_limits = list("ST4.03ch00" = c(10e6, 20e6),
+#'                                   "ST4.03ch02" = c(15e6, 25e6)))
 #' }
 #' @export
 hidecan_plot <- function(gwas_list = NULL,
@@ -348,6 +444,7 @@ hidecan_plot <- function(gwas_list = NULL,
                          colour_genes_by_score = TRUE,
                          remove_empty_chrom = FALSE,
                          chroms = NULL,
+                         chrom_limits = NULL,
                          title = NULL,
                          subtitle = NULL,
                          n_rows = NULL,
@@ -420,6 +517,7 @@ hidecan_plot <- function(gwas_list = NULL,
                       colour_genes_by_score,
                       remove_empty_chrom,
                       chroms,
+                      chrom_limits,
                       title,
                       subtitle,
                       n_rows,
