@@ -3,6 +3,9 @@ template:
   bootstrap: 5
 
 navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, github]
   components:
     articles:
       text: Articles
@@ -14,6 +17,9 @@ navbar:
       - text: Shiny app
         href: articles/shiny-app.html
 
+home:
+  sidebar:
+    structure: [links, license, citation, authors]
 
 reference:
 
