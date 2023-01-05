@@ -189,7 +189,6 @@ ui <- fluidPage(
         tabPanel(
           title = "Plot options",
 
-          checkboxInput("colour_genes_by_score", "Colour genes by score?", value = TRUE),
           textInput("title", "Title"),
           textInput("subtitle", "Subtitle"),
           fluidRow(
@@ -209,6 +208,8 @@ ui <- fluidPage(
             column(6,
                    numericInput("label_padding", "Label padding", value = 0.15, min = 0, max = Inf))
           ),
+          checkboxInput("colour_genes_by_score", "Colour genes by score?", value = TRUE),
+          checkboxInput("remove_empty_chrom", "Remove empty chromosomes?", value = TRUE)
         ),
 
         tabPanel(
@@ -349,6 +350,7 @@ server <- function(input, output, session){
     create_hidecan_plot(x,
                         chrom_length(),
                         colour_genes_by_score = input$colour_genes_by_score,
+                        remove_empty_chrom = input$remove_empty_chrom,
                         title = input$title,
                         subtitle = input$subtitle,
                         n_rows = plot_nrows(),
