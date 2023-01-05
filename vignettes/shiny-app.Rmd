@@ -1,0 +1,21 @@
+---
+title: "The hidecan shiny app"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{sinhy-app}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(hidecan)
+```
+
+The function `run_hidecan_shiny()` launches a Shiny app from which the user can generate a HIDECAN plot. GWAS results, DE results and candidate genes lists are uploaded as CSV files into the app. Different menus allow to control the significance thresholds and different aspects of the plot. This is a work in progress so it might not offer all the functionalities of the `hidecan_plot()` function.

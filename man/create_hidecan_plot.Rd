@@ -10,6 +10,7 @@ create_hidecan_plot(
   colour_genes_by_score = TRUE,
   remove_empty_chrom = FALSE,
   chroms = NULL,
+  chrom_limits = NULL,
   title = NULL,
   subtitle = NULL,
   n_rows = NULL,
@@ -37,6 +38,14 @@ markers/genes nor candidate genes be removed from the plot? Default value
 if \code{FALSE}.}
 
 \item{chroms}{Character vector, name of chromosomes to include in the plot.}
+
+\item{chrom_limits}{Integer vector of length 2, or named list where the
+elements are integer vectors of length 2. If vector, gives the lower and upper
+limit of the chromosomes (in bp) to use in the plot. If a named list, names
+should correspond to chromosome names. Gives for each chromosome the lower
+and upper limits (in bp) to use in the plot. Doesn't have to be specified
+for all chromosomes. Default value is \code{NULL}, i.e. no limits are applied
+to the chromosomes (they will be plotted in their entirety).}
 
 \item{title}{Character, title of the plot. Default value is \code{NULL} (i.e.
 no title will be added to the plot).}
@@ -105,5 +114,18 @@ create_hidecan_plot(setNames(z, c(" ", "RNAseq", "My list")),
                     chrom_length,
                     colour_genes_by_score = FALSE,
                     label_size = 2)
+
+## Set limits on all chromosomes (to "zoom in" to the 10-20Mb region)
+create_hidecan_plot(z,
+                    chrom_length,
+                    label_size = 2,
+                    chrom_limits = c(10e6, 20e6))
+
+## Set limits on some chromosomes only
+create_hidecan_plot(z,
+                    chrom_length
+                    label_size = 2,
+                    chrom_limits = list("ST4.03ch00" = c(10e6, 20e6),
+                                        "ST4.03ch02" = c(15e6, 25e6)))
 }
 }
