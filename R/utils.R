@@ -51,6 +51,6 @@ get_gwaspoly_example_data <- function(with_thresholds = TRUE){
   if(with_thresholds){
     return(gwaspoly_res_thr)
   } else {
-    gwaspoly_res
+    return(gwaspoly_res)
   }
 }

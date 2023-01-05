@@ -130,6 +130,7 @@ hidecan_plot(
 )
 ```
 
+By setting the `remove_empty_chrom` argument to `TRUE`, these chromosomes will be removed from the plot:
 
 ```{r hidecan-plot-without-empty-chrom, fig.width = 10, fig.height = 8}
 hidecan_plot(
@@ -154,6 +155,53 @@ hidecan_plot(
   score_thr_de = -log10(0.05),      
   log2fc_thr = 0,
   chroms = c("ST4.03ch07", "ST4.03ch08")
+)
+```
+
+
+We can also "zoom in" on some or all chromosomes, through the `chrom_limits` argument. To zoom in on all chromosomes at once, we pass to the `chrom_limits` argument an integer vector of length 2, which gives the lower and upper limits in bp to use. For example here, we focus on the 10-20Mb region of each chromosome:
+
+```{r hidecan-chrom-limits-all-chrom, fig.width = 10, fig.height = 10}
+hidecan_plot(
+  gwas_list = x[["GWAS"]],                    
+  de_list = x[["DE"]],                          
+  can_list = x[["CAN"]],                  
+  score_thr_gwas = -log10(0.0001),  
+  score_thr_de = -log10(0.05),      
+  log2fc_thr = 0,
+  chrom_limits = c(10e6, 20e6)
+)
+```
+
+Alternatively, we can apply different limits to some of the chromosomes, by passing a named list to the argument. The names of the list should match the chromosomes name, and each element should be an integer vector of length 2 giving the lower and upper limits in bp to use for the corresponding chromosome. For example, we will focus on the 10-20Mb region for chromosome 1, and the 30-40Mb region for chromosome 5, and leave all other chromosomes as is:
+
+```{r hidecan-chrom-limits-some-chrom, fig.width = 10, fig.height = 10}
+hidecan_plot(
+  gwas_list = x[["GWAS"]],                    
+  de_list = x[["DE"]],                          
+  can_list = x[["CAN"]],                  
+  score_thr_gwas = -log10(0.0001),  
+  score_thr_de = -log10(0.05),      
+  log2fc_thr = 0,
+  chrom_limits = list("ST4.03ch01" = c(10e6, 20e6),
+                      "ST4.03ch05" = c(30e6, 40e6))
+)
+```
+
+
+The two options `chroms` and `chrom_limits` can be used together:
+
+```{r hidecan-select-chroms-and-chrom-lims, fig.width = 10, fig.height = 3}
+hidecan_plot(
+  gwas_list = x[["GWAS"]],                    
+  de_list = x[["DE"]],                          
+  can_list = x[["CAN"]],                  
+  score_thr_gwas = -log10(0.0001),  
+  score_thr_de = -log10(0.05),      
+  log2fc_thr = 0,
+  chroms = c("ST4.03ch07", "ST4.03ch08"),
+  chrom_limits = list("ST4.03ch07" = c(50e6, 55e6),
+                      "ST4.03ch08" = c(45e6, 50e6))
 )
 ```
 
@@ -317,7 +365,7 @@ In addition, it is possible to:
 
 If you are working on RStudio, you may encounter the following error:
 
-```{r show-window-size-error, echo = FALSE, error = TRUE, fig.width = 0.00001, fig.height = 0.00001}
+```{r show-window-size-error, echo = FALSE, error = TRUE, fig.width = 1, fig.height = 1}
 hidecan_plot(gwas_list = x[["GWAS"]],
              de_list = x[["DE"]],
              can_list = x[["CAN"]],

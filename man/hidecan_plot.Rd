@@ -15,6 +15,7 @@ hidecan_plot(
   colour_genes_by_score = TRUE,
   remove_empty_chrom = FALSE,
   chroms = NULL,
+  chrom_limits = NULL,
   title = NULL,
   subtitle = NULL,
   n_rows = NULL,
@@ -60,6 +61,14 @@ markers/genes nor candidate genes be removed from the plot? Default value
 if \code{FALSE}.}
 
 \item{chroms}{Character vector, name of chromosomes to include in the plot.}
+
+\item{chrom_limits}{Integer vector of length 2, or named list where the
+elements are integer vectors of length 2. If vector, gives the lower and upper
+limit of the chromosomes (in bp) to use in the plot. If a named list, names
+should correspond to chromosome names. Gives for each chromosome the lower
+and upper limits (in bp) to use in the plot. Doesn't have to be specified
+for all chromosomes. Default value is \code{NULL}, i.e. no limits are applied
+to the chromosomes (they will be plotted in their entirety).}
 
 \item{title}{Character, title of the plot. Default value is \code{NULL} (i.e.
 no title will be added to the plot).}
@@ -115,5 +124,26 @@ hidecan_plot(de_list = list("X vs Y" = x[["DE"]],
                             "X vs Z" = x[["DE"]]),
              score_thr_de = -log10(0.05),
              log2fc_thr = 0)
+
+## Set limits on all chromosomes (to "zoom in" to the 10-20Mb region)
+hidecan_plot(gwas_list = x[["GWAS"]],
+             de_list = x[["DE"]],
+             can_list = x[["CAN"]],
+             score_thr_gwas = -log10(0.0001),
+             score_thr_de = -log10(0.005),
+             log2fc_thr = 0,
+             label_size = 2,
+             chrom_limits = c(10e6, 20e6))
+
+## Set limits on some chromosomes only
+hidecan_plot(gwas_list = x[["GWAS"]],
+             de_list = x[["DE"]],
+             can_list = x[["CAN"]],
+             score_thr_gwas = -log10(0.0001),
+             score_thr_de = -log10(0.005),
+             log2fc_thr = 0,
+             label_size = 2,
+             chrom_limits = list("ST4.03ch00" = c(10e6, 20e6),
+                                  "ST4.03ch02" = c(15e6, 25e6)))
 }
 }

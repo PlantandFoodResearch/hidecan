@@ -1,5 +1,11 @@
 load("data-test/test_input.rda")
 
+get_chrom_limits_plot <- function(p){
+  p$layers[[1]]$data |>
+    dplyr::select(chromosome, position_mb, position_mb_end) |>
+    dplyr::distinct()
+}
+
 test_that("create_hidecan_plot works", {
 
   x <- list(
@@ -14,6 +20,7 @@ test_that("create_hidecan_plot works", {
                                    "Expecting a list of 'GWAS_data_thr', 'DE_data_thr' and/or 'CAN_data_thr' objects (see apply_threshold() function)."))
 
   expect_error(create_hidecan_plot(x, chrom_length), NA)
+  expect_error(create_hidecan_plot(x, chrom_length, remove_empty_chrom = TRUE), NA)
 
   p <- create_hidecan_plot(x, chrom_length)
   expect_s3_class(p, "ggplot")
@@ -50,6 +57,34 @@ test_that("create_hidecan_plot works", {
                  sort(),
                c("GWAS 1 - GWAS peaks, 1", "DE genes", "GWAS 1 - GWAS peaks") |>
                  factor(levels = c("GWAS 1 - GWAS peaks, 1", "DE genes", "GWAS 1 - GWAS peaks")))
+
+  ## Checking chrom_limits arguments
+  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = "TEST"), "The chrom_limits argument should either be an integer vector of length 2 or a named list where each element is an integer vector of length 2.")
+  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = c(3e6, 5e6)), NA)
+  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list(c(3e6, 5e6))), "The chrom_limits argument should be a named list, with the names corresponding to chromosomes' name.")
+  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list("TEST" = c(3e6, 5e6))), "In chrom_limits argument: 'TEST' are not valid chromosome names. Possible names are: '.+")
+  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c(3e6, 5e6))), NA)
+  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c(3e6, 5e6, 5e6))), "The chrom_limits argument should be a named list where each element is an integer vector of length 2.")
+  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c("a", "B"))), "The chrom_limits argument should be a named list where each element is an integer vector of length 2.")
+
+  p <- create_hidecan_plot(x, chrom_length, chrom_limits = c(3e6, 5e6))
+  cl_df <- get_chrom_limits_plot(p)
+  expect_true(all(cl_df$position_mb == 3))
+  expect_true(all(cl_df$position_mb_end == 5))
+
+  p <- create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c(3e6, 5e6)))
+  cl_df <- get_chrom_limits_plot(p)
+  expect_equal(dplyr::filter(cl_df, chromosome == "ST4.03ch06")$position_mb, 3)
+  expect_equal(dplyr::filter(cl_df, chromosome == "ST4.03ch06")$position_mb_end, 5)
+  expect_true(all(dplyr::filter(cl_df, chromosome != "ST4.03ch06")$position_mb == 0))
+  expect_true(all(dplyr::filter(cl_df, chromosome != "ST4.03ch06")$position_mb_end > 5))
+
+  p <- create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c(3e6, 500e6)))
+  cl_df <- get_chrom_limits_plot(p)
+  expect_equal(dplyr::filter(cl_df, chromosome == "ST4.03ch06")$position_mb, 3)
+  expect_equal(dplyr::filter(cl_df, chromosome == "ST4.03ch06")$position_mb_end |> round(2), 59.42)
+  expect_true(all(dplyr::filter(cl_df, chromosome != "ST4.03ch06")$position_mb == 0))
+  expect_true(all(dplyr::filter(cl_df, chromosome != "ST4.03ch06")$position_mb_end > 5))
 })
 
 
