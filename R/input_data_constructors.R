@@ -131,7 +131,7 @@ validate_DE_data <- function(x){
 #' of the gene/transcript. If column `log2FoldChange` is missing, will be constructed
 #' as `log2(foldChange)`.
 #'
-#' @param dat Tibble, results from a GWAS analysis. See Details.
+#' @param dat Tibble, results from a differential expression analysis. See Details.
 #' @param keep_rownames_as Character, the name of the column in which to save the
 #' rownames of the input data-frame. Default value is `NULL`, i.e. rownames will
 #' be discarded.
@@ -222,6 +222,8 @@ validate_CAN_data <- function(x){
 }
 
 #' Creates a `CAN_data` object
+#'
+#' Creates a `CAN_data` object from a tibble or data-frame of candidate genes.
 #'
 #' The input data should have one row per gene, and at least the
 #' following columns:

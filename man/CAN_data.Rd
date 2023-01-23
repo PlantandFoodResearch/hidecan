@@ -17,10 +17,11 @@ be discarded.}
 A \code{CAN_data} object, i.e. a tibble.
 }
 \description{
-The input data should have one row per gene, and at least the
-following columns:
+Creates a \code{CAN_data} object from a tibble or data-frame of candidate genes.
 }
 \details{
+The input data should have one row per gene, and at least the
+following columns:
 \itemize{
 \item \code{chromosome}: character column, chromosome on which the gene is located.
 \item \code{start} and \code{end}: numeric, starting and end position of the gene (in bp).

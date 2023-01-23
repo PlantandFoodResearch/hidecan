@@ -7,7 +7,7 @@
 DE_data(dat, keep_rownames_as = NULL)
 }
 \arguments{
-\item{dat}{Tibble, results from a GWAS analysis. See Details.}
+\item{dat}{Tibble, results from a differential expression analysis. See Details.}
 
 \item{keep_rownames_as}{Character, the name of the column in which to save the
 rownames of the input data-frame. Default value is \code{NULL}, i.e. rownames will

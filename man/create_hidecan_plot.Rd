@@ -123,7 +123,7 @@ create_hidecan_plot(z,
 
 ## Set limits on some chromosomes only
 create_hidecan_plot(z,
-                    chrom_length
+                    chrom_length,
                     label_size = 2,
                     chrom_limits = list("ST4.03ch00" = c(10e6, 20e6),
                                         "ST4.03ch02" = c(15e6, 25e6)))

@@ -7,7 +7,7 @@ Authors@R:
 Description: A package for generating hidecan plots that summarise and combine 
   the results of GWAS and transcriptomics differential expression analyses,
   along candidate genes of interest.
-License: GPL (>= 3)
+License: MIT + file LICENSE
 URL: https://shiny-adventure-acfe02d1.pages.github.io/, https://github.com/PlantandFoodResearch/hidecan
 BugReports: https://github.com/PlantandFoodResearch/hidecan/issues
 Encoding: UTF-8
