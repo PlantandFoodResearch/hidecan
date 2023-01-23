@@ -168,7 +168,56 @@ as unit or number. Default value is 0.15
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_example_data.html">get_example_data</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"GWAS"</span> <span class="op">=</span> <span class="fu"><a href="GWAS_data.html">GWAS_data</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="st">"GWAS"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>          <span class="st">"DE"</span> <span class="op">=</span> <span class="fu"><a href="DE_data.html">DE_data</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="st">"DE"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>          <span class="st">"CAN"</span> <span class="op">=</span> <span class="fu"><a href="CAN_data.html">CAN_data</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="st">"CAN"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">chrom_length</span> <span class="op">&lt;-</span> <span class="fu"><a href="combine_chrom_length.html">combine_chrom_length</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="apply_threshold.html">apply_threshold</a></span><span class="op">(</span><span class="va">y</span><span class="op">[[</span><span class="st">"GWAS"</span><span class="op">]</span><span class="op">]</span>, score_thr <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="apply_threshold.html">apply_threshold</a></span><span class="op">(</span><span class="va">y</span><span class="op">[[</span><span class="st">"DE"</span><span class="op">]</span><span class="op">]</span>, score_thr <span class="op">=</span> <span class="fl">1.3</span>, log2fc_thr <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="apply_threshold.html">apply_threshold</a></span><span class="op">(</span><span class="va">y</span><span class="op">[[</span><span class="st">"CAN"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">create_hidecan_plot</span><span class="op">(</span><span class="va">z</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">chrom_length</span>,</span></span>
+<span class="r-in"><span>                    label_size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Colour genes according to their fold-change</span></span></span>
+<span class="r-in"><span><span class="fu">create_hidecan_plot</span><span class="op">(</span><span class="va">z</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">chrom_length</span>,</span></span>
+<span class="r-in"><span>                    colour_genes_by_score <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                    label_size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Add names to the datasets</span></span></span>
+<span class="r-in"><span><span class="fu">create_hidecan_plot</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">z</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Genomics"</span>, <span class="st">"RNAseq"</span>, <span class="st">"My list"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">chrom_length</span>,</span></span>
+<span class="r-in"><span>                    colour_genes_by_score <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                    label_size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Add names to some of the datasets only (e.g. not for GWAS results)</span></span></span>
+<span class="r-in"><span><span class="fu">create_hidecan_plot</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="va">z</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">" "</span>, <span class="st">"RNAseq"</span>, <span class="st">"My list"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">chrom_length</span>,</span></span>
+<span class="r-in"><span>                    colour_genes_by_score <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                    label_size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Set limits on all chromosomes (to "zoom in" to the 10-20Mb region)</span></span></span>
+<span class="r-in"><span><span class="fu">create_hidecan_plot</span><span class="op">(</span><span class="va">z</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">chrom_length</span>,</span></span>
+<span class="r-in"><span>                    label_size <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                    chrom_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10e6</span>, <span class="fl">20e6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Set limits on some chromosomes only</span></span></span>
+<span class="r-in"><span><span class="fu">create_hidecan_plot</span><span class="op">(</span><span class="va">z</span>,</span></span>
+<span class="r-in"><span>                    <span class="va">chrom_length</span>,</span></span>
+<span class="r-in"><span>                    label_size <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                    chrom_limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="st">"ST4.03ch00"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">10e6</span>, <span class="fl">20e6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                        <span class="st">"ST4.03ch02"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">15e6</span>, <span class="fl">25e6</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+</code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
