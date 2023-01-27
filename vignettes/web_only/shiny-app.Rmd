@@ -1,10 +1,6 @@
 ---
 title: "The hidecan shiny app"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{sinhy-app}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: html_document
 ---
 
 ```{r, include = FALSE}

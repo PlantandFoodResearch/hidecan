@@ -35,22 +35,26 @@ get_example_data <- function(){
   )
 }
 
-#' GWASpoly example dataset
-#'
-#' Returns a list of GWASpoly example datasets.
-#'
-#' @param with_thresholds Logical, should the GWASpoly object returned
-#' contain significance threshold? Default value is `TRUE`.
-#' @returns
-#' * if `with_thresholds` is `TRUE`: a `GWASpoly.thresh` object
-#' (returned by the `GWASpoly::set.threshold()` function).
-#' if `with_thresholds` is `FALSE`: a `GWASpoly.fitted` object
-#' (returned by the `GWASpoly::GWASpoly()` function).
-#' @export
-get_gwaspoly_example_data <- function(with_thresholds = TRUE){
-  if(with_thresholds){
-    return(gwaspoly_res_thr)
-  } else {
-    return(gwaspoly_res)
-  }
-}
+# #' GWASpoly example dataset
+# #'
+# #' Returns a list of GWASpoly example datasets. Not exported because otherwise
+# #' would load the GWASpoly package which is not on CRAN.
+# #'
+# #' Install the GWASpoly package with `devtools::install_github('jendelman/GWASpoly', build_vignettes=FALSE)`.
+# #'
+# #' @param with_thresholds Logical, should the GWASpoly object returned
+# #' contain significance threshold? Default value is `TRUE`.
+# #' @returns
+# #' * if `with_thresholds` is `TRUE`: a `GWASpoly.thresh` object
+# #' (returned by the `GWASpoly::set.threshold()` function).
+# #' if `with_thresholds` is `FALSE`: a `GWASpoly.fitted` object
+# #' (returned by the `GWASpoly::GWASpoly()` function).
+# #' @export
+# get_gwaspoly_example_data <- function(with_thresholds = TRUE){
+#
+#   if(with_thresholds){
+#     return(gwaspoly_res_thr)
+#   } else {
+#     return(gwaspoly_res)
+#   }
+# }

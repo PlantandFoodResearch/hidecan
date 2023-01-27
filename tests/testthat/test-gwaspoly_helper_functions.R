@@ -1,6 +1,11 @@
 test_that("GWAS_data_from_gwaspoly works", {
-  x_thr <- get_gwaspoly_example_data()
-  x_nothr <- get_gwaspoly_example_data(with_thresholds = FALSE)
+
+  ## because the example data is a S4 object from the GWASpoly package,
+  ## Cannot load it without using GWASpoly
+  skip_if_not_installed("GWASpoly")
+
+  x_thr <- gwaspoly_res_thr
+  x_nothr <- gwaspoly_res
 
   expect_error(GWAS_data_from_gwaspoly("TEST"), "'gwaspoly_output' should be a `GWASpoly.fitted` or `GWASpoly.thresh` object (returned by GWASpoly() or set.threshold() functions).", fixed = TRUE)
 

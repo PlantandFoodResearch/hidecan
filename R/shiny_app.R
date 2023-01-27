@@ -9,3 +9,8 @@ run_hidecan_shiny <- function(){
 
   shiny::runApp(app_dir, display.mode = "normal")
 }
+
+## To get rid of the check NOTE
+ignore_unused_imports <- function(){
+  vroom::vroom
+}

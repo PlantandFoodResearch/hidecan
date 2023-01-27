@@ -86,6 +86,9 @@ gwaspoly_res <- GWASpoly(data.original,
 
 gwaspoly_res_thr <- set.threshold(gwaspoly_res, method = "M.eff", level = 0.05)
 
+## For users to access the example GWASpoly dataset without having it loaded
+saveRDS(gwaspoly_res_thr, file = "inst/extdata/gwaspoly_res_thr.rda")
+
 #manhattan.plot(gwaspoly_res_thr)
 
 

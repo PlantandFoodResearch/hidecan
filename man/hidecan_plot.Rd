@@ -102,7 +102,7 @@ Wrapper function to create a HIDECAN plot from GWAS results,
 DE results or candidate genes.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 x <- get_example_data()
 
 ## Typical example with one GWAs result table, one DE result table and

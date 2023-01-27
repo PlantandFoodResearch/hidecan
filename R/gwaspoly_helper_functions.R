@@ -128,12 +128,6 @@ GWAS_data_from_gwaspoly <- function(gwaspoly_output,
 #' @param ... Further arguments passed to the \code{\link{create_hidecan_plot}()}
 #' function.
 #' @returns A ggplot.
-#' @examples
-#' \dontrun{
-#' x <- get_gwaspoly_example_data(with_thresholds = TRUE)
-#'
-#' hidecan_plot_from_gwaspoly(x)
-#' }
 #' @export
 hidecan_plot_from_gwaspoly <- function(gwaspoly_output,
                                        traits = NULL,

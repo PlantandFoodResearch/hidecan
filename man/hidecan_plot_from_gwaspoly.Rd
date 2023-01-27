@@ -25,10 +25,3 @@ A ggplot.
 \description{
 Creates a HIDECAN plot from the GWAS results from GWASpoly.
 }
-\examples{
-\dontrun{
-x <- get_gwaspoly_example_data(with_thresholds = TRUE)
-
-hidecan_plot_from_gwaspoly(x)
-}
-}

@@ -1,14 +1,14 @@
 Package: hidecan
-Title: Hidecan plots generator
+Title: Create HIDECAN Plots for Visualising GWAS and Differential Expression Results
 Version: 1.0.0
 Authors@R: 
     person("Olivia", "Angelin-Bonnet", , "olivia.angelin-bonnet@plantandfood.co.nz", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7708-2919"))
-Description: A package for generating hidecan plots that summarise and combine 
+Description: Generates HIDECAN plots that summarise and combine 
   the results of GWAS and transcriptomics differential expression analyses,
-  along candidate genes of interest.
+  along with manually curated candidate genes of interest.
 License: MIT + file LICENSE
-URL: https://shiny-adventure-acfe02d1.pages.github.io/, https://github.com/PlantandFoodResearch/hidecan
+URL: https://plantandfoodresearch.github.io/hidecan/, https://github.com/PlantandFoodResearch/hidecan
 BugReports: https://github.com/PlantandFoodResearch/hidecan/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -26,12 +26,10 @@ Imports:
     tidyr,
     viridis,
     vroom
-Suggests: 
-    GWASpoly,
+Suggests:
     knitr,
     rmarkdown,
     stringr,
     testthat (>= 3.0.0)
-Remotes: jendelman/GWASpoly
 Config/testthat/edition: 3
 VignetteBuilder: knitr
