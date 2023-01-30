@@ -20,7 +20,7 @@ extracted. If \code{NULL} (default value), all genetic models present are consid
 function.}
 }
 \value{
-A ggplot.
+A \code{ggplot}.
 }
 \description{
 Creates a HIDECAN plot from the GWAS results from GWASpoly.

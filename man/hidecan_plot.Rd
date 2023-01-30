@@ -95,7 +95,7 @@ as unit or number. Default value is 0.15
 (for \link[ggrepel]{geom_label_repel}).}
 }
 \value{
-a ggplot.
+a \code{ggplot}.
 }
 \description{
 Wrapper function to create a HIDECAN plot from GWAS results,

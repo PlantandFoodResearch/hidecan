@@ -15,13 +15,13 @@ library(hidecan)
 library(GWASpoly)
 ```
 
-The [GWASpoly](https://github.com/jendelman/GWASpoly) package is designed to perform GWAS analyses for autopolyploid organisms. It allows the simultaneous analysis of several traits or phenotypes, and can compute markers association scores with different genetic models. The package also includes a function to compute the significance threshold for each trait and genetic model.
+The [`GWASpoly`](https://github.com/jendelman/GWASpoly) package is designed to perform GWAS analyses for autopolyploid organisms. It allows the simultaneous analysis of several traits or phenotypes, and can compute markers association scores with different genetic models. The package also includes a function to compute the significance threshold for each trait and genetic model.
 
 The `hidecan` package provides functions to generate a HIDECAN plot directly from a `GWASpoly` output object (object of class `GWASpoly.thresh` obtained with the `GWASpoly::set.threshold()`).
 
-## GWASpoly example data
+## `GWASpoly` example data
 
-An example of GWASpoly output, based on the [original example dataset](https://doi.org/10.3835/plantgenome2015.08.0073) from the GWASpoly package is provided in the package and can be loaded through ^[Note that this example dataset is not made available through a helper function in the hidecan package for a good reason. The `gwaspoly_res_thr` object is an instance of an S4 class (`GWASpoly.thresh`) implemented in the `GWASpoly` package. As such, you need to have the `GWASpoly` package installed in order to load this object. But `GWASpoly` is not (yet?) on CRAN, so cannot be used as an import or suggest by `hidecan`.]:
+An example of `GWASpoly` output, based on the [original example dataset](https://doi.org/10.3835/plantgenome2015.08.0073) from the `GWASpoly` package is provided in the package and can be loaded through ^[Note that this example dataset is not made available through a helper function in the hidecan package for a good reason. The `gwaspoly_res_thr` object is an instance of an S4 class (`GWASpoly.thresh`) implemented in the `GWASpoly` package. As such, you need to have the `GWASpoly` package installed in order to load this object. But `GWASpoly` is not (yet?) on CRAN, so cannot be used as an import or suggest by `hidecan`.]:
 
 ```{r get-gwaspoly-example-dataset}
 gwaspoly_res_thr <- readRDS(system.file("extdata/gwaspoly_res_thr.rda", package = "hidecan"))
@@ -40,7 +40,7 @@ head(gwaspoly_res_thr@scores[[1]])
 
 See the Appendix section at the bottom of this vignette for the code used to generate this example data.
 
-## HIDECAN plot from GWASpoly output
+## HIDECAN plot from `GWASpoly` output
 
 The `hidecan_plot_from_gwaspoly()` function reads in a `GWASpoly.thresh` object, extracts from it the marker scores for each combination of trait and genetic model, and uses them to construct a HIDECAN plot. In the y-axis, the trait is indicated first, and the genetic model next in brackets:
 
@@ -64,7 +64,7 @@ hidecan_plot_from_gwaspoly(
 )
 ```
 
-## The GWASpoly constructor
+## The `GWASpoly` constructor
 
 Under the hood, the `hidecan_plot_from_gwaspoly()` function relies on the `GWAS_data_from_gwaspoly()` constructor, which takes as an input either:
 
@@ -72,7 +72,7 @@ Under the hood, the `hidecan_plot_from_gwaspoly()` function relies on the `GWAS_
 
 -   a `GWASpoly.thresh` object (returned by the `GWASpoly::set.threshold()` function).
 
-The function extracts the marker scores for all traits and genetic models present in the GWASpoly output, as well as the length of all chromosomes. In addition, if the input data is a `GWASpoly.thresh` object, it extracts the significance threshold for each combination of trait and genetic model, and uses it to filter significant markers.
+The function extracts the marker scores for all traits and genetic models present in the `GWASpoly` output, as well as the length of all chromosomes. In addition, if the input data is a `GWASpoly.thresh` object, it extracts the significance threshold for each combination of trait and genetic model, and uses it to filter significant markers.
 
 ```{r gwas-data-from-gwaspoly}
 gwaspoly_data <- GWAS_data_from_gwaspoly(gwaspoly_res_thr)
@@ -88,7 +88,7 @@ str(gwaspoly_data$chrom_length)
 ```
 
 
-## Appendix: reproducing the GWASpoly example data
+## Appendix: reproducing the `GWASpoly` example data
 
 The example dataset provided here can be reproduced with the following code:
 

@@ -69,7 +69,7 @@ Any other column present in the data-frame will be ignored. An example of valid 
 head(x[["DE"]])
 ```
 
-(Note that in the example dataset, some genes have missing values in the `padj` column; this corresponds to genes that have been filtered out via [independent filtering in the DEseq2 package](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pvaluesNA)).
+(Note that in the example dataset, some genes have missing values in the `padj` column; this corresponds to genes that have been filtered out via [independent filtering in the DESeq2 package](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pvaluesNA)).
 
 ### Candidate genes
 

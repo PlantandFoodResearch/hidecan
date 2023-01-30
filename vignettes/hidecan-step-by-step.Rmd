@@ -162,7 +162,7 @@ As for the `GWAS_data`, `DE_data` or `CAN_data` objects, the `GWAS_data_thr`, `D
 
 ## Creating the HIDECAN plot
 
-Finally, the filtered datasets are combined into a list and passed on to the `create_hidecan_plot()` function, along with the tibble of chromosome length. This is the function that generates the HIDECAN ggplot:
+Finally, the filtered datasets are combined into a list and passed on to the `create_hidecan_plot()` function, along with the tibble of chromosome length. This is the function that generates the HIDECAN `ggplot`:
 
 ```{r create-hidecan-plot, fig.width = 10, fig.height = 10}
 create_hidecan_plot(
