@@ -1,3 +1,12 @@
+# Resubmission
+
+This is a resubmission. In this version I have:
+
+* Reduced the size of the example datasets included in the package in order to reduce the size of the tarball.
+
+* Added a reference to the publication presenting HIDECAN plots. It is currently in review,
+so there is no DOI to cite yet. The package description will be updated upon publication.
+
 # Test environments
 
 - local Windows 10, R 4.2.2
@@ -23,34 +32,16 @@ Maintainer: 'Olivia Angelin-Bonnet <olivia.angelin-bonnet@plantandfood.co.nz>'
 New submission
 
 Possibly misspelled words in DESCRIPTION:
+  Angelin (11:19)
   GWAS (2:45, 9:18)
-  HIDECAN (2:15, 8:24)
+  HIDECAN (2:15, 8:24, 10:64)
+  al (11:37)
+  et (11:34)
   transcriptomics (9:27)
 ```
 
-This is a new submission. GWAS stands for Genome-Wide Association Study, HIDECAN is the name of the package, and transcriptomics is correctly spelled.
+This is a new submission. Angelin is a family name; GWAS stands for Genome-Wide Association Study; HIDECAN is the name of the package; transcriptomics is correctly spelled; et al. was used for a reference.
 
-There was a NOTE only found on Windows Server 2022 R-devel, 64 bit:
-
-```
-* checking for detritus in the temp directory ... NOTE
-Found the following files/directories:
-  'lastMiKTeXException'
-```
-
-As noted in [R-hub issue #503](https://github.com/r-hub/rhub/issues/503), this could be due to a bug/crash in MiKTeX and can likely be ignored.
-
-There was a NOTE only found on macOS 10.13.6 High Sierra, R-release, brew:
-
-```
-* checking installed package size ... NOTE
-  installed size is  5.2Mb
-  sub-directories of 1Mb or more:
-    extdata   1.0Mb
-    R         3.1Mb
-```
-
-The extdata folder contains an R object that is made available to users as an example input data.
 
 # Downstream dependencies
 

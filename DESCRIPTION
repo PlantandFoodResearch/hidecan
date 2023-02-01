@@ -6,7 +6,8 @@ Authors@R:
            comment = c(ORCID = "0000-0002-7708-2919"))
 Description: Generates HIDECAN plots that summarise and combine 
   the results of GWAS and transcriptomics differential expression analyses,
-  along with manually curated candidate genes of interest.
+  along with manually curated candidate genes of interest. The HIDECAN plot 
+  is presented in Angelin-Bonnet et al. (2023) (currently in review).
 License: MIT + file LICENSE
 URL: https://plantandfoodresearch.github.io/hidecan/, https://github.com/PlantandFoodResearch/hidecan
 BugReports: https://github.com/PlantandFoodResearch/hidecan/issues
