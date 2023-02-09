@@ -2,10 +2,9 @@
 
 This is a resubmission. In this version I have:
 
-* Reduced the size of the example datasets included in the package in order to reduce the size of the tarball.
+* Explained acronyms in the description of the package.
 
-* Added a reference to the publication presenting HIDECAN plots. It is currently in review,
-so there is no DOI to cite yet. The package description will be updated upon publication.
+* Added the missing \value tag in the run_hidecan_shiny.Rd documentation.s
 
 # Test environments
 
@@ -33,14 +32,14 @@ New submission
 
 Possibly misspelled words in DESCRIPTION:
   Angelin (11:19)
-  GWAS (2:45, 9:18)
-  HIDECAN (2:15, 8:24, 10:64)
+  GWAS (9:51)
+  HIDECAN (2:15, 8:24, 10:103)
   al (11:37)
   et (11:34)
-  transcriptomics (9:27)
+  transcriptomics (9:61)
 ```
 
-This is a new submission. Angelin is a family name; GWAS stands for Genome-Wide Association Study; HIDECAN is the name of the package; transcriptomics is correctly spelled; et al. was used for a reference.
+This is a new submission. Angelin is a family name; GWAS stands for Genome-Wide Association Study (precised in the description); HIDECAN is the name of the package; transcriptomics is correctly spelled; et al. was used for a reference.
 
 
 # Downstream dependencies

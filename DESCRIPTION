@@ -1,19 +1,19 @@
 Package: hidecan
-Title: Create HIDECAN Plots for Visualising GWAS and Differential Expression Results
+Title: Create HIDECAN Plots for Visualising Genome-Wide Association Studies and Differential Expression Results
 Version: 1.1.0
 Authors@R: 
     person("Olivia", "Angelin-Bonnet", , "olivia.angelin-bonnet@plantandfood.co.nz", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7708-2919"))
 Description: Generates HIDECAN plots that summarise and combine 
-  the results of GWAS and transcriptomics differential expression analyses,
-  along with manually curated candidate genes of interest. The HIDECAN plot 
+  the results of genome-wide association studies (GWAS) and transcriptomics 
+  differential expression analyses (DE), along with manually curated candidate genes of interest. The HIDECAN plot 
   is presented in Angelin-Bonnet et al. (2023) (currently in review).
 License: MIT + file LICENSE
 URL: https://plantandfoodresearch.github.io/hidecan/, https://github.com/PlantandFoodResearch/hidecan
 BugReports: https://github.com/PlantandFoodResearch/hidecan/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3
 Depends: 
     R (>= 2.10)
 Imports: 
