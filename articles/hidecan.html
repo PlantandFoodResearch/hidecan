@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">hidecan</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,9 +45,12 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/hidecan-step-by-step.html">Step-by-step</a>
-    <a class="dropdown-item" href="../articles/gwaspoly_output.html">GWASpoly output</a>
-    <a class="dropdown-item" href="../articles/shiny-app.html">Shiny app</a>
+    <a class="dropdown-item" href="../articles/web_only/gwaspoly_output.html">GWASpoly output</a>
+    <a class="dropdown-item" href="../articles/web_only/shiny-app.html">Shiny app</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -83,7 +86,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://shiny-adventure-acfe02d1.pages.github.io/" class="external-link">hidecan</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://plantandfoodresearch.github.io/hidecan/">hidecan</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="input-data">Input data<a class="anchor" aria-label="anchor" href="#input-data"></a>
 </h2>
@@ -97,8 +100,8 @@ contain some mandatory columns, depending on the type of data.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">x</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 3</span></span>
-<span><span class="co">#&gt;  $ GWAS: tibble [72,847 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;  $ DE  : tibble [25,163 × 7] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;  $ GWAS: tibble [35,481 × 4] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;  $ DE  : tibble [10,671 × 7] (S3: tbl_df/tbl/data.frame)</span></span>
 <span><span class="co">#&gt;  $ CAN : tibble [32 × 6] (S3: tbl_df/tbl/data.frame)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="gwas-results">GWAS results<a class="anchor" aria-label="anchor" href="#gwas-results"></a>
@@ -123,14 +126,14 @@ example of valid input is shown below:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="st">"GWAS"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 4</span></span></span>
-<span><span class="co">#&gt;   id                chromosome position  score</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ST4.03ch00_172333 ST4.03ch00   <span style="text-decoration: underline;">172</span>333 0.342 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ST4.03ch00_172690 ST4.03ch00   <span style="text-decoration: underline;">172</span>690 0.179 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ST4.03ch00_194668 ST4.03ch00   <span style="text-decoration: underline;">194</span>668 0.047<span style="text-decoration: underline;">9</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ST4.03ch00_194695 ST4.03ch00   <span style="text-decoration: underline;">194</span>695 0.469 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ST4.03ch00_194712 ST4.03ch00   <span style="text-decoration: underline;">194</span>712 0.893 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> ST4.03ch00_275624 ST4.03ch00   <span style="text-decoration: underline;">275</span>624 0.380</span></span></code></pre></div>
+<span><span class="co">#&gt;   id                  chromosome position score</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> ST4.03ch00_45467783 ST4.03ch00 45<span style="text-decoration: underline;">467</span>783 0.191</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> ST4.03ch01_88589716 ST4.03ch01 88<span style="text-decoration: underline;">589</span>716 1.84 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> ST4.03ch02_48614228 ST4.03ch02 48<span style="text-decoration: underline;">614</span>228 0.381</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> ST4.03ch03_62263578 ST4.03ch03 62<span style="text-decoration: underline;">263</span>578 0.661</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> ST4.03ch04_72139135 ST4.03ch04 72<span style="text-decoration: underline;">139</span>135 0.640</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> ST4.03ch05_52040302 ST4.03ch05 52<span style="text-decoration: underline;">040</span>302 0.346</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="differential-expression-results">Differential expression results<a class="anchor" aria-label="anchor" href="#differential-expression-results"></a>
@@ -164,18 +167,18 @@ example of valid input is shown below:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="st">"DE"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
-<span><span class="co">#&gt;   gene                 chromosome   padj log2FoldChange   start     end label   </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> PGSC0003DMG400013995 ST4.03ch00  0.972       0.000<span style="text-decoration: underline;">728</span>  <span style="text-decoration: underline;">174</span>833  <span style="text-decoration: underline;">179</span>264 Serine …</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> PGSC0003DMG400045238 ST4.03ch00  0.922      -<span style="color: #BB0000;">0.000</span><span style="color: #BB0000; text-decoration: underline;">878</span>  <span style="text-decoration: underline;">461</span>366  <span style="text-decoration: underline;">461</span>756 N-acyle…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> PGSC0003DMG400045392 ST4.03ch00 <span style="color: #BB0000;">NA</span>           0.002<span style="text-decoration: underline;">87</span>   <span style="text-decoration: underline;">690</span>521  <span style="text-decoration: underline;">692</span>816 Gene of…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> PGSC0003DMG400022052 ST4.03ch00  0.609       0.029<span style="text-decoration: underline;">3</span>    <span style="text-decoration: underline;">804</span>763  <span style="text-decoration: underline;">805</span>569 Conserv…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> PGSC0003DMG400022093 ST4.03ch00  0.176       0.147    1<span style="text-decoration: underline;">247</span>383 1<span style="text-decoration: underline;">252</span>635 Conserv…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> PGSC0003DMG402018893 ST4.03ch00  0.950       0.001<span style="text-decoration: underline;">25</span>  1<span style="text-decoration: underline;">510</span>542 1<span style="text-decoration: underline;">513</span>352 Stricto…</span></span></code></pre></div>
+<span><span class="co">#&gt;   gene                 chromosome   padj log2FoldChange    start      end label </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> PGSC0003DMG400032056 ST4.03ch00  0.787       0.011<span style="text-decoration: underline;">4</span>   45<span style="text-decoration: underline;">813</span>195 45<span style="text-decoration: underline;">813</span>526 Prote…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> PGSC0003DMG400018039 ST4.03ch01  0.630       0.005<span style="text-decoration: underline;">29</span>  88<span style="text-decoration: underline;">623</span>473 88<span style="text-decoration: underline;">627</span>702 PhD-f…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> PGSC0003DMG400020231 ST4.03ch02  0.864       0.003<span style="text-decoration: underline;">62</span>  48<span style="text-decoration: underline;">563</span>271 48<span style="text-decoration: underline;">578</span>978 Acety…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> PGSC0003DMG400009197 ST4.03ch03  0.530       0.032<span style="text-decoration: underline;">0</span>   62<span style="text-decoration: underline;">256</span>322 62<span style="text-decoration: underline;">258</span>929 Phosp…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> PGSC0003DMG403025662 ST4.03ch04  0.975       0.002<span style="text-decoration: underline;">25</span>  72<span style="text-decoration: underline;">168</span>842 72<span style="text-decoration: underline;">170</span>119 Conse…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> PGSC0003DMG400023316 ST4.03ch05 <span style="color: #BB0000;">NA</span>          -<span style="color: #BB0000;">0.000</span><span style="color: #BB0000; text-decoration: underline;">726</span> 52<span style="text-decoration: underline;">039</span>916 52<span style="text-decoration: underline;">040</span>326 Conse…</span></span></code></pre></div>
 <p>(Note that in the example dataset, some genes have missing values in
 the <code>padj</code> column; this corresponds to genes that have been
 filtered out via <a href="https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#pvaluesNA" class="external-link">independent
-filtering in the DEseq2 package</a>).</p>
+filtering in the DESeq2 package</a>).</p>
 </div>
 <div class="section level3">
 <h3 id="candidate-genes">Candidate genes<a class="anchor" aria-label="anchor" href="#candidate-genes"></a>

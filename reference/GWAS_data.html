@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">hidecan</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,9 +28,12 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/hidecan-step-by-step.html">Step-by-step</a>
-    <a class="dropdown-item" href="../articles/gwaspoly_output.html">GWASpoly output</a>
-    <a class="dropdown-item" href="../articles/shiny-app.html">Shiny app</a>
+    <a class="dropdown-item" href="../articles/web_only/gwaspoly_output.html">GWASpoly output</a>
+    <a class="dropdown-item" href="../articles/web_only/shiny-app.html">Shiny app</a>
   </div>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -94,20 +97,20 @@ If column <code>score</code> column is missing, will be constructed as <code>-lo
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_example_data.html">get_example_data</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">GWAS_data</span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="st">"GWAS"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 72,847 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    id                chromosome position  score</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ST4.03ch00_172333 ST4.03ch00   <span style="text-decoration: underline;">172</span>333 0.342 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ST4.03ch00_172690 ST4.03ch00   <span style="text-decoration: underline;">172</span>690 0.179 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ST4.03ch00_194668 ST4.03ch00   <span style="text-decoration: underline;">194</span>668 0.047<span style="text-decoration: underline;">9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ST4.03ch00_194695 ST4.03ch00   <span style="text-decoration: underline;">194</span>695 0.469 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ST4.03ch00_194712 ST4.03ch00   <span style="text-decoration: underline;">194</span>712 0.893 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ST4.03ch00_275624 ST4.03ch00   <span style="text-decoration: underline;">275</span>624 0.380 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ST4.03ch00_303647 ST4.03ch00   <span style="text-decoration: underline;">303</span>647 0.486 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ST4.03ch00_303860 ST4.03ch00   <span style="text-decoration: underline;">303</span>860 0.517 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ST4.03ch00_303918 ST4.03ch00   <span style="text-decoration: underline;">303</span>918 0.937 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ST4.03ch00_598047 ST4.03ch00   <span style="text-decoration: underline;">598</span>047 1.82  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 72,837 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 35,481 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    id                  chromosome position score</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> ST4.03ch00_45467783 ST4.03ch00 45<span style="text-decoration: underline;">467</span>783 0.191</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> ST4.03ch01_88589716 ST4.03ch01 88<span style="text-decoration: underline;">589</span>716 1.84 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> ST4.03ch02_48614228 ST4.03ch02 48<span style="text-decoration: underline;">614</span>228 0.381</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> ST4.03ch03_62263578 ST4.03ch03 62<span style="text-decoration: underline;">263</span>578 0.661</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> ST4.03ch04_72139135 ST4.03ch04 72<span style="text-decoration: underline;">139</span>135 0.640</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> ST4.03ch05_52040302 ST4.03ch05 52<span style="text-decoration: underline;">040</span>302 0.346</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> ST4.03ch06_59434834 ST4.03ch06 59<span style="text-decoration: underline;">434</span>834 1.13 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> ST4.03ch07_56713057 ST4.03ch07 56<span style="text-decoration: underline;">713</span>057 0.213</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> ST4.03ch08_56937627 ST4.03ch08 56<span style="text-decoration: underline;">937</span>627 0.843</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> ST4.03ch09_61537423 ST4.03ch09 61<span style="text-decoration: underline;">537</span>423 0.512</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 35,471 more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
