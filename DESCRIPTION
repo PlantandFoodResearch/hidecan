@@ -1,6 +1,6 @@
 Package: hidecan
 Title: Create HIDECAN Plots for Visualising Genome-Wide Association Studies and Differential Expression Results
-Version: 1.1.9000
+Version: 1.1.0
 Authors@R: 
     person("Olivia", "Angelin-Bonnet", , "olivia.angelin-bonnet@plantandfood.co.nz", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-7708-2919"))
