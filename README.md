@@ -13,7 +13,13 @@ association study (GWAS) and transcriptomics differential expression
 
 ## Installation
 
-You can install the development version of `hidecan` from
+`hidecan` is available on the CRAN and can be installed via:
+
+``` r
+install.packages("hidecan")
+```
+
+Alternatively, you can install the development version of `hidecan` from
 [GitHub](https://github.com/) with:
 
 ``` r
