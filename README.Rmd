@@ -22,7 +22,14 @@ knitr::opts_chunk$set(
 
 ## Installation
 
-You can install the development version of `hidecan` from [GitHub](https://github.com/) with:
+`hidecan` is available on the CRAN and can be installed via:
+
+```{r, eval = FALSE}
+install.packages("hidecan")
+```
+
+
+Alternatively, you can install the development version of `hidecan` from [GitHub](https://github.com/) with:
 
 ```{r, eval = FALSE}
 # install.packages("devtools")
