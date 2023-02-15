@@ -86,6 +86,9 @@ gwaspoly_res <- GWASpoly(data.original,
 
 gwaspoly_res_thr <- set.threshold(gwaspoly_res, method = "M.eff", level = 0.05)
 
+## For users to access the example GWASpoly dataset without having it loaded
+saveRDS(gwaspoly_res_thr, file = "inst/extdata/gwaspoly_res_thr.rda")
+
 #manhattan.plot(gwaspoly_res_thr)
 
 
@@ -93,4 +96,47 @@ gwaspoly_res_thr <- set.threshold(gwaspoly_res, method = "M.eff", level = 0.05)
 ## Saving everything ##
 ## ----------------- ##
 
-usethis::use_data(gwas_data, de_data, candidate_data, gwaspoly_res, gwaspoly_res_thr, internal = TRUE, overwrite = TRUE)
+## To reduce the size of the dataset, removing at random some of the non-significant
+## markers and genes
+
+## Preserving the end of each chromosome
+gwas_data_ends <- gwas_data |>
+  group_by(chromosome) |>
+  slice_max(position, n = 1) |>
+  ungroup()
+
+de_data_ends <- de_data |>
+  group_by(chromosome) |>
+  slice_max(end, n = 1) |>
+  ungroup()
+
+## Keeping the significant markers/genes
+gwas_data_sign <- gwas_data |>
+  filter(score >= 3.5)
+
+de_data_sign <- de_data |>
+  filter(padj <= 0.05)
+
+## Randomly subsetting non-significant markers/genes
+gwas_data_subset <- gwas_data |>
+  filter(score < 3.5) |>
+  slice_sample(prop = 0.5)
+
+de_data_subset <- de_data |>
+  filter(padj > 0.05) |>
+  slice_sample(prop = 0.5)
+
+## Combining retained markers/genes
+gwas_data <- bind_rows(
+  gwas_data_ends,
+  gwas_data_sign,
+  gwas_data_subset
+)
+
+de_data <- bind_rows(
+  de_data_ends,
+  de_data_sign,
+  de_data_subset
+)
+
+usethis::use_data(gwas_data, de_data, candidate_data, internal = TRUE, overwrite = TRUE)

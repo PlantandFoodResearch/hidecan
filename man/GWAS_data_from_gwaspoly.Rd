@@ -31,5 +31,5 @@ combination. The names of the list are in the form \verb{trait (genetic model)}.
 }
 }
 \description{
-Extracts GWAS results and chomosome length from GWASpoly output.
+Extracts GWAS results and chromosome length from GWASpoly output.
 }

@@ -10,3 +10,5 @@
 ^\.github$
 ^README\.Rmd$
 ^README.html$
+^cran-comments\.md$
+^CRAN-SUBMISSION$

@@ -72,14 +72,14 @@ as unit or number. Default value is 0.15
 (for \link[ggrepel]{geom_label_repel}).}
 }
 \value{
-A ggplot.
+A \code{ggplot}.
 }
 \description{
 Creates a HIDECAN plot from a list of filtered GWAS or DE results
 and/or candidate genes.
 }
 \examples{
-\dontrun{
+if (interactive()) {
 x <- get_example_data()
 y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
           "DE" = DE_data(x[["DE"]]),

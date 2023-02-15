@@ -38,9 +38,9 @@
 #' @param label_padding Numeric, amount of padding around gene labels in the plot,
 #' as unit or number. Default value is 0.15
 #' (for \link[ggrepel]{geom_label_repel}).
-#' @returns A ggplot.
+#' @returns A `ggplot`.
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' x <- get_example_data()
 #' y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
 #'           "DE" = DE_data(x[["DE"]]),
@@ -387,9 +387,9 @@ create_hidecan_plot <- function(x,
 #' giving for each chromosome its length in bp. If `NULL` (the default), will
 #' be inferred from the GWAS, DE and candidate gene data.
 #' @inheritParams create_hidecan_plot
-#' @returns a ggplot.
+#' @returns a `ggplot`.
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' x <- get_example_data()
 #'
 #' ## Typical example with one GWAs result table, one DE result table and

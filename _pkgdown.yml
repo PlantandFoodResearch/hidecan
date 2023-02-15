@@ -13,9 +13,9 @@ navbar:
       - text: Step-by-step
         href: articles/hidecan-step-by-step.html
       - text: GWASpoly output
-        href: articles/gwaspoly_output.html
+        href: articles/web_only/gwaspoly_output.html
       - text: Shiny app
-        href: articles/shiny-app.html
+        href: articles/web_only/shiny-app.html
 
 home:
   sidebar:
@@ -58,7 +58,6 @@ reference:
 - title: "Example datasets"
   contents:
   - get_example_data
-  - get_gwaspoly_example_data
 
 - title: "Utils"
   contents:

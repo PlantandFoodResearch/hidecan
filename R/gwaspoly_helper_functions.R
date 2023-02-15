@@ -1,6 +1,6 @@
 #' Extracts information from GWASpoly output
 #'
-#' Extracts GWAS results and chomosome length from GWASpoly output.
+#' Extracts GWAS results and chromosome length from GWASpoly output.
 #'
 #' @param gwaspoly_output A `GWASpoly.fitted` or `GWASpoly.thresh` object
 #' (returned by `GWASpoly::GWASpoly()` or `GWASpoly::set.threshold()` functions).
@@ -127,13 +127,7 @@ GWAS_data_from_gwaspoly <- function(gwaspoly_output,
 #' @inheritParams GWAS_data_from_gwaspoly
 #' @param ... Further arguments passed to the \code{\link{create_hidecan_plot}()}
 #' function.
-#' @returns A ggplot.
-#' @examples
-#' \dontrun{
-#' x <- get_gwaspoly_example_data(with_thresholds = TRUE)
-#'
-#' hidecan_plot_from_gwaspoly(x)
-#' }
+#' @returns A `ggplot`.
 #' @export
 hidecan_plot_from_gwaspoly <- function(gwaspoly_output,
                                        traits = NULL,

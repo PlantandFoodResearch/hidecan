@@ -6,6 +6,9 @@
 \usage{
 run_hidecan_shiny()
 }
+\value{
+No return value, called for side effects (launching the shiny app).
+}
 \description{
 Starts the HIDECAN shiny app. The app reads in csv data to produce
 a HIDECAN plot.

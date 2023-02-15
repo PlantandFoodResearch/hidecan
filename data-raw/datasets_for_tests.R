@@ -10,3 +10,40 @@ can_res <- hidecan::CAN_data(candidate_data)
 
 save(gwas_res, de_res, can_res, file = "tests/testthat/data-test/test_input.rda")
 
+
+library(GWASpoly)
+library(readr)
+library(dplyr)
+
+genofile <- system.file("extdata", "TableS1.csv", package = "GWASpoly")
+phenofile <- system.file("extdata", "TableS2.csv", package = "GWASpoly")
+
+set.seed(10)
+geno_data <- read_csv(genofile) |>
+  slice_sample(n = 500)
+
+temp_file <- tempfile()
+write_csv(geno_data, temp_file)
+
+data <- read.GWASpoly(ploidy = 4,
+                      pheno.file = phenofile,
+                      geno.file = temp_file,
+                      format = "ACGT",
+                      n.traits = 13,
+                      delim = ",")
+
+data.original <- set.K(data,
+                       LOCO = FALSE,
+                       n.core = 2)
+
+
+gwaspoly_res <- GWASpoly(data.original,
+                         models = c("general", "additive"),
+                         traits = c("tuber_eye_depth", "tuber_shape"),
+                         n.core = 2)
+
+gwaspoly_res_thr <- set.threshold(gwaspoly_res, method = "M.eff", level = 0.05)
+
+## For users to access the example GWASpoly dataset without having it loaded
+saveRDS(gwaspoly_res, file = "tests/testthat/data-test/test_gwaspoly_res.rda")
+saveRDS(gwaspoly_res_thr, file = "tests/testthat/data-test/test_gwaspoly_res_thr.rda")
