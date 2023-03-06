@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">hidecan</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,6 +76,34 @@
 <li><p><code>CAN</code>: a tibble of candidate genes, with columns <code>id</code>, <code>chromosome</code>,
 <code>start</code>, <code>end</code>, <code>name</code> and <code>gene_name</code>.</p></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The dataset used in this example is presented in Angelin-Bonnet et al., 2023
+(submitted). In this study, tetraploid potato plants from a half-sibling
+breeding population were used to assess the genetic components of tuber
+bruising. Capture sequencing was used to obtain genomic information about the
+individuals, and a genome-wide association study (GWAS) was performed on 72,847
+genomic biallelic variants obtained from 158
+plants for which a bruising score was measured. The GWAS analysis was carried
+with the <code>GWASpoly</code> package. In addition, expression data was obtained for
+25,163 transcribed genes, and a differential expression (DE) analysis was
+carried out between 41 low- and 33 high-bruising samples. Finally, a literature
+search yielded a list of 42 candidate genes identified in previous studies as
+involved in potato tuber bruising mechanisms. A subset of the GWAS and DE results,
+as well as the list of candidate genes from the literature, are made available
+in this function. From the
+complete GWAS results table, half of the genomic variants with a GWAS score
+&lt; 3.5 were randomly selected and consequently discarded, yielding a dataset
+with GWAS scores for 35,481 variants. Similarly, half of the transcribed
+genes in the DE results table with an adjusted p-value &gt; 0.05 were
+randomly selected and discarded, yielding a dataset with DE results for
+10,671 transcribed genes. This filtering was performed to reduce the
+size of the datasets (in accordance with CRAN policies), but ensures
+that all significant markers and genes are retained in the datasets.
+Finally, some of the candidate genes located on chromosome 3 were removed
+from the example dataset for better clarity in the resulting HIDECAN
+plot, leaving 32 candidate genes.</p>
+    </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

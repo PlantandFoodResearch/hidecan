@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">hidecan</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0.9000</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -525,6 +525,20 @@ the candidate genes labels (<code>label_size</code> and
 </ul>
 </div>
 <div class="section level2">
+<h2 id="creating-a-manhattan-plot">Creating a Manhattan plot<a class="anchor" aria-label="anchor" href="#creating-a-manhattan-plot"></a>
+</h2>
+<p>It is possible to visualise GWAS results with a Manhattan plot
+through the <code><a href="../reference/manhattan_plot.html">manhattan_plot()</a></code> function. The function takes
+as input a data-frame of GWAS results, which must follow the same rules
+as for <code>plot_hidecan()</code> function (see <a href="hidecan.html#gwas-results">this section</a> of the vignette). A
+horizontal line representing the significance threshold can be added to
+the plot, by passing the value to the <code>score_thr</code>
+argument.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/manhattan_plot.html">manhattan_plot</a></span><span class="op">(</span><span class="va">x</span><span class="op">[[</span><span class="st">"GWAS"</span><span class="op">]</span><span class="op">]</span>, score_thr <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<p><img src="hidecan_files/figure-html/manhattan-plot-1.png" width="960"></p>
+</div>
+<div class="section level2">
 <h2 id="viewport-error">Viewport error<a class="anchor" aria-label="anchor" href="#viewport-error"></a>
 </h2>
 <p>If you are working on RStudio, you may encounter the following
@@ -534,7 +548,7 @@ error:</p>
 the size of the plotting window in the RStudio console. Alternatively,
 you can save the plot into an R object, then use
 <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggplot2::ggsave()</a></code> to save it into a file:</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hidecan_plot.html">hidecan_plot</a></span><span class="op">(</span></span>
 <span>  gwas_list <span class="op">=</span> <span class="va">x</span><span class="op">[[</span><span class="st">"GWAS"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  de_list <span class="op">=</span> <span class="va">x</span><span class="op">[[</span><span class="st">"DE"</span><span class="op">]</span><span class="op">]</span>,</span>
