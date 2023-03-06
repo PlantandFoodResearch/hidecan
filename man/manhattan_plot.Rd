@@ -15,6 +15,9 @@ manhattan_plot(
 )
 }
 \arguments{
+\item{gwas_df}{Data-frame of GWAS results, with at least a \code{chromosome},
+\code{position} and either \code{padj} or \code{score} columns.}
+
 \item{score_thr}{Numeric, the significance threshold on GWAS score. If a value
 is provided, will be represented in the Manhattan plot as a red dashed line. If
 \code{NULL} (default value), no significance threshold line will be drawn.}
@@ -37,9 +40,6 @@ the points for each chromosome. Names will be ignored. If vector provided
 contains less colours than the number of chromosomes to plot, the values will
 be recycled. If \code{NULL}, default, colours will be automatically chosen from a
 predefined palette.}
-
-\item{x}{Data-frame of GWAS results, with at least a \code{chromosome},
-\code{position} and either \code{padj} or \code{score} columns.}
 }
 \value{
 A \code{ggplot}.

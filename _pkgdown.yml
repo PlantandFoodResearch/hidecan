@@ -48,12 +48,13 @@ reference:
   contents:
   - apply_threshold
 
-- title: "Generating a hidecan plot"
+- title: "Plotting functions"
   contents:
   - hidecan_plot
   - create_hidecan_plot
   - run_hidecan_shiny
   - hidecan_plot_from_gwaspoly
+  - manhattan_plot
 
 - title: "Example datasets"
   contents:
