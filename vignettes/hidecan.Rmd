@@ -361,6 +361,15 @@ In addition, it is possible to:
 
 -   control the size of the labels and padding around the text for the candidate genes labels (`label_size` and `label_padding` arguments).
 
+## Creating a Manhattan plot
+
+It is possible to visualise GWAS results with a Manhattan plot through the `manhattan_plot()` function. The function takes as input a data-frame of GWAS results, which must follow the same rules as for `plot_hidecan()` function (see [this section](hidecan.html#gwas-results) of the vignette). A horizontal line representing the significance threshold can be added to the plot, by passing the value to the `score_thr` argument.
+
+```{r manhattan-plot, fig.width = 10, fig.height = 6}
+manhattan_plot(x[["GWAS"]], score_thr = 4)
+```
+
+
 ## Viewport error
 
 If you are working on RStudio, you may encounter the following error:

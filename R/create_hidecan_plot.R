@@ -13,6 +13,7 @@
 #' markers/genes nor candidate genes be removed from the plot? Default value
 #' if `FALSE`.
 #' @param chroms Character vector, name of chromosomes to include in the plot.
+#' If `NULL` (default value), all chromosomes will be included.
 #' @param chrom_limits Integer vector of length 2, or named list where the
 #' elements are integer vectors of length 2. If vector, gives the lower and upper
 #' limit of the chromosomes (in bp) to use in the plot. If a named list, names
