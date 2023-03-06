@@ -1,3 +1,5 @@
+# hidecan 1.1.0.9000
+
 # hidecan 1.1.0
 
 * Removed `get_gwaspoly_example_data()` function so that the package doesn't depend on GWASpoly (for CRAN submission)
