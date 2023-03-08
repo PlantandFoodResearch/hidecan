@@ -2,8 +2,9 @@
 #'
 #' Creates a Manhattan plot from a data-frame of GWAS results.
 #'
-#' @param gwas_df Data-frame of GWAS results, with at least a `chromosome`,
-#' `position` and either `padj` or `score` columns.
+#' @param gwas_list Data-frame or list of data-frames containing GWAS results,
+#' each with at least a `chromosome`, `position` and either `padj` or `score`
+#' columns. If a named list, the names will be used in the plot.
 #' @param score_thr Numeric, the significance threshold on GWAS score. If a value
 #' is provided, will be represented in the Manhattan plot as a red dashed line. If
 #' `NULL` (default value), no significance threshold line will be drawn.
@@ -21,6 +22,8 @@
 #' contains less colours than the number of chromosomes to plot, the values will
 #' be recycled. If `NULL`, default, colours will be automatically chosen from a
 #' predefined palette.
+#' @param ncol Integer, number of Manhattan plots per row when several GWAS results
+#' are provided.
 #' @returns A `ggplot`.
 #' @examples
 #' if (interactive()){
@@ -38,15 +41,38 @@
 #'                chrom_col = c("dodgerblue1", "dodgerblue4"))
 #' }
 #' @export
-manhattan_plot <- function(gwas_df,
+manhattan_plot <- function(gwas_list,
                            score_thr = NULL,
                            chroms = NULL,
                            title = NULL,
                            subtitle = NULL,
                            size_range = c(1, 3),
-                           chrom_col = NULL){
+                           chrom_col = NULL,
+                           ncol = NULL){
 
-  gwas_df <- GWAS_data(gwas_df)
+  ## For devtools::check
+  facet <- NULL
+
+  if(is.data.frame(gwas_list)){
+
+    gwas_df <- GWAS_data(gwas_list)
+    make_facets <- FALSE
+
+  } else if(is.list(gwas_list)){
+
+    if(is.null(names(gwas_list))) names(gwas_list) <- paste0("GWAS results ", seq_along(gwas_list))
+
+    gwas_df <- gwas_list |>
+      purrr::map_dfr(GWAS_data, .id = "facet") |>
+      dplyr::mutate(facet = factor(facet, levels = names(gwas_list)))
+
+    make_facets <- TRUE
+
+  } else{
+    stop("gwas_list argument should be either a list or a data-frame.")
+  }
+
+
 
   chrom_length <- compute_chrom_length(gwas_df)
 
@@ -104,6 +130,11 @@ manhattan_plot <- function(gwas_df,
                           linetype = 2)
   }
 
+  if(make_facets){
+    p <- p +
+      ggplot2::facet_wrap(~facet, ncol = ncol)
+  }
+
   p <- p +
     ggplot2::scale_colour_manual(values = chrom_col,
                                  guide = "none") +
@@ -116,6 +147,7 @@ manhattan_plot <- function(gwas_df,
     ggplot2::theme_bw() +
     ggplot2::labs(x = NULL,
                   y = "GWAS score")
+
 
   return(p)
 
