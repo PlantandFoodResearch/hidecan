@@ -363,11 +363,21 @@ In addition, it is possible to:
 
 ## Creating a Manhattan plot
 
-It is possible to visualise GWAS results with a Manhattan plot through the `manhattan_plot()` function. The function takes as input a data-frame of GWAS results, which must follow the same rules as for `plot_hidecan()` function (see [this section](hidecan.html#gwas-results) of the vignette). A horizontal line representing the significance threshold can be added to the plot, by passing the value to the `score_thr` argument.
+It is possible to visualise GWAS results with a Manhattan plot through the `manhattan_plot()` function. The function takes as input a data-frame (or list of data-frames) of GWAS results, which must follow the same rules as for `plot_hidecan()` function (see [this section](hidecan.html#gwas-results) of the vignette). A horizontal line representing the significance threshold can be added to the plot, by passing the threshold value to the `score_thr` argument.
 
-```{r manhattan-plot, fig.width = 10, fig.height = 6}
+```{r manhattan-plot, fig.width = 11, fig.height = 6}
 manhattan_plot(x[["GWAS"]], score_thr = 4)
 ```
+
+As for the `hidecan_plot()` function, it is possible to pass a list of GWAS results to the function, in order to draw several Manhattan plots in one figure. The names of the list will be used to identify the different plots:
+
+```{r manhattan-plot-facets, fig.width = 11, fig.height = 12}
+manhattan_plot(list("Trait A" = x[["GWAS"]],
+                    "Trait B" = x[["GWAS"]]), 
+               score_thr = 4,
+               ncol = 1)
+```
+
 
 
 ## Viewport error

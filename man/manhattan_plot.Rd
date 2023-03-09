@@ -5,18 +5,20 @@
 \title{Creates a Manhattan plot}
 \usage{
 manhattan_plot(
-  gwas_df,
+  gwas_list,
   score_thr = NULL,
   chroms = NULL,
   title = NULL,
   subtitle = NULL,
   size_range = c(1, 3),
-  chrom_col = NULL
+  chrom_col = NULL,
+  ncol = NULL
 )
 }
 \arguments{
-\item{gwas_df}{Data-frame of GWAS results, with at least a \code{chromosome},
-\code{position} and either \code{padj} or \code{score} columns.}
+\item{gwas_list}{Data-frame or list of data-frames containing GWAS results,
+each with at least a \code{chromosome}, \code{position} and either \code{padj} or \code{score}
+columns. If a named list, the names will be used in the plot.}
 
 \item{score_thr}{Numeric, the significance threshold on GWAS score. If a value
 is provided, will be represented in the Manhattan plot as a red dashed line. If
@@ -40,6 +42,9 @@ the points for each chromosome. Names will be ignored. If vector provided
 contains less colours than the number of chromosomes to plot, the values will
 be recycled. If \code{NULL}, default, colours will be automatically chosen from a
 predefined palette.}
+
+\item{ncol}{Integer, number of Manhattan plots per row when several GWAS results
+are provided.}
 }
 \value{
 A \code{ggplot}.
