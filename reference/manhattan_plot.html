@@ -63,21 +63,23 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">manhattan_plot</span><span class="op">(</span></span>
-<span>  <span class="va">gwas_df</span>,</span>
+<span>  <span class="va">gwas_list</span>,</span>
 <span>  score_thr <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  chroms <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  subtitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  size_range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span>  chrom_col <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  chrom_col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ncol <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>gwas_df</dt>
-<dd><p>Data-frame of GWAS results, with at least a <code>chromosome</code>,
-<code>position</code> and either <code>padj</code> or <code>score</code> columns.</p></dd>
+    <dl><dt>gwas_list</dt>
+<dd><p>Data-frame or list of data-frames containing GWAS results,
+each with at least a <code>chromosome</code>, <code>position</code> and either <code>padj</code> or <code>score</code>
+columns. If a named list, the names will be used in the plot.</p></dd>
 
 
 <dt>score_thr</dt>
@@ -113,6 +115,11 @@ the points for each chromosome. Names will be ignored. If vector provided
 contains less colours than the number of chromosomes to plot, the values will
 be recycled. If <code>NULL</code>, default, colours will be automatically chosen from a
 predefined palette.</p></dd>
+
+
+<dt>ncol</dt>
+<dd><p>Integer, number of Manhattan plots per row when several GWAS results
+are provided.</p></dd>
 
 </dl></div>
     <div class="section level2">
