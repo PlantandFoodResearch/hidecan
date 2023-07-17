@@ -19,8 +19,8 @@
 #'
 #' Returns a list of example datasets.
 #'
-#' The dataset used in this example is presented in Angelin-Bonnet et al., 2023
-#' (submitted). In this study, tetraploid potato plants from a half-sibling
+#' The dataset used in this example is presented in: [Angelin-Bonnet et al., BMC Plant Biology (2023)](https://doi.org/10.1186/s12870-023-04255-2).
+#' In this study, tetraploid potato plants from a half-sibling
 #' breeding population were used to assess the genetic components of tuber
 #' bruising. Capture sequencing was used to obtain genomic information about the
 #' individuals, and a genome-wide association study (GWAS) was performed on 72,847
