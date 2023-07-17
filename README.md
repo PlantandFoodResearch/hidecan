@@ -69,3 +69,12 @@ hidecan_plot(
 ```
 
 <img src="man/figures/README-brief-example-hidecan-plot-1.png" width="100%" />
+
+## Citation
+
+If using HIDECAN, please cite:
+
+Angelin-Bonnet, O., Vignes, M., Biggs, P. J., Baldwin, S., & Thomson, S.
+(2023). Visual integration of GWAS and differential expression results
+with the hidecan R package. bioRxiv, 2023-03.
+<https://doi.org/10.1101/2023.03.30.535015>
