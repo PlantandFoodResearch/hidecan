@@ -44,7 +44,7 @@ hidecan_plot <- hidecan_plot(
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank(),
     legend.position = "none",
-    strip.background.x = element_rect(fill = "#6cc3c6"),
+    strip.background.x = element_rect(fill = "#136c68"),
     strip.text.x = element_text(
       margin = margin(0, 0, 0, 0),
       color = NA
@@ -53,8 +53,8 @@ hidecan_plot <- hidecan_plot(
   ) +
   theme_transparent()
 
-col_border <- "#399093"
-col_background <- "#ceebec"
+col_border <- "#0f5753"
+col_background <- "#d4f7f6"
 sticker(
   hidecan_plot,
   package = "hidecan",
