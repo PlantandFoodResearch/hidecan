@@ -187,11 +187,11 @@ create_hidecan_plot <- function(x,
   ## Now filter both toplot and chrom_lenght to only the desired chromosomes
   toplot <- toplot |>
     dplyr::filter(chromosome %in% chroms) |>
-    dplyr::mutate(chromosome = factor(chromosome, levels = chroms))
+    dplyr::mutate(chromosome = factor(chromosome, levels = chroms, ordered = FALSE))
 
   chrom_length <- chrom_length |>
     dplyr::filter(chromosome %in% chroms) |>
-    dplyr::mutate(chromosome = factor(chromosome, levels = chroms))
+    dplyr::mutate(chromosome = factor(chromosome, levels = chroms, ordered = FALSE))
 
   toplot_chroms <- chrom_length |>
     dplyr::mutate(position_mb = length / 1e6) |>
@@ -231,7 +231,8 @@ create_hidecan_plot <- function(x,
           ~ tibble::tibble(lower_limit_mb = .x[[1]],
                            upper_limit_mb = .x[[2]]),
           .id = "chromosome"
-        ),
+        ) |>
+          dplyr::mutate(chromosome = factor(chromosome, levels = chroms)),
         by = "chromosome"
       ) |>
       tidyr::replace_na(list(lower_limit_mb = 0)) |>
