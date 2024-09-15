@@ -16,19 +16,31 @@ test_that("create_hidecan_plot works", {
 
   chrom_length <- combine_chrom_length(list(gwas_res, de_res, can_res))
 
-  expect_error(create_hidecan_plot(list(LETTERS[1:5]),
-                                   "Expecting a list of 'GWAS_data_thr', 'DE_data_thr' and/or 'CAN_data_thr' objects (see apply_threshold() function)."))
+  expect_error(
+    create_hidecan_plot(list(LETTERS[1:5]), chrom_length),
+    "Expecting a list of 'GWAS_data_thr', 'DE_data_thr' and/or 'CAN_data_thr' objects (see apply_threshold() function).",
+    fixed = TRUE
+  )
 
-  expect_error(create_hidecan_plot(x, chrom_length), NA)
-  expect_error(create_hidecan_plot(x, chrom_length, remove_empty_chrom = TRUE), NA)
+  expect_no_error(create_hidecan_plot(x, chrom_length))
+  expect_no_error(create_hidecan_plot(x, chrom_length, remove_empty_chrom = TRUE))
 
   p <- create_hidecan_plot(x, chrom_length)
   expect_s3_class(p, "ggplot")
 
   ## Checking problems with chrom_length
-  expect_error(create_hidecan_plot(x, dplyr::rename(chrom_length, chrom = chromosome)), "'chrom_length' argument should be a data-frame with columns 'chromosome' ad length.")
-  expect_error(create_hidecan_plot(x, dplyr::bind_rows(chrom_length, chrom_length[1, ])), "Duplicated chromosome names in 'chrom_length' data-frame.")
-  expect_error(create_hidecan_plot(x, chrom_length[-1, ]), "The following chromosomes are present in the data but missing from 'chrom_length' data-frame: '.+")
+  expect_error(
+    create_hidecan_plot(x, dplyr::rename(chrom_length, chrom = chromosome)),
+    "'chrom_length' argument should be a data-frame with columns 'chromosome' and 'length'."
+  )
+  expect_error(
+    create_hidecan_plot(x, dplyr::bind_rows(chrom_length, chrom_length[1, ])),
+    "Duplicated chromosome names in 'chrom_length' data-frame."
+  )
+  expect_error(
+    create_hidecan_plot(x, chrom_length[-1, ]),
+    "The following chromosomes are present in the data but missing from 'chrom_length' data-frame: '.+"
+  )
 
   ## Checking names on y-axis
   expect_equal(p$data[["dataset"]] |>
@@ -59,13 +71,28 @@ test_that("create_hidecan_plot works", {
                  factor(levels = c("GWAS 1 - GWAS peaks, 1", "DE genes", "GWAS 1 - GWAS peaks")))
 
   ## Checking chrom_limits arguments
-  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = "TEST"), "The chrom_limits argument should either be an integer vector of length 2 or a named list where each element is an integer vector of length 2.")
-  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = c(3e6, 5e6)), NA)
-  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list(c(3e6, 5e6))), "The chrom_limits argument should be a named list, with the names corresponding to chromosomes' name.")
-  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list("TEST" = c(3e6, 5e6))), "In chrom_limits argument: 'TEST' are not valid chromosome names. Possible names are: '.+")
-  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c(3e6, 5e6))), NA)
-  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c(3e6, 5e6, 5e6))), "The chrom_limits argument should be a named list where each element is an integer vector of length 2.")
-  expect_error(create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c("a", "B"))), "The chrom_limits argument should be a named list where each element is an integer vector of length 2.")
+  expect_error(
+    create_hidecan_plot(x, chrom_length, chrom_limits = "TEST"),
+    "The chrom_limits argument should either be an integer vector of length 2 or a named list where each element is an integer vector of length 2."
+  )
+  expect_no_error(create_hidecan_plot(x, chrom_length, chrom_limits = c(3e6, 5e6)))
+  expect_error(
+    create_hidecan_plot(x, chrom_length, chrom_limits = list(c(3e6, 5e6))),
+    "The chrom_limits argument should be a named list, with the names corresponding to chromosomes' name."
+  )
+  expect_error(
+    create_hidecan_plot(x, chrom_length, chrom_limits = list("TEST" = c(3e6, 5e6))),
+    "In chrom_limits argument: 'TEST' are not valid chromosome names. Possible names are: '.+"
+  )
+  expect_no_error(create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c(3e6, 5e6))))
+  expect_error(
+    create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c(3e6, 5e6, 5e6))),
+    "The chrom_limits argument should be a named list where each element is an integer vector of length 2."
+  )
+  expect_error(
+    create_hidecan_plot(x, chrom_length, chrom_limits = list("ST4.03ch06" = c("a", "B"))),
+    "The chrom_limits argument should be a named list where each element is an integer vector of length 2."
+  )
 
   p <- create_hidecan_plot(x, chrom_length, chrom_limits = c(3e6, 5e6))
   cl_df <- get_chrom_limits_plot(p)
