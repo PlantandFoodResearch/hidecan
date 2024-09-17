@@ -14,6 +14,8 @@ navbar:
         href: articles/hidecan-step-by-step.html
       - text: GWASpoly output
         href: articles/web_only/gwaspoly_output.html
+      - text: Adding custom tracks
+        href: articles/web_only/custom_tracks.html
       - text: Shiny app
         href: articles/web_only/shiny-app.html
 
@@ -33,6 +35,7 @@ reference:
   - GWAS_data
   - DE_data
   - CAN_data
+  - CUSTOM_data
 
 - title: "Constructors from packages output"
   contents:
@@ -42,6 +45,7 @@ reference:
   contents:
   - compute_chrom_length
   - combine_chrom_length
+  - .compute_chrom_length_markers
   - .compute_chrom_length_genes
 
 - title: "Applying threshold"
@@ -52,9 +56,13 @@ reference:
   contents:
   - hidecan_plot
   - create_hidecan_plot
+  - hidecan_aes
   - run_hidecan_shiny
   - hidecan_plot_from_gwaspoly
   - manhattan_plot
+  - .get_aes_type
+  - .get_plot_aes
+  - .add_data_type
 
 - title: "Example datasets"
   contents:
@@ -63,4 +71,6 @@ reference:
 - title: "Utils"
   contents:
   - .check_cols
+  - .check_chroms
+  - .check_chrom_limits
 

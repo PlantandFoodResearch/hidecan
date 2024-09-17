@@ -17,6 +17,7 @@ library(tibble)
 library(dplyr)
 library(purrr)
 library(stringr)
+library(viridis)
 ```
 
 ```{r setup}
@@ -378,6 +379,63 @@ manhattan_plot(list("Trait A" = x[["GWAS"]],
                ncol = 1)
 ```
 
+## Controlling the aesthetics (colours, point shapes, labels) of the tracks
+
+The default look of the different data types (GWAS peaks, DE genes and candidate genes) in a HIDECAN plots is controlled by the arguments returned by `hidecan_aes()`. More specifically, the function controls:
+
+- the label of each data type on the x-axis (e.g. 'GWAS peaks' for GWAS results),
+
+- the colour of the vertical lines used to showcase the position of markers or genes,
+
+- the shape of the points,
+
+- whether the name of the markers/genes are displayed (by default, will only show for candidate genes),
+
+- the colour palette used for the score or log2 fold-change of the points.
+
+The default values used for these parameters have been chosen to ensure that the resulting plot is easily understandable. However, it is possible to change them. To do so, we'll start by saving the defaults returned by `hidecan_aes()`:
+
+```{r hidecan-aes}
+default_aes <- hidecan_aes()
+
+str(default_aes, max.level = 1)
+
+default_aes[[1]]
+```
+
+As we can see above, the function returns a list of the default aesthetics to use for GWAS results (the `GWAS_data_thr` element), for DE results (`DE_data_thr` element), for candidate genes (`CAN_data_thr` element), and for custom tracks (`CUSTOM_data_thr` element - see the [Adding custom tracks](web_only/custom_tracks.html) article for more information). Each element is itself a list, containing the value for each attribute mentioned above.
+
+Let's modify the label given to the GWAS peaks, and the colour palette used for DE score:
+
+```{r modify-hidecan-aes}
+library(viridis)
+
+default_aes$GWAS_data_thr$y_label <- "GWAS signif. markers"
+
+default_aes$DE_data_thr$fill_scale <- scale_fill_viridis(
+  "DE gene score",
+  option = "inferno",
+  guide = ggplot2::guide_colourbar(
+    title.position = "top",
+    title.hjust = 0.5,
+    order = 3 # ensures this legend is shown after the one for GWAS scores
+  )
+)
+```
+
+We can use these modified values by passing this list to `hidecan_plot()` through its `custom_aes` argument:
+
+```{r use-custom-aes, fig.width = 10, fig.height = 10}
+hidecan_plot(
+  gwas_list = x[["GWAS"]],
+  de_list = x[["DE"]],
+  can_list = x[["CAN"]],     
+  score_thr_gwas = -log10(0.0001),
+  score_thr_de = -log10(0.05),
+  log2fc_thr = 0,
+  custom_aes = default_aes
+)
+```
 
 
 ## Viewport error
