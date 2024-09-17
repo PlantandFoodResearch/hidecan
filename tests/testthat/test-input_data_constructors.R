@@ -186,3 +186,55 @@ test_that("CAN_data works", {
   res <- CAN_data(data_2, keep_rownames_as = "rowname")
   expect_equal(res[["rowname"]], rownames(data_2))
 })
+
+test_that("new_CUSTOM_data works", {
+
+  data <- tibble::tibble(chromosome = LETTERS[1:5], position = 1:5, score = 1:5)
+
+  ## Expecting a tibble as input
+  expect_error(new_CUSTOM_data(as.data.frame(data)))
+
+  res <- new_CUSTOM_data(data)
+
+  ## output should be equal to input
+  expect_equal(unclass(res), unclass(data))
+
+  ## class should be CUSTOM_data
+  expect_equal(class(res)[1], "CUSTOM_data")
+
+})
+
+
+test_that("CUSTOM_data works", {
+
+  data <- tibble::tibble(chromosome = LETTERS[1:5], position = 1:5, score = 1:5)
+
+  ## Need the correct columns
+  expect_error(CUSTOM_data(tibble::tibble(a = LETTERS[1:5], b = 1:5)),
+               "Input data-frame is missing the following columns: 'chromosome', 'position', 'score'.")
+
+  ## Checking correct input type
+  expect_error(CUSTOM_data(tibble::tibble(chromosome = LETTERS[1:5], position = LETTERS[1:5], score = 1:5)),
+               "'position' column should contain numeric values.")
+  expect_error(CUSTOM_data(tibble::tibble(chromosome = LETTERS[1:5], position = 1:5, score = LETTERS[1:5])),
+               "'score' column should contain numeric values.")
+
+  ## Correct input should trigger no error
+  expect_no_error(CUSTOM_data(data))
+
+  ## output should be equal to input
+  expect_equal(unclass(CUSTOM_data(data)), unclass(data))
+
+
+  data_2 <- as.data.frame(data)
+  rownames(data_2) <- letters[1:5]
+
+  ## By default, rownames of a data-frame should be ignored
+  res <- CUSTOM_data(data_2)
+  expect_equal(colnames(res),  colnames(data_2))
+
+  ## If specified, rownames should be saved in new column
+  res <- CUSTOM_data(data_2, keep_rownames_as = "rowname")
+  expect_equal(res[["rowname"]], rownames(data_2))
+})
+

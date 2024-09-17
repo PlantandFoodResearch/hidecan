@@ -1,6 +1,6 @@
-load("data-test/test_input.rda")
-
 test_that("apply_threshold.GWAS_data works", {
+
+  gwas_res <- test_get_gwas()
 
   ## If no threshold is specified, returns the dataset without rows
   ## that have a missing score
@@ -21,6 +21,8 @@ test_that("apply_threshold.GWAS_data works", {
 })
 
 test_that("apply_threshold.DE_data works", {
+
+  de_res <- test_get_de()
 
   ## If no threshold is specified, returns the dataset without rows
   ## that have a missing score
@@ -46,6 +48,8 @@ test_that("apply_threshold.DE_data works", {
 
 test_that("apply_threshold.CAN_data works", {
 
+  can_res <- test_get_can()
+
   ## Should return the dataset
   expect_identical(unclass(apply_threshold(can_res)),
                    unclass(can_res))
@@ -55,4 +59,26 @@ test_that("apply_threshold.CAN_data works", {
 
   expect_identical(unclass(apply_threshold(can_res, log2fc_thr = 2)),
                    unclass(can_res))
+})
+
+test_that("apply_threshold.CUSTOM_data works", {
+
+  custom_res <- test_get_custom()
+
+  ## If no threshold is specified, returns the dataset without rows
+  ## that have a missing score
+  expect_identical(unclass(apply_threshold(custom_res)),
+                   custom_res |>
+                     dplyr::filter(!is.na(score)) |>
+                     unclass())
+
+  ## applying the threshold should get rid of the rows with a score
+  ## below the threshold
+  res <- apply_threshold(custom_res, score_thr = 2)
+  expect_true(min(res[["score"]]) >= 2)
+
+  ## the log2fc_thr parameter should have no effect on the output
+  expect_identical(apply_threshold(custom_res, score_thr = 2, log2fc_thr = 0),
+                   apply_threshold(custom_res, score_thr = 2, log2fc_thr = 1))
+
 })

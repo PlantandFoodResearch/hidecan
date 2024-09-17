@@ -3,7 +3,7 @@
 #' Computes the length (in bp) of each chromosome as the maximum
 #' position of markers or genes on the chromosome.
 #'
-#' @param x Either a `GWAS_data`, `DE_data` or `CAN_data` object.
+#' @param x Either a `GWAS_data`, `DE_data`, `CAN_data` or `CUSTOM_data` object.
 #' @returns A tibble with two columns: `chromosome` (chromosome name) and
 #' `length` (chromosome length in base pair).
 #' @examples
@@ -20,6 +20,37 @@ compute_chrom_length <- function(x){
 #' @rdname compute_chrom_length
 #' @export
 compute_chrom_length.GWAS_data <- function(x){
+  .compute_chrom_length_markers(x)
+}
+
+#' @rdname compute_chrom_length
+#' @export
+compute_chrom_length.DE_data <- function(x){
+  .compute_chrom_length_genes(x)
+}
+
+#' @rdname compute_chrom_length
+#' @export
+compute_chrom_length.CAN_data <- function(x){
+  .compute_chrom_length_genes(x)
+}
+
+#' @rdname compute_chrom_length
+#' @export
+compute_chrom_length.CUSTOM_data <- function(x){
+  .compute_chrom_length_markers(x)
+}
+
+#' Computes chromosomes' length for a tibble of markers
+#'
+#' Computes the length (in bp) of each chromosome as the maximum
+#' position of chromosomes on the chromosome.
+#'
+#' @param x Either a `GWAS_data` or `CUSTOM_data` object.
+#' @returns A tibble with two columns: `chromosome` (chromosome name) and
+#' `length` (chromosome length in base pair).
+#' @export
+.compute_chrom_length_markers <- function(x){
 
   chromosome <- position <- NULL
 
@@ -27,23 +58,6 @@ compute_chrom_length.GWAS_data <- function(x){
     dplyr::group_by(chromosome) |>
     dplyr::summarise(length = max(position),
                      .groups = "drop")
-
-}
-
-#' @rdname compute_chrom_length
-#' @export
-compute_chrom_length.DE_data <- function(x){
-
-  .compute_chrom_length_genes(x)
-
-}
-
-#' @rdname compute_chrom_length
-#' @export
-compute_chrom_length.CAN_data <- function(x){
-
-  .compute_chrom_length_genes(x)
-
 }
 
 #' Computes chromosomes' length for a tibble of genes
@@ -73,7 +87,7 @@ compute_chrom_length.CAN_data <- function(x){
 #' Computes the length (in bp) of each chromosome from a list of GWAS and
 #' DE results as well as candidate gene lists.
 #'
-#' @param x A list of `GWAS_data`, `DE_data` or `CAN_data` objects.
+#' @param x A list of `GWAS_data`, `DE_data`, `CAN_data` or `CUSTOM_data` objects.
 #' @returns A tibble with two columns: `chromosome` (chromosome name) and
 #' `length` (chromosome length in base pair).
 #' @examples

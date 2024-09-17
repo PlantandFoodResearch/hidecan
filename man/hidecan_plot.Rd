@@ -23,7 +23,10 @@ hidecan_plot(
   legend_position = "bottom",
   point_size = 3,
   label_size = 3.5,
-  label_padding = 0.15
+  label_padding = 0.15,
+  custom_aes = NULL,
+  custom_list = NULL,
+  score_thr_custom = 0
 )
 }
 \arguments{
@@ -31,20 +34,20 @@ hidecan_plot(
 each with at least a \code{chromosome}, \code{position} and either \code{padj} or \code{score}
 columns. If a named list, the names will be used in the plot.}
 
-\item{de_list}{Data-frame or list of data-frames containing DE results,
-each with at least a \code{chromosome}, \code{start}, \code{end}, \code{log2FoldChange} and
-either \code{padj} or \code{score} columns. If a named list, the names will be used in
-the plot.}
+\item{de_list}{Data-frame or list of data-frames containing DE results, each
+with at least a \code{chromosome}, \code{start}, \code{end}, \code{log2FoldChange} and either
+\code{padj} or \code{score} columns. If a named list, the names will be used in the
+plot.}
 
 \item{can_list}{Data-frame or list of data-frames containing candidate genes,
 each with at least a \code{chromosome}, \code{start}, \code{end} and \code{name} columns. If a
 named list, the names will be used in the plot.}
 
-\item{score_thr_gwas}{Numeric, the score threshold for GWAS results that will be used to
-select which markers will be plotted. Default value is 4.}
+\item{score_thr_gwas}{Numeric, the score threshold for GWAS results that will
+be used to select which markers will be plotted. Default value is 4.}
 
-\item{score_thr_de}{Numeric, the score threshold for DE results that will be used to
-select which markers will be plotted. Default value is 2.}
+\item{score_thr_de}{Numeric, the score threshold for DE results that will be
+used to select which markers will be plotted. Default value is 2.}
 
 \item{log2fc_thr}{Numeric, the log2(fold-change) threshold that will be used
 to select which genes will be plotted. Default value is 1.}
@@ -94,13 +97,26 @@ Default value is 2. Will be set to \code{NULL} if \code{n_rows} is not \code{NUL
 \item{label_padding}{Numeric, amount of padding around gene labels in the plot,
 as unit or number. Default value is 0.15
 (for \link[ggrepel]{geom_label_repel}).}
+
+\item{custom_aes}{Named list of plot aesthetics for custom data types. See
+\code{\link[=hidecan_aes]{hidecan_aes()}} for information about the content of each element. Default
+is \code{NULL} (only needed if there are \code{CUSTOM_data_thr} objects in \code{x} or to
+customise the aesthetics for the default data tracks).}
+
+\item{custom_list}{Data-frame or list of data-frames containing custom
+genomic features, each with at least a \code{chromosome}, \code{position} and \code{score}
+columns. If a named list, the names will be used in the plot.}
+
+\item{score_thr_custom}{Numeric, the score threshold for custom genomic
+features that will be used to select which markers will be plotted. Default
+value is 0.}
 }
 \value{
 a \code{ggplot}.
 }
 \description{
-Wrapper function to create a HIDECAN plot from GWAS results,
-DE results or candidate genes.
+Wrapper function to create a HIDECAN plot from GWAS results, DE results or
+candidate genes.
 }
 \examples{
 if (interactive()) {

@@ -1,6 +1,5 @@
-load("data-test/test_input.rda")
-
 test_that("compute_chrom_length.GWAS_data works", {
+  gwas_res <- test_get_gwas()
 
   chr_length <- compute_chrom_length(gwas_res)
 
@@ -20,6 +19,7 @@ test_that("compute_chrom_length.GWAS_data works", {
 
 
 test_that("compute_chrom_length.DE_data works", {
+  de_res <- test_get_de()
 
   chr_length <- compute_chrom_length(de_res)
 
@@ -39,6 +39,7 @@ test_that("compute_chrom_length.DE_data works", {
 })
 
 test_that("compute_chrom_length.CAN_data works", {
+  can_res <- test_get_can()
 
   chr_length <- compute_chrom_length(can_res)
 
@@ -57,8 +58,30 @@ test_that("compute_chrom_length.CAN_data works", {
 
 })
 
+test_that("compute_chrom_length.CUSTOM_data works", {
+  custom_res <- test_get_custom()
+
+  chr_length <- compute_chrom_length(custom_res)
+
+  ## One value per chromosome
+  expect_equal(chr_length[["chromosome"]], sort(unique(custom_res[["chromosome"]])))
+
+  ## Each value is the max position within the chromosome
+  manual_vals <- custom_res[["chromosome"]] |>
+    unique() |>
+    sort() |>
+    purrr::map_dbl(~ max(custom_res$position[custom_res$chromosome == .x]))
+
+  expect_equal(chr_length[["length"]],
+               manual_vals)
+
+})
 
 test_that("combine_chrom_length works", {
+  gwas_res <- test_get_gwas()
+  de_res <- test_get_de()
+  can_res <- test_get_can()
+
   res <- combine_chrom_length(list(gwas_res, de_res, can_res))
 
   expect_equal(res[["chromosome"]],
