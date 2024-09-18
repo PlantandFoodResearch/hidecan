@@ -7,7 +7,7 @@
 combine_chrom_length(x)
 }
 \arguments{
-\item{x}{A list of \code{GWAS_data}, \code{DE_data} or \code{CAN_data} objects.}
+\item{x}{A list of \code{GWAS_data}, \code{DE_data}, \code{CAN_data} or \code{CUSTOM_data} objects.}
 }
 \value{
 A tibble with two columns: \code{chromosome} (chromosome name) and

@@ -5,6 +5,7 @@
 \alias{compute_chrom_length.GWAS_data}
 \alias{compute_chrom_length.DE_data}
 \alias{compute_chrom_length.CAN_data}
+\alias{compute_chrom_length.CUSTOM_data}
 \title{Computes chromosomes' length}
 \usage{
 compute_chrom_length(x)
@@ -14,9 +15,11 @@ compute_chrom_length(x)
 \method{compute_chrom_length}{DE_data}(x)
 
 \method{compute_chrom_length}{CAN_data}(x)
+
+\method{compute_chrom_length}{CUSTOM_data}(x)
 }
 \arguments{
-\item{x}{Either a \code{GWAS_data}, \code{DE_data} or \code{CAN_data} object.}
+\item{x}{Either a \code{GWAS_data}, \code{DE_data}, \code{CAN_data} or \code{CUSTOM_data} object.}
 }
 \value{
 A tibble with two columns: \code{chromosome} (chromosome name) and

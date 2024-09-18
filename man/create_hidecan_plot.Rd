@@ -18,13 +18,15 @@ create_hidecan_plot(
   legend_position = "bottom",
   point_size = 3,
   label_size = 3.5,
-  label_padding = 0.15
+  label_padding = 0.15,
+  custom_aes = NULL
 )
 }
 \arguments{
-\item{x}{A list of \code{GWAS_data_thr}, \code{DE_data_thr} and/or \code{CAN_data_thr}
-produced by the \code{\link{apply_threshold}()} function. If named, the names
-will be appended to the y-axis labels (use \code{' '} as empty name in the list).}
+\item{x}{A list of \code{GWAS_data_thr}, \code{DE_data_thr}, \code{CAN_data_thr} and/or
+\code{CUSTOM_data_thr} produced by the \code{\link{apply_threshold}()} function.
+If named, the names will be appended to the y-axis labels (use \code{' '} as
+empty name in the list).}
 
 \item{chrom_length}{Tibble with columns \code{chromosome} and \code{length}, giving
 for each chromosome its length in bp (see \code{\link{combine_chrom_length}()}
@@ -71,6 +73,11 @@ Default value is 2. Will be set to \code{NULL} if \code{n_rows} is not \code{NUL
 \item{label_padding}{Numeric, amount of padding around gene labels in the plot,
 as unit or number. Default value is 0.15
 (for \link[ggrepel]{geom_label_repel}).}
+
+\item{custom_aes}{Named list of plot aesthetics for custom data types. See
+\code{\link[=hidecan_aes]{hidecan_aes()}} for information about the content of each element. Default
+is \code{NULL} (only needed if there are \code{CUSTOM_data_thr} objects in \code{x} or to
+customise the aesthetics for the default data tracks).}
 }
 \value{
 A \code{ggplot}.

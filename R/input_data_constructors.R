@@ -266,3 +266,65 @@ CAN_data <- function(dat, keep_rownames_as = NULL){
   dat <- new_CAN_data(dat)
   validate_CAN_data(dat)
 }
+
+#' `CUSTOM_data` constructor
+#'
+#' @param dat Tibble, custom genomic features, with at least columns
+#' `chromosome`, `position` and `score`.
+#' @returns A `GWAS_data` object, i.e. a tibble.
+new_CUSTOM_data <- function(dat){
+  ## Making sure that the input is a tibble
+  stopifnot(tibble::is_tibble(dat))
+
+  class(dat) <- c("CUSTOM_data", class(dat))
+
+  dat
+}
+
+#' Checks validity of input for `CUSTOM_data` constructor
+#'
+#' @param x, a `CUSTOM_data` object constructed via \link{new_CUSTOM_data}.
+#' @returns A `CUSTOM_data` object, i.e. a tibble.
+validate_CUSTOM_data <- function(x){
+
+  ## A GWAS result table must at least contain these columns
+  .check_cols(x, c("chromosome", "position", "score"))
+
+  if (!is.numeric(x[["position"]])) stop("'position' column should contain numeric values.", call. = FALSE)
+  if (!is.numeric(x[["score"]])) stop("'score' column should contain numeric values.", call. = FALSE)
+
+  x
+}
+
+#' Creates a `CUSTOM_data` object
+#'
+#' Creates a `CUSTOM_data` object from a tibble or data-frame of custom genomic features.
+#'
+#' The input data should have one row per marker, and at least the
+#' following columns:
+#'
+#' * `chromosome`: character column, chromosome on which the feature is located.
+#'
+#' * `position`: numeric, the physical position of the feature along the chromosome (in bp).
+#'
+#' * `score`: numeric, score to be used for the genomic feature.
+#'
+#' @param dat Tibble of custom genomic features. See Details.
+#' @param keep_rownames_as Character, the name of the column in which to save the
+#' rownames of the input data-frame. Default value is `NULL`, i.e. rownames will
+#' be discarded.
+#' @returns A `CUSTOM_data` object, i.e. a tibble.
+#' @examples
+#' x <- get_example_data()
+#'
+#' CUSTOM_data(x[["GWAS"]])
+#' @export
+CUSTOM_data <- function(dat, keep_rownames_as = NULL){
+  ## If the data is not a tibble, transform it
+  if (!tibble::is_tibble(dat)) {
+    dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
+  }
+
+  dat <- new_CUSTOM_data(dat)
+  validate_CUSTOM_data(dat)
+}

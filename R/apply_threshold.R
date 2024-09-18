@@ -5,16 +5,16 @@
 #' candidate genes, simply returns the list. Note that markers or genes with
 #' a missing score or log2(fold-change) will be removed from the dataset.
 #'
-#' @param x Either a `GWAS_data`, `DE_data` or `CAN_data` object.
+#' @param x Either a `GWAS_data`, `DE_data`, `CAN_data` or `CUSTOM_data` object.
 #' @param score_thr Numeric, threshold to use on markers' or genes/transcripts' score.
 #' Only markers or genes with a score equal to or higher than this threshold
 #' will be retained. Default value is 0. Ignored for `CAN_data`.
 #' @param log2fc_thr Numeric, threshold to use on the absolute value of genes/
 #' transcripts' log2(fold-change). Only genes/transcripts with an absolute
 #' log2(fold-change) equal to or higher than this threshold will be retained.
-#' Ignored for `GWAS_data` and `CAN_data`.
-#' @returns A filtered tibble (of class `GWAS_data_thr`, `DE_data_thr` or
-#' `CAN_data_thr`).
+#' Ignored for `GWAS_data`, `CAN_data` and `CUSTOM_data`.
+#' @returns A filtered tibble (of class `GWAS_data_thr`, `DE_data_thr`,
+#' `CAN_data_thr` or `CUSTOM_data_thr`).
 #' @examples
 #' x <- get_example_data()
 #'
@@ -69,6 +69,20 @@ apply_threshold.CAN_data <- function(x, score_thr = 0, log2fc_thr = 0){
   res <- x
 
   class(res)[1] <- "CAN_data_thr"
+
+  return(res)
+}
+
+#' @rdname apply_threshold
+#' @export
+apply_threshold.CUSTOM_data <- function(x, score_thr = 0, log2fc_thr = 0){
+
+  score <- NULL
+
+  res <- x |>
+    dplyr::filter(score >= score_thr)
+
+  class(res)[1] <- "CUSTOM_data_thr"
 
   return(res)
 }

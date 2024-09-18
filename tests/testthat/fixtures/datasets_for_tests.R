@@ -2,14 +2,18 @@ library(dplyr)
 load("R/sysdata.rda")
 
 set.seed(834)
-gwas_res <- hidecan::GWAS_data(gwas_data |>
-                                 dplyr::slice_sample(n = 1000))
-de_res <- hidecan::DE_data(de_data|>
-                             dplyr::slice_sample(n = 1000))
+gwas_res <- hidecan::GWAS_data(gwas_data |> dplyr::slice_sample(n = 1000))
+de_res <- hidecan::DE_data(de_data|> dplyr::slice_sample(n = 1000))
 can_res <- hidecan::CAN_data(candidate_data)
+custom_res <- gwas_data |>
+  dplyr::slice_sample(n = 1000) |>
+  dplyr::mutate(score = runif(1000, 0, 5)) |>
+  hidecan::CUSTOM_data()
 
-save(gwas_res, de_res, can_res, file = "tests/testthat/data-test/test_input.rda")
-
+saveRDS(gwas_res, file = "tests/testthat/fixtures/test_gwas.rds")
+saveRDS(de_res, file = "tests/testthat/fixtures/test_de.rds")
+saveRDS(can_res, file = "tests/testthat/fixtures/test_can.rds")
+saveRDS(custom_res, file = "tests/testthat/fixtures/test_custom.rds")
 
 library(GWASpoly)
 library(readr)
@@ -45,5 +49,5 @@ gwaspoly_res <- GWASpoly(data.original,
 gwaspoly_res_thr <- set.threshold(gwaspoly_res, method = "M.eff", level = 0.05)
 
 ## For users to access the example GWASpoly dataset without having it loaded
-saveRDS(gwaspoly_res, file = "tests/testthat/data-test/test_gwaspoly_res.rda")
-saveRDS(gwaspoly_res_thr, file = "tests/testthat/data-test/test_gwaspoly_res_thr.rda")
+saveRDS(gwaspoly_res, file = "tests/testthat/fixtures/test_gwaspoly_res.rds")
+saveRDS(gwaspoly_res_thr, file = "tests/testthat/fixtures/test_gwaspoly_res_thr.rds")

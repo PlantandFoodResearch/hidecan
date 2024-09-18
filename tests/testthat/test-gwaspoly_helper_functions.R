@@ -4,8 +4,8 @@ test_that("GWAS_data_from_gwaspoly works", {
   ## Cannot load it without using GWASpoly
   skip_if_not_installed("GWASpoly")
 
-  x_thr <- readRDS("data-test/test_gwaspoly_res_thr.rda")
-  x_nothr <- readRDS("data-test/test_gwaspoly_res.rda")
+  x_thr <- test_get_gwaspoly_thr()
+  x_nothr <- test_get_gwaspoly()
 
   expect_error(GWAS_data_from_gwaspoly("TEST"), "'gwaspoly_output' should be a `GWASpoly.fitted` or `GWASpoly.thresh` object (returned by GWASpoly() or set.threshold() functions).", fixed = TRUE)
 
