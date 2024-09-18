@@ -21,6 +21,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/hidecan-step-by-step.html">Step-by-step</a></li>
     <li><a class="dropdown-item" href="../articles/web_only/gwaspoly_output.html">GWASpoly output</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/custom_tracks.html">Adding custom tracks</a></li>
     <li><a class="dropdown-item" href="../articles/web_only/shiny-app.html">Shiny app</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -56,6 +57,12 @@
         <dd><code>CAN_data</code> constructor</dd>
       </dl><dl><dt>
 
+          <code><a href="new_CUSTOM_data.html">new_CUSTOM_data()</a></code>
+
+        </dt>
+        <dd><code>CUSTOM_data</code> constructor</dd>
+      </dl><dl><dt>
+
           <code><a href="new_DE_data.html">new_DE_data()</a></code>
 
         </dt>
@@ -72,6 +79,12 @@
 
         </dt>
         <dd>Checks validity of input for <code>CAN_data</code> constructor</dd>
+      </dl><dl><dt>
+
+          <code><a href="validate_CUSTOM_data.html">validate_CUSTOM_data()</a></code>
+
+        </dt>
+        <dd>Checks validity of input for <code>CUSTOM_data</code> constructor</dd>
       </dl><dl><dt>
 
           <code><a href="validate_DE_data.html">validate_DE_data()</a></code>
@@ -113,6 +126,12 @@
 
         </dt>
         <dd>Creates a <code>CAN_data</code> object</dd>
+      </dl><dl><dt>
+
+          <code><a href="CUSTOM_data.html">CUSTOM_data()</a></code>
+
+        </dt>
+        <dd>Creates a <code>CUSTOM_data</code> object</dd>
       </dl></div><div class="section level2">
       <h2 id="constructors-from-packages-output">Constructors from packages output<a class="anchor" aria-label="anchor" href="#constructors-from-packages-output"></a></h2>
 
@@ -153,6 +172,12 @@
 
         </dt>
         <dd>Computes chromosomes' length from list</dd>
+      </dl><dl><dt>
+
+          <code><a href="dot-compute_chrom_length_markers.html">.compute_chrom_length_markers()</a></code>
+
+        </dt>
+        <dd>Computes chromosomes' length for a tibble of markers</dd>
       </dl><dl><dt>
 
           <code><a href="dot-compute_chrom_length_genes.html">.compute_chrom_length_genes()</a></code>
@@ -201,6 +226,12 @@
         <dd>Creates a HIDECAN plot</dd>
       </dl><dl><dt>
 
+          <code><a href="hidecan_aes.html">hidecan_aes()</a></code>
+
+        </dt>
+        <dd>Default aesthetics for HIDECAN plot</dd>
+      </dl><dl><dt>
+
           <code><a href="run_hidecan_shiny.html">run_hidecan_shiny()</a></code>
 
         </dt>
@@ -217,6 +248,24 @@
 
         </dt>
         <dd>Creates a Manhattan plot</dd>
+      </dl><dl><dt>
+
+          <code><a href="dot-get_aes_type.html">.get_aes_type()</a></code>
+
+        </dt>
+        <dd>Returns either "aes_type" attribute or object class</dd>
+      </dl><dl><dt>
+
+          <code><a href="dot-get_plot_aes.html">.get_plot_aes()</a></code>
+
+        </dt>
+        <dd>Computes plot aesthetics</dd>
+      </dl><dl><dt>
+
+          <code><a href="dot-add_data_type.html">.add_data_type()</a></code>
+
+        </dt>
+        <dd>Add data type to HIDECAN plot</dd>
       </dl></div><div class="section level2">
       <h2 id="example-datasets">Example datasets<a class="anchor" aria-label="anchor" href="#example-datasets"></a></h2>
 
@@ -251,6 +300,18 @@
 
         </dt>
         <dd>Checks whether some columns are present in a tibble</dd>
+      </dl><dl><dt>
+
+          <code><a href="dot-check_chroms.html">.check_chroms()</a></code>
+
+        </dt>
+        <dd>Check chromosomes to plot</dd>
+      </dl><dl><dt>
+
+          <code><a href="dot-check_chrom_limits.html">.check_chrom_limits()</a></code>
+
+        </dt>
+        <dd>Check chromosome limits</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
@@ -261,7 +322,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

@@ -21,6 +21,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/hidecan-step-by-step.html">Step-by-step</a></li>
     <li><a class="dropdown-item" href="../articles/web_only/gwaspoly_output.html">GWASpoly output</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/custom_tracks.html">Adding custom tracks</a></li>
     <li><a class="dropdown-item" href="../articles/web_only/shiny-app.html">Shiny app</a></li>
   </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -42,7 +43,13 @@
 <h2 class="pkg-version" data-toc-text="1.1.0.9000" id="hidecan-1109000">hidecan 1.1.0.9000<a class="anchor" aria-label="anchor" href="#hidecan-1109000"></a></h2>
 <ul><li><p>Added the <code><a href="../reference/manhattan_plot.html">manhattan_plot()</a></code> function to generate Manhattan plots from a table of GWAS results.</p></li>
 <li><p>Fixed bug where specifying chromosome limits for <code><a href="../reference/hidecan_plot_from_gwaspoly.html">hidecan_plot_from_gwaspoly()</a></code> would mess up the ordering of the chromosomes in the plot.</p></li>
+</ul><div class="section level4">
+<h4 id="changes-to-enable-custom-tracks-1-1-0-9000">Changes to enable custom tracks<a class="anchor" aria-label="anchor" href="#changes-to-enable-custom-tracks-1-1-0-9000"></a></h4>
+<ul><li><p>New S3 classes to store custom genomic features: <code>CUSTOM_data</code> and <code>CUSTOM_data_thr</code>.</p></li>
+<li><p><code><a href="../reference/create_hidecan_plot.html">create_hidecan_plot()</a></code> now accepts <code>CUSTOM_data_thr</code> objects as input, which allows users to add custom tracks to their plot. It has an additional argument <code>custom_aes</code> to handle the aesthetics for custom tracks.</p></li>
+<li><p>Added the <code><a href="../reference/hidecan_aes.html">hidecan_aes()</a></code> function which returns the default aesthetics for the different types of data in the plot.</p></li>
 </ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="hidecan-110">hidecan 1.1.0<a class="anchor" aria-label="anchor" href="#hidecan-110"></a></h2><p class="text-muted">CRAN release: 2023-02-10</p>
 <ul><li><p>Removed <code>get_gwaspoly_example_data()</code> function so that the package doesn’t depend on GWASpoly (for CRAN submission)</p></li>
@@ -57,7 +64,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

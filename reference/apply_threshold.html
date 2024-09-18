@@ -27,6 +27,7 @@ a missing score or log2(fold-change) will be removed from the dataset."><meta pr
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/hidecan-step-by-step.html">Step-by-step</a></li>
     <li><a class="dropdown-item" href="../articles/web_only/gwaspoly_output.html">GWASpoly output</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/custom_tracks.html">Adding custom tracks</a></li>
     <li><a class="dropdown-item" href="../articles/web_only/shiny-app.html">Shiny app</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -65,6 +66,9 @@ a missing score or log2(fold-change) will be removed from the dataset.</p>
 <span><span class="co"># S3 method for class 'CAN_data'</span></span>
 <span><span class="fu">apply_threshold</span><span class="op">(</span><span class="va">x</span>, score_thr <span class="op">=</span> <span class="fl">0</span>, log2fc_thr <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for class 'CUSTOM_data'</span></span>
+<span><span class="fu">apply_threshold</span><span class="op">(</span><span class="va">x</span>, score_thr <span class="op">=</span> <span class="fl">0</span>, log2fc_thr <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># Default S3 method</span></span>
 <span><span class="fu">apply_threshold</span><span class="op">(</span><span class="va">x</span>, score_thr <span class="op">=</span> <span class="fl">0</span>, log2fc_thr <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -74,7 +78,7 @@ a missing score or log2(fold-change) will be removed from the dataset.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>Either a <code>GWAS_data</code>, <code>DE_data</code> or <code>CAN_data</code> object.</p></dd>
+<dd><p>Either a <code>GWAS_data</code>, <code>DE_data</code>, <code>CAN_data</code> or <code>CUSTOM_data</code> object.</p></dd>
 
 
 <dt id="arg-score-thr">score_thr<a class="anchor" aria-label="anchor" href="#arg-score-thr"></a></dt>
@@ -87,13 +91,13 @@ will be retained. Default value is 0. Ignored for <code>CAN_data</code>.</p></dd
 <dd><p>Numeric, threshold to use on the absolute value of genes/
 transcripts' log2(fold-change). Only genes/transcripts with an absolute
 log2(fold-change) equal to or higher than this threshold will be retained.
-Ignored for <code>GWAS_data</code> and <code>CAN_data</code>.</p></dd>
+Ignored for <code>GWAS_data</code>, <code>CAN_data</code> and <code>CUSTOM_data</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A filtered tibble (of class <code>GWAS_data_thr</code>, <code>DE_data_thr</code> or
-<code>CAN_data_thr</code>).</p>
+    <p>A filtered tibble (of class <code>GWAS_data_thr</code>, <code>DE_data_thr</code>,
+<code>CAN_data_thr</code> or <code>CUSTOM_data_thr</code>).</p>
     </div>
 
     <div class="section level2">
@@ -171,7 +175,7 @@ Ignored for <code>GWAS_data</code> and <code>CAN_data</code>.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>

@@ -42,6 +42,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/hidecan-step-by-step.html">Step-by-step</a></li>
     <li><a class="dropdown-item" href="../articles/web_only/gwaspoly_output.html">GWASpoly output</a></li>
+    <li><a class="dropdown-item" href="../articles/web_only/custom_tracks.html">Adding custom tracks</a></li>
     <li><a class="dropdown-item" href="../articles/web_only/shiny-app.html">Shiny app</a></li>
   </ul>
 </li>
@@ -540,6 +541,94 @@ identify the different plots:</p>
 <p><img src="hidecan_files/figure-html/manhattan-plot-facets-1.png" width="1056"></p>
 </div>
 <div class="section level2">
+<h2 id="controlling-the-aesthetics-colours-point-shapes-labels-of-the-tracks">Controlling the aesthetics (colours, point shapes, labels) of the
+tracks<a class="anchor" aria-label="anchor" href="#controlling-the-aesthetics-colours-point-shapes-labels-of-the-tracks"></a>
+</h2>
+<p>The default look of the different data types (GWAS peaks, DE genes
+and candidate genes) in a HIDECAN plots is controlled by the arguments
+returned by <code><a href="../reference/hidecan_aes.html">hidecan_aes()</a></code>. More specifically, the function
+controls:</p>
+<ul>
+<li><p>the label of each data type on the x-axis (e.g. ‘GWAS peaks’ for
+GWAS results),</p></li>
+<li><p>the colour of the vertical lines used to showcase the position of
+markers or genes,</p></li>
+<li><p>the shape of the points,</p></li>
+<li><p>whether the name of the markers/genes are displayed (by default,
+will only show for candidate genes),</p></li>
+<li><p>the colour palette used for the score or log2 fold-change of the
+points.</p></li>
+</ul>
+<p>The default values used for these parameters have been chosen to
+ensure that the resulting plot is easily understandable. However, it is
+possible to change them. To do so, we’ll start by saving the defaults
+returned by <code><a href="../reference/hidecan_aes.html">hidecan_aes()</a></code>:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">default_aes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hidecan_aes.html">hidecan_aes</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">default_aes</span>, max.level <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 4</span></span>
+<span><span class="co">#&gt;  $ GWAS_data_thr  :List of 5</span></span>
+<span><span class="co">#&gt;  $ DE_data_thr    :List of 5</span></span>
+<span><span class="co">#&gt;  $ CAN_data_thr   :List of 5</span></span>
+<span><span class="co">#&gt;  $ CUSTOM_data_thr:List of 5</span></span>
+<span></span>
+<span><span class="va">default_aes</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; $y_label</span></span>
+<span><span class="co">#&gt; [1] "GWAS peaks"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $line_colour</span></span>
+<span><span class="co">#&gt; [1] "red"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $point_shape</span></span>
+<span><span class="co">#&gt; [1] 21</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $show_name</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $fill_scale</span></span>
+<span><span class="co">#&gt; &lt;ScaleContinuous&gt;</span></span>
+<span><span class="co">#&gt;  Range:  </span></span>
+<span><span class="co">#&gt;  Limits:    0 --    1</span></span></code></pre></div>
+<p>As we can see above, the function returns a list of the default
+aesthetics to use for GWAS results (the <code>GWAS_data_thr</code>
+element), for DE results (<code>DE_data_thr</code> element), for
+candidate genes (<code>CAN_data_thr</code> element), and for custom
+tracks (<code>CUSTOM_data_thr</code> element - see the <a href="web_only/custom_tracks.html">Adding custom tracks</a> article for
+more information). Each element is itself a list, containing the value
+for each attribute mentioned above.</p>
+<p>Let’s modify the label given to the GWAS peaks, and the colour
+palette used for DE score:</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://sjmgarnier.github.io/viridis/" class="external-link">viridis</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">default_aes</span><span class="op">$</span><span class="va">GWAS_data_thr</span><span class="op">$</span><span class="va">y_label</span> <span class="op">&lt;-</span> <span class="st">"GWAS signif. markers"</span></span>
+<span></span>
+<span><span class="va">default_aes</span><span class="op">$</span><span class="va">DE_data_thr</span><span class="op">$</span><span class="va">fill_scale</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://sjmgarnier.github.io/viridis/reference/scale_viridis.html" class="external-link">scale_fill_viridis</a></span><span class="op">(</span></span>
+<span>  <span class="st">"DE gene score"</span>,</span>
+<span>  option <span class="op">=</span> <span class="st">"inferno"</span>,</span>
+<span>  guide <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_colourbar.html" class="external-link">guide_colourbar</a></span><span class="op">(</span></span>
+<span>    title.position <span class="op">=</span> <span class="st">"top"</span>,</span>
+<span>    title.hjust <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>    order <span class="op">=</span> <span class="fl">3</span> <span class="co"># ensures this legend is shown after the one for GWAS scores</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>We can use these modified values by passing this list to
+<code><a href="../reference/hidecan_plot.html">hidecan_plot()</a></code> through its <code>custom_aes</code>
+argument:</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/hidecan_plot.html">hidecan_plot</a></span><span class="op">(</span></span>
+<span>  gwas_list <span class="op">=</span> <span class="va">x</span><span class="op">[[</span><span class="st">"GWAS"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  de_list <span class="op">=</span> <span class="va">x</span><span class="op">[[</span><span class="st">"DE"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  can_list <span class="op">=</span> <span class="va">x</span><span class="op">[[</span><span class="st">"CAN"</span><span class="op">]</span><span class="op">]</span>,     </span>
+<span>  score_thr_gwas <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="fl">0.0001</span><span class="op">)</span>,</span>
+<span>  score_thr_de <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log10</a></span><span class="op">(</span><span class="fl">0.05</span><span class="op">)</span>,</span>
+<span>  log2fc_thr <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  custom_aes <span class="op">=</span> <span class="va">default_aes</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="hidecan_files/figure-html/use-custom-aes-1.png" width="960"></p>
+</div>
+<div class="section level2">
 <h2 id="viewport-error">Viewport error<a class="anchor" aria-label="anchor" href="#viewport-error"></a>
 </h2>
 <p>If you are working on RStudio, you may encounter the following
@@ -549,7 +638,7 @@ error:</p>
 the size of the plotting window in the RStudio console. Alternatively,
 you can save the plot into an R object, then use
 <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggplot2::ggsave()</a></code> to save it into a file:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/hidecan_plot.html">hidecan_plot</a></span><span class="op">(</span></span>
 <span>  gwas_list <span class="op">=</span> <span class="va">x</span><span class="op">[[</span><span class="st">"GWAS"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  de_list <span class="op">=</span> <span class="va">x</span><span class="op">[[</span><span class="st">"DE"</span><span class="op">]</span><span class="op">]</span>,</span>
@@ -573,7 +662,7 @@ you can save the plot into an R object, then use
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
