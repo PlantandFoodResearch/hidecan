@@ -21,8 +21,12 @@ validate_GWAS_data <- function(x){
   ## A GWAS result table must at least contain these columns
   .check_cols(x, c("chromosome", "position", "score"))
 
-  if(!is.numeric(x[["position"]])) stop("'position' column should contain numeric values.", call. = FALSE)
-  if(!is.numeric(x[["score"]])) stop("'score' column should contain numeric values.", call. = FALSE)
+  if (!is.numeric(x[["position"]])) {
+    stop("'position' column should contain numeric values.", call. = FALSE)
+  }
+  if (!is.numeric(x[["score"]])) {
+    stop("'score' column should contain numeric values.", call. = FALSE)
+  }
 
   x
 }
@@ -53,16 +57,19 @@ validate_GWAS_data <- function(x){
 #' @export
 GWAS_data <- function(dat, keep_rownames_as = NULL){
   ## If the data is not a tibble, transform it
-  if(!tibble::is_tibble(dat)){
-
+  if (!tibble::is_tibble(dat)) {
     dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
   }
 
   ## If missing score column, construct it from adjusted p-value
-  if(!("score" %in% colnames(dat))){
+  if (!("score" %in% colnames(dat))) {
 
-    if(!("padj" %in% colnames(dat))) stop("Input data-frame should have either a 'score' or a 'padj' column.")
-    if(!is.numeric(dat[["padj"]])) stop("'padj' column in input data-frame should contain numeric values.")
+    if (!("padj" %in% colnames(dat))) {
+      stop("Input data-frame should have either a 'score' or a 'padj' column.")
+    }
+    if (!is.numeric(dat[["padj"]])) {
+      stop("'padj' column in input data-frame should contain numeric values.")
+    }
 
     ## for devtools::check
     score <- padj <- NULL
@@ -101,10 +108,18 @@ validate_DE_data <- function(x){
   ## A GWAS result table must at least contain these columns
   .check_cols(x, c("chromosome", "start", "end", "position", "score", "log2FoldChange"))
 
-  if(!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) stop("'start' and 'end' columns should contain numeric values.")
-  if(!is.numeric(x[["position"]])) stop("'position' column should contain numeric values.", call. = FALSE)
-  if(!is.numeric(x[["score"]])) stop("'score' column should contain numeric values.", call. = FALSE)
-  if(!is.numeric(x[["log2FoldChange"]])) stop("'log2FoldChange' column should contain numeric values.", call. = FALSE)
+  if (!is.numeric(x[["position"]])) {
+    stop("'position' column should contain numeric values.", call. = FALSE)
+  }
+  if (!is.numeric(x[["score"]])) {
+    stop("'score' column should contain numeric values.", call. = FALSE)
+  }
+  if (!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) {
+    stop("'start' and 'end' columns should contain numeric values.")
+  }
+  if (!is.numeric(x[["log2FoldChange"]])) {
+    stop("'log2FoldChange' column should contain numeric values.", call. = FALSE)
+  }
 
   x
 }
@@ -143,16 +158,19 @@ validate_DE_data <- function(x){
 #' @export
 DE_data <- function(dat, keep_rownames_as = NULL){
   ## If the data is not a tibble, transform it
-  if(!tibble::is_tibble(dat)){
-
+  if (!tibble::is_tibble(dat)) {
     dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
   }
 
   ## If missing score column, construct it from adjusted p-value
-  if(!("score" %in% colnames(dat))){
+  if (!("score" %in% colnames(dat))) {
 
-    if(!("padj" %in% colnames(dat))) stop("Input data-frame should have either a 'score' or a 'padj' column.")
-    if(!is.numeric(dat[["padj"]])) stop("'padj' column in input data-frame should contain numeric values.")
+    if (!("padj" %in% colnames(dat))) {
+      stop("Input data-frame should have either a 'score' or a 'padj' column.")
+    }
+    if (!is.numeric(dat[["padj"]])) {
+      stop("'padj' column in input data-frame should contain numeric values.")
+    }
 
     ## for devtools::check
     score <- padj <- NULL
@@ -162,10 +180,14 @@ DE_data <- function(dat, keep_rownames_as = NULL){
   }
 
   ## If missing log2FoldChange column, construct it from fold-change
-  if(!("log2FoldChange" %in% colnames(dat))){
+  if (!("log2FoldChange" %in% colnames(dat))) {
 
-    if(!("foldChange" %in% colnames(dat))) stop("Input data-frame should have either a 'log2FoldChange' or a 'foldChange' column.")
-    if(!is.numeric(dat[["foldChange"]])) stop("'foldChange' column in input data-frame should contain numeric values.")
+    if (!("foldChange" %in% colnames(dat))) {
+      stop("Input data-frame should have either a 'log2FoldChange' or a 'foldChange' column.")
+    }
+    if (!is.numeric(dat[["foldChange"]])) {
+      stop("'foldChange' column in input data-frame should contain numeric values.")
+    }
 
     ## for devtools::check
     log2FoldChange <- foldChange <- NULL
@@ -175,8 +197,12 @@ DE_data <- function(dat, keep_rownames_as = NULL){
   }
 
   ## Construct the position column from start and end
-  if(length(setdiff(c("start", "end"), colnames(dat)))) stop("Input data-frame should have a 'start' and an 'end' column.")
-  if(!is.numeric(dat[["start"]]) | !is.numeric(dat[["end"]])) stop("'start' and 'end' columns should contain numeric values.")
+  if (length(setdiff(c("start", "end"), colnames(dat)))) {
+    stop("Input data-frame should have a 'start' and an 'end' column.")
+  }
+  if (!is.numeric(dat[["start"]]) | !is.numeric(dat[["end"]])) {
+    stop("'start' and 'end' columns should contain numeric values.")
+  }
 
   ## for devtools::check
   start <- end <- NULL
@@ -214,9 +240,15 @@ validate_CAN_data <- function(x){
   .check_cols(x, c("chromosome", "start", "end", "position", "name"))
 
 
-  if(!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) stop("'start' and 'end' columns should contain numeric values.", call. = FALSE)
-  if(!is.numeric(x[["position"]])) stop("'position' column should contain numeric values.", call. = FALSE)
-  if(!is.character(x[["name"]])) stop("'name' column should contain character values.", call. = FALSE)
+  if (!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) {
+    stop("'start' and 'end' columns should contain numeric values.", call. = FALSE)
+  }
+  if (!is.numeric(x[["position"]])) {
+    stop("'position' column should contain numeric values.", call. = FALSE)
+  }
+  if (!is.character(x[["name"]])) {
+    stop("'name' column should contain character values.", call. = FALSE)
+  }
 
   x
 }
@@ -248,14 +280,17 @@ validate_CAN_data <- function(x){
 #' @export
 CAN_data <- function(dat, keep_rownames_as = NULL){
   ## If the data is not a tibble, transform it
-  if(!tibble::is_tibble(dat)){
-
+  if (!tibble::is_tibble(dat)) {
     dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
   }
 
   ## Construct the position column from start and end
-  if(length(setdiff(c("start", "end"), colnames(dat)))) stop("Input data-frame should have a 'start' and an 'end' column.")
-  if(!is.numeric(dat[["start"]]) | !is.numeric(dat[["end"]])) stop("'start' and 'end' columns should contain numeric values.")
+  if (length(setdiff(c("start", "end"), colnames(dat)))) {
+    stop("Input data-frame should have a 'start' and an 'end' column.")
+  }
+  if (!is.numeric(dat[["start"]]) | !is.numeric(dat[["end"]])) {
+    stop("'start' and 'end' columns should contain numeric values.")
+  }
 
   ## for devtools::check
   start <- end <- NULL
@@ -265,6 +300,111 @@ CAN_data <- function(dat, keep_rownames_as = NULL){
 
   dat <- new_CAN_data(dat)
   validate_CAN_data(dat)
+}
+
+#' `QTL_data` constructor
+#'
+#' @param dat Tibble, results from a QTL mapping, with at least columns
+#' `chromosome`, `start`, `end` and `score`.
+#' @returns A `QTL_data` object, i.e. a tibble.
+new_QTL_data <- function(dat){
+  ## Making sure that the input is a tibble
+  stopifnot(tibble::is_tibble(dat))
+
+  class(dat) <- c("QTL_data", class(dat))
+
+  dat
+}
+
+#' Checks validity of input for `QTL_data` constructor
+#'
+#' @param x, a `QTL_data` object constructed via \link{new_QTL_data}.
+#' @returns A `QTL_data` object, i.e. a tibble.
+validate_QTL_data <- function(x){
+
+  ## A GWAS result table must at least contain these columns
+  .check_cols(x, c("chromosome", "start", "end", "score"))
+
+  if (!is.numeric(x[["position"]])) {
+    stop("'position' column should contain numeric values.", call. = FALSE)
+  }
+  if (!is.numeric(x[["start"]]) | !is.numeric(x[["end"]])) {
+    stop("'start' and 'end' columns should contain numeric values.")
+  }
+  if (!is.numeric(x[["score"]])) {
+    stop("'score' column should contain numeric values.", call. = FALSE)
+  }
+
+  x
+}
+
+#' Creates a `QTL_data` object
+#'
+#' Creates a `QTL_data` object from a tibble or data-frame of QTL mapping
+#' results.
+#'
+#' The input data should have one row per QTL region, and at least the following
+#' columns:
+#'
+#' * `chromosome`: character column, chromosome on which the QTL region is located.
+#'
+#' * `start` and `end`: numeric, starting and end position of the QTL region
+#' (in bp). A column `position` will be constructed as the middle value (mean)
+#' between `start` and `end`.
+#'
+#' * `score` or `padj`: numeric, the QTL score or adjusted p-value of the
+#' QTL region. If column `score` column is missing, will be constructed as
+#' `-log10(padj)`.
+#'
+#' @param dat Tibble, results from a QTL mapping analysis. See Details.
+#' @param keep_rownames_as Character, the name of the column in which to save
+#'   the rownames of the input data-frame. Default value is `NULL`, i.e.
+#'   rownames will be discarded.
+#' @returns A `QTL_data` object, i.e. a tibble.
+#' @examples
+#' x <- get_example_data()
+#'
+#' QTL_data(x[["QTL"]])
+#' @export
+QTL_data <- function(dat, keep_rownames_as = NULL){
+  ## If the data is not a tibble, transform it
+  if (!tibble::is_tibble(dat)) {
+    dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
+  }
+
+  ## If missing score column, construct it from adjusted p-value
+  if (!("score" %in% colnames(dat))) {
+
+    if (!("padj" %in% colnames(dat))) {
+      stop("Input data-frame should have either a 'score' or a 'padj' column.")
+    }
+    if (!is.numeric(dat[["padj"]])) {
+      stop("'padj' column in input data-frame should contain numeric values.")
+    }
+
+    ## for devtools::check
+    score <- padj <- NULL
+
+    dat <- dat |>
+      dplyr::mutate(score = -log10(padj))
+  }
+
+  ## Construct the position column from start and end
+  if (length(setdiff(c("start", "end"), colnames(dat)))) {
+    stop("Input data-frame should have a 'start' and an 'end' column.")
+  }
+  if (!is.numeric(dat[["start"]]) | !is.numeric(dat[["end"]])) {
+    stop("'start' and 'end' columns should contain numeric values.")
+  }
+
+  ## for devtools::check
+  start <- end <- NULL
+
+  dat <- dat |>
+    dplyr::mutate(position = (start + end) / 2)
+
+  dat <- new_QTL_data(dat)
+  validate_QTL_data(dat)
 }
 
 #' `CUSTOM_data` constructor
@@ -290,8 +430,12 @@ validate_CUSTOM_data <- function(x){
   ## A GWAS result table must at least contain these columns
   .check_cols(x, c("chromosome", "position", "score"))
 
-  if (!is.numeric(x[["position"]])) stop("'position' column should contain numeric values.", call. = FALSE)
-  if (!is.numeric(x[["score"]])) stop("'score' column should contain numeric values.", call. = FALSE)
+  if (!is.numeric(x[["position"]])) {
+    stop("'position' column should contain numeric values.", call. = FALSE)
+  }
+  if (!is.numeric(x[["score"]])) {
+    stop("'score' column should contain numeric values.", call. = FALSE)
+  }
 
   x
 }

@@ -1,6 +1,7 @@
 library(tidyverse)
 library(GWASpoly)
 
+set.seed(348)
 
 ## ------------------------ ##
 ## Reading the GWAS results ##
@@ -57,6 +58,18 @@ candidate_data <- candidate_genes |>
   ## removing some candidate genes from chromosome 3 to avoid ggrepel warning
   filter(!(chromosome == "ST4.03ch03") | name %in% c("PHO1A", "4CL", "KTPI", "4CL2"))
 
+## ---------------------------------------- ##
+## Constructing example QTL mapping results ##
+## ---------------------------------------- ##
+
+qtl_data <- tibble(
+  id = "qtl_1",
+  chromosome = "ST4.03ch00",
+  start = 26e6,
+  end = 28e6,
+  score = 6,
+  name = "QTL 1"
+)
 
 ## --------------------------------- ##
 ## Getting example data for GWASpoly ##
@@ -139,4 +152,4 @@ de_data <- bind_rows(
   de_data_subset
 )
 
-usethis::use_data(gwas_data, de_data, candidate_data, internal = TRUE, overwrite = TRUE)
+usethis::use_data(gwas_data, de_data, candidate_data, qtl_data, internal = TRUE, overwrite = TRUE)
