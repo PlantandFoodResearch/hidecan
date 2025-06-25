@@ -63,13 +63,18 @@ candidate_data <- candidate_genes |>
 ## ---------------------------------------- ##
 
 qtl_data <- tibble(
-  id = "qtl_1",
-  chromosome = "ST4.03ch00",
-  start = 26e6,
-  end = 28e6,
-  score = 6,
-  name = "QTL 1"
-)
+  chromosome = c("ST4.03ch01", "ST4.03ch01", "ST4.03ch04", "ST4.03ch07", "ST4.03ch08"),
+  start = c(5.6, 9.5, 12.7, 49.9, 45),
+  end = c(11.3, 14, 17.6, 51.7, 47),
+  score = c(4.1, 5.5, 4.3, 5.1, 5.8),
+) |>
+  mutate(
+    id = paste0("qtl_", 1:n()),
+    start = start * 1e6,
+    end = end * 1e6,
+    name = paste0("QTL ", 1:n())
+  ) |>
+  relocate(id, .before = everything())
 
 ## --------------------------------- ##
 ## Getting example data for GWASpoly ##

@@ -229,15 +229,13 @@ create_hidecan_plot <- function(x,
   ## Making sure that the order of the "Position of" legends matches the order
   ## in which the different data types appear in the y-axis
   unique_data_types <- unique(aes_types)
+  ## the drawing order of the tracks is slightly different, all genomic regions
+  ## need to go first
+  drawing_data_types <- unique(c(data_type_as_rect, unique_data_types))
 
   ## Check whether we need to add a new fill legend for each data type
-  first_fill_legend <- ifelse(
-    length(data_type_as_rect) > 0,
-    "",
-    unique_data_types[[1]]
-  )
-  new_legend <- !(unique_data_types %in% c(first_fill_legend, "CAN_data_thr"))
-  names(new_legend) <- unique_data_types
+  new_legend <- drawing_data_types != "CAN_data_thr"
+  names(new_legend) <- drawing_data_types
 
   p <- toplot |>
     ggplot2::ggplot(ggplot2::aes(x = position_mb, y = dataset)) +
@@ -251,22 +249,6 @@ create_hidecan_plot <- function(x,
       scales = "free_x",
       nrow = n_rows,
       ncol = n_cols
-    ) +
-    ## vertical position indicators for points
-    ggplot2::geom_vline(
-      data = dplyr::filter(toplot, !(data_type %in% data_type_as_rect)),
-      ggplot2::aes(xintercept = position_mb, colour = data_type),
-      alpha = 0.7,
-      show.legend = TRUE
-    ) +
-    ## vertical position indicators for rectangles
-    ggplot2::geom_rect(
-      data = dplyr::filter(toplot, data_type %in% data_type_as_rect),
-      ggplot2::aes(
-        xmin = start_mb, xmax = end_mb, ymin = -Inf, ymax = Inf,
-        fill = data_type
-      ),
-      alpha = 0.3
     ) +
     ## General colours and shapes
     ggplot2::scale_colour_manual(
@@ -296,9 +278,42 @@ create_hidecan_plot <- function(x,
         order = 1
       ),
       shape = ggplot2::guide_legend(order = 1)
+    ) +
+    ## vertical position indicators for rectangles
+    ggplot2::geom_rect(
+      data = dplyr::filter(toplot, data_type %in% data_type_as_rect),
+      ggplot2::aes(
+        xmin = start_mb, xmax = end_mb, ymin = -Inf, ymax = Inf,
+        fill = data_type
+      ),
+      alpha = 0.3
     )
 
-  for (i in unique_data_types) {
+  ## Need to add the genomic region tracks before adding the vertical lines
+  ## for the point tracks (but after showing their shadows)
+  for (i in data_type_as_rect) {
+    p <- .add_data_type(
+      p,
+      toplot,
+      i,
+      paes = plot_aes[[i]],
+      add_new_legend = new_legend[[i]],
+      point_size,
+      label_size,
+      label_padding
+    )
+  }
+
+  p <- p +
+    ## vertical position indicators for points
+    ggplot2::geom_vline(
+      data = dplyr::filter(toplot, !(data_type %in% data_type_as_rect)),
+      ggplot2::aes(xintercept = position_mb, colour = data_type),
+      alpha = 0.7,
+      show.legend = TRUE
+    )
+
+  for (i in setdiff(drawing_data_types, data_type_as_rect)) {
     p <- .add_data_type(
       p,
       toplot,
@@ -661,6 +676,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
       "fill_scale" = viridis::scale_fill_viridis(
         "QTL region score",
         option = "mako",
+        begin = 0.3,
         guide = ggplot2::guide_colourbar(title.position = "top",
                                          title.hjust = 0.5,
                                          order = 2)
@@ -713,7 +729,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
 #' @returns Named list of plot aesthetics.
 .get_plot_aes <- function(aes_types, colour_genes_by_score, custom_aes) {
 
-  default_aes <- hidecan_aes(colour_genes_by_score)
+  default_aes <- hidecan_aes(colour_genes_by_score)[aes_types]
 
   if (!is.null(custom_aes)) {
     default_aes <- c(

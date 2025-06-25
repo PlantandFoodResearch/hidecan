@@ -47,21 +47,21 @@
 #' purposes, as no QTL mapping was performed in the original study.
 #'
 #' @returns A list with the following elements:
+#' * `QTL`: a tibble of QTL regions, with columns `id`, `chromosome`, `start`,
+#'   `end`, `score` and `name`.
 #' * `GWAS`: a tibble of GWAS results, with columns `id`, `chromosome`,
 #'   `position` and `score`.
 #' * `DE`: a tibble of differential expression results, with columns `gene`,
 #'   `chromosome`, `padj`, `log2FoldChange`, `start`, `end` and `label`.
 #' * `CAN`: a tibble of candidate genes, with columns `id`, `chromosome`,
 #'   `start`, `end`, `name` and `gene_name`.
-#' * `QTL`: a tibble of QTL regions, with columns `id`, `chromosome`, `start`,
-#'   `end`, `score` and `name`.
 #' @export
 get_example_data <- function(){
   list(
+    QTL = qtl_data,
     GWAS = gwas_data,
     DE = de_data,
-    CAN = candidate_data,
-    QTL = qtl_data
+    CAN = candidate_data
   )
 }
 

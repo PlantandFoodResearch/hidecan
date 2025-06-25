@@ -9,14 +9,14 @@ get_example_data()
 \value{
 A list with the following elements:
 \itemize{
+\item \code{QTL}: a tibble of QTL regions, with columns \code{id}, \code{chromosome}, \code{start},
+\code{end}, \code{score} and \code{name}.
 \item \code{GWAS}: a tibble of GWAS results, with columns \code{id}, \code{chromosome},
 \code{position} and \code{score}.
 \item \code{DE}: a tibble of differential expression results, with columns \code{gene},
 \code{chromosome}, \code{padj}, \code{log2FoldChange}, \code{start}, \code{end} and \code{label}.
 \item \code{CAN}: a tibble of candidate genes, with columns \code{id}, \code{chromosome},
 \code{start}, \code{end}, \code{name} and \code{gene_name}.
-\item \code{QTL}: a tibble of QTL regions, with columns \code{id}, \code{chromosome}, \code{start},
-\code{end}, \code{score} and \code{name}.
 }
 }
 \description{

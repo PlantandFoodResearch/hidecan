@@ -6,8 +6,10 @@ Authors@R:
            comment = c(ORCID = "0000-0002-7708-2919"))
 Description: Generates HIDECAN plots that summarise and combine 
   the results of QTL mapping, genome-wide association studies (GWAS) and transcriptomics 
-  differential expression analyses (DE), along with manually curated candidate genes of interest. The HIDECAN plot
-  is presented in: Angelin-Bonnet, O., Vignes, M., Biggs, P. J., Baldwin, S., & Thomson, S. (2024). Visual Integration of Genome-Wide Association Studies and Differential Expression Results with the Hidecan R Package. Genes, 15(10), 1244. (https://doi.org/10.3390/genes15101244)
+  differential expression analyses (DE), along with manually curated candidate genes of interest.
+  The HIDECAN plot is presented in Angelin-Bonnet, O., Vignes, M., Biggs, P. J., Baldwin, S.,
+  & Thomson, S. (2024). Visual Integration of Genome-Wide Association Studies and Differential
+  Expression Results with the Hidecan R Package. Genes, 15(10), 1244.
 License: MIT + file LICENSE
 URL: https://plantandfoodresearch.github.io/hidecan/, https://github.com/PlantandFoodResearch/hidecan
 BugReports: https://github.com/PlantandFoodResearch/hidecan/issues
