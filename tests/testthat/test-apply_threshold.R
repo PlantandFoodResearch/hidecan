@@ -61,6 +61,31 @@ test_that("apply_threshold.CAN_data works", {
                    unclass(can_res))
 })
 
+test_that("apply_threshold.QTL_data works", {
+
+  qtl_res <- test_get_qtl()
+
+  ## If no threshold is specified, returns the dataset without rows
+  ## that have a missing score
+  expect_identical(
+    unclass(apply_threshold(qtl_res)),
+    qtl_res |>
+      dplyr::filter(!is.na(score)) |>
+      unclass()
+  )
+
+  ## applying the threshold should get rid of the rows with a score
+  ## below the threshold
+  res <- apply_threshold(qtl_res, score_thr = 2)
+  expect_true(min(res[["score"]]) >= 2)
+
+  ## the log2fc_thr parameter should have no effect on the output
+  expect_identical(
+    apply_threshold(qtl_res, score_thr = 2, log2fc_thr = 0),
+    apply_threshold(qtl_res, score_thr = 2, log2fc_thr = 1)
+  )
+})
+
 test_that("apply_threshold.CUSTOM_data works", {
 
   custom_res <- test_get_custom()

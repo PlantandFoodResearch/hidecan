@@ -5,9 +5,10 @@
 \alias{apply_threshold.GWAS_data}
 \alias{apply_threshold.DE_data}
 \alias{apply_threshold.CAN_data}
+\alias{apply_threshold.QTL_data}
 \alias{apply_threshold.CUSTOM_data}
 \alias{apply_threshold.default}
-\title{Filters GWAS or DE results based on a threshold}
+\title{Filters GWAS, DE or QTL mapping results based on a threshold}
 \usage{
 apply_threshold(x, score_thr = 0, log2fc_thr = 0)
 
@@ -17,31 +18,36 @@ apply_threshold(x, score_thr = 0, log2fc_thr = 0)
 
 \method{apply_threshold}{CAN_data}(x, score_thr = 0, log2fc_thr = 0)
 
+\method{apply_threshold}{QTL_data}(x, score_thr = 0, log2fc_thr = 0)
+
 \method{apply_threshold}{CUSTOM_data}(x, score_thr = 0, log2fc_thr = 0)
 
 \method{apply_threshold}{default}(x, score_thr = 0, log2fc_thr = 0)
 }
 \arguments{
-\item{x}{Either a \code{GWAS_data}, \code{DE_data}, \code{CAN_data} or \code{CUSTOM_data} object.}
+\item{x}{Either a \code{GWAS_data}, \code{DE_data}, \code{CAN_data}, \code{QTL_data} or
+\code{CUSTOM_data} object.}
 
-\item{score_thr}{Numeric, threshold to use on markers' or genes/transcripts' score.
-Only markers or genes with a score equal to or higher than this threshold
-will be retained. Default value is 0. Ignored for \code{CAN_data}.}
+\item{score_thr}{Numeric, threshold to use on markers', genes/transcripts' or
+QTL regions' score. Only markers/genes/regions with a score equal to or
+higher than this threshold will be retained. Default value is 0. Ignored
+for \code{CAN_data}.}
 
 \item{log2fc_thr}{Numeric, threshold to use on the absolute value of genes/
 transcripts' log2(fold-change). Only genes/transcripts with an absolute
 log2(fold-change) equal to or higher than this threshold will be retained.
-Ignored for \code{GWAS_data}, \code{CAN_data} and \code{CUSTOM_data}.}
+Ignored for \code{GWAS_data}, \code{CAN_data}, \code{QTL_data} and \code{CUSTOM_data}.}
 }
 \value{
 A filtered tibble (of class \code{GWAS_data_thr}, \code{DE_data_thr},
-\code{CAN_data_thr} or \code{CUSTOM_data_thr}).
+\code{CAN_data_thr}, \code{QTL_data_thr} or \code{CUSTOM_data_thr}).
 }
 \description{
-Filters markers or genes/transcripts based on a threshold applied to their
-GWAS or DE score, and log2(fold-change) (if applicable). For a set of
-candidate genes, simply returns the list. Note that markers or genes with
-a missing score or log2(fold-change) will be removed from the dataset.
+Filters markers, genes/transcripts or QTL regions based on a threshold
+applied to their GWAS, DE or QTL score, and log2(fold-change) (if
+applicable). For a set of candidate genes, simply returns the list. Note that
+markers, genes and QTL regions with a missing score or log2(fold-change) will
+be removed from the dataset.
 }
 \examples{
 x <- get_example_data()
@@ -56,4 +62,7 @@ apply_threshold(DE_data(x[["DE"]]), score_thr = -log10(0.05), log2fc_thr = 0)
 
 ## No effect on the Candidate genes
 apply_threshold(CAN_data(x[["CAN"]]))
+
+## For QTL mapping results
+apply_threshold(QTL_data(x[["QTL"]]), score_thr = 4)
 }

@@ -3,8 +3,9 @@ load("R/sysdata.rda")
 
 set.seed(834)
 gwas_res <- hidecan::GWAS_data(gwas_data |> dplyr::slice_sample(n = 1000))
-de_res <- hidecan::DE_data(de_data|> dplyr::slice_sample(n = 1000))
+de_res <- hidecan::DE_data(de_data |> dplyr::slice_sample(n = 1000))
 can_res <- hidecan::CAN_data(candidate_data)
+qtl_res <- hidecan::QTL_data(qtl_data)
 custom_res <- gwas_data |>
   dplyr::slice_sample(n = 1000) |>
   dplyr::mutate(score = runif(1000, 0, 5)) |>
@@ -13,6 +14,7 @@ custom_res <- gwas_data |>
 saveRDS(gwas_res, file = "tests/testthat/fixtures/test_gwas.rds")
 saveRDS(de_res, file = "tests/testthat/fixtures/test_de.rds")
 saveRDS(can_res, file = "tests/testthat/fixtures/test_can.rds")
+saveRDS(qtl_res, file = "tests/testthat/fixtures/test_qtl.rds")
 saveRDS(custom_res, file = "tests/testthat/fixtures/test_custom.rds")
 
 library(GWASpoly)
