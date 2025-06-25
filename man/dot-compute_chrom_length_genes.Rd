@@ -7,7 +7,7 @@
 .compute_chrom_length_genes(x)
 }
 \arguments{
-\item{x}{Either a \code{DE_data} or \code{CAN_data} object.}
+\item{x}{Either a \code{DE_data}, \code{QTL_data} or \code{CAN_data} object.}
 }
 \value{
 A tibble with two columns: \code{chromosome} (chromosome name) and
