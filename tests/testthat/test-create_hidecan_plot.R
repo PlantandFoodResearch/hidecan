@@ -1,19 +1,21 @@
 test_that("create_hidecan_plot works", {
+  qtl_res <- test_get_qtl()
   gwas_res <- test_get_gwas()
   de_res <- test_get_de()
   can_res <- test_get_can()
 
   x <- list(
+    apply_threshold(qtl_res, score_thr = 4),
     apply_threshold(gwas_res, score_thr = 4),
     apply_threshold(de_res, score_thr = -log10(0.05), log2fc_thr = 0.5),
     apply_threshold(can_res)
   )
 
-  chrom_length <- combine_chrom_length(list(gwas_res, de_res, can_res))
+  chrom_length <- combine_chrom_length(list(qtl_res, gwas_res, de_res, can_res))
 
   expect_error(
     create_hidecan_plot(list(LETTERS[1:5]), chrom_length),
-    "Expecting a list of 'GWAS_data_thr', 'DE_data_thr', 'CAN_data_thr' and/or 'CUSTOM_data_thr' objects (see apply_threshold() function).",
+    "Expecting a list of 'QTL_data_thr', 'GWAS_data_thr', 'DE_data_thr', 'CAN_data_thr' and/or 'CUSTOM_data_thr' objects (see apply_threshold() function).",
     fixed = TRUE
   )
 
@@ -41,24 +43,24 @@ test_that("create_hidecan_plot works", {
   expect_equal(p$data[["dataset"]] |>
                  unique() |>
                  sort(),
-               c("Candidate genes", "DE genes", "GWAS peaks") |>
+               c("Candidate genes", "DE genes", "GWAS peaks", "QTL regions") |>
                  factor())
 
-  p <- create_hidecan_plot(list(x[[1]], x[[2]], x[[1]]), chrom_length)
+  p <- create_hidecan_plot(list(x[[2]], x[[3]], x[[2]]), chrom_length)
   expect_equal(p$data[["dataset"]] |>
                  unique() |>
                  sort(),
                c("GWAS peaks - 1", "DE genes", "GWAS peaks") |>
                  factor(levels = c("GWAS peaks - 1", "DE genes", "GWAS peaks")))
 
-  p <- create_hidecan_plot(list("GWAS 1" = x[[1]], " " =  x[[2]], "GWAS 2" =  x[[1]]), chrom_length)
+  p <- create_hidecan_plot(list("GWAS 1" = x[[2]], " " =  x[[3]], "GWAS 2" =  x[[2]]), chrom_length)
   expect_equal(p$data[["dataset"]] |>
                  unique() |>
                  sort(),
                c("GWAS 2 - GWAS peaks", "DE genes", "GWAS 1 - GWAS peaks") |>
                  factor(levels = c("GWAS 2 - GWAS peaks", "DE genes", "GWAS 1 - GWAS peaks")))
 
-  p <- create_hidecan_plot(list("GWAS 1" = x[[1]], " " =  x[[2]], "GWAS 1" =  x[[1]]), chrom_length)
+  p <- create_hidecan_plot(list("GWAS 1" = x[[2]], " " =  x[[3]], "GWAS 1" =  x[[2]]), chrom_length)
   expect_equal(p$data[["dataset"]] |>
                  unique() |>
                  sort(),
@@ -111,25 +113,28 @@ test_that("create_hidecan_plot works", {
 
 
 test_that("create_hidecan_plot works with custom tracks", {
+  qtl_res <- test_get_qtl()
   gwas_res <- test_get_gwas()
   de_res <- test_get_de()
   can_res <- test_get_can()
   custom_res <- test_get_custom()
 
   x <- list(
+    apply_threshold(qtl_res, score_thr = 4),
     apply_threshold(gwas_res, score_thr = 4),
     apply_threshold(de_res, score_thr = -log10(0.05), log2fc_thr = 0.5),
     apply_threshold(can_res),
     apply_threshold(custom_res, score_thr = 4.95)
   )
 
-  chrom_length <- combine_chrom_length(list(gwas_res, de_res, can_res, custom_res))
+  chrom_length <- combine_chrom_length(list(qtl_res, gwas_res, de_res, can_res, custom_res))
 
   expect_no_error(create_hidecan_plot(x, chrom_length))
 
   custom_aes <- list(
     "CUSTOM_data_thr" = list(
       "y_label" = "QTL peaks",
+      "show_as_rect" = FALSE,
       "line_colour" = "purple",
       "point_shape" = 21,
       "show_name" = FALSE,
@@ -139,7 +144,8 @@ test_that("create_hidecan_plot works with custom tracks", {
         guide = ggplot2::guide_colourbar(title.position = "top",
                                          title.hjust = 0.5,
                                          order = 4)
-      )
+      ),
+      rect_width = NA
     )
   )
 
@@ -147,30 +153,34 @@ test_that("create_hidecan_plot works with custom tracks", {
 })
 
 test_that("hidecan_plot works", {
-
+  qtl_res <- test_get_qtl()
   gwas_res <- test_get_gwas()
   de_res <- test_get_de()
   can_res <- test_get_can()
 
   ## getting input as tibbles
+  qtl_data <- qtl_res; class(qtl_data) <- class(qtl_data)[-1]
   gwas_data <- gwas_res; class(gwas_data) <- class(gwas_data)[-1]
   de_data <- de_res; class(de_data) <- class(de_data)[-1]
   can_data <- can_res; class(can_data) <- class(can_data)[-1]
 
   ## Minimal graph should work
+  expect_error(hidecan_plot(qtl_list = qtl_data), NA)
   expect_error(hidecan_plot(gwas_list = gwas_res), NA)
   expect_error(hidecan_plot(de_list = de_res), NA)
   expect_message(hidecan_plot(de_list = de_res), NA) ## got rid of the duplicated x scale
   expect_error(hidecan_plot(can_list = can_res), NA)
 
-  expect_error(hidecan_plot(gwas_list = gwas_data,
+  expect_error(hidecan_plot(qtl_list = qtl_data,
+                            gwas_list = gwas_data,
                             de_list = de_data,
                             can_list = can_data), NA)
 
   ## Checking GWAS, DE and CAN input
-  expect_error(hidecan_plot(), "Should provide at least one non-empty list for 'gwas_list', 'de_list', 'can_list' or 'custom_list' argument.")
-  expect_error(hidecan_plot(gwas_list = "TEST"), "Arguments 'gwas_list', 'de_list' or 'can_list' should either be a data-frame or a list, or NULL.")
+  expect_error(hidecan_plot(), "Should provide at least one non-empty list for 'qtl_list', 'gwas_list', 'de_list', 'can_list' or 'custom_list' argument.")
+  expect_error(hidecan_plot(gwas_list = "TEST"), "Arguments 'qtl_list', 'gwas_list', 'de_list' or 'can_list' should either be a data-frame or a list, or NULL.")
 
+  expect_error(hidecan_plot(qtl_list = dplyr::rename(qtl_data, chrom = chromosome)), "In 'qtl_list' argument: Input data-frame is missing the following columns: 'chromosome'.")
   expect_error(hidecan_plot(gwas_list = dplyr::rename(gwas_data, chrom = chromosome)), "In 'gwas_list' argument: Input data-frame is missing the following columns: 'chromosome'.")
   expect_error(hidecan_plot(de_list = dplyr::mutate(de_data, score = paste0(score))), "In 'de_list' argument: 'score' column should contain numeric values.")
   expect_error(hidecan_plot(can_list = dplyr::rename(can_data, chrom = chromosome)), "In 'can_list' argument: Input data-frame is missing the following columns: 'chromosome'.")

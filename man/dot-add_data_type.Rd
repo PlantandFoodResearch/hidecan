@@ -36,7 +36,7 @@ legend for fill.}
 plot, as unit or number.}
 }
 \value{
-Ggplot \code{p} to which the new data type has been added.
+ggplot \code{p} to which the new data type has been added.
 }
 \description{
 Add data type to HIDECAN plot

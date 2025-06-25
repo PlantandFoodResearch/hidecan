@@ -89,13 +89,15 @@ and/or candidate genes.
 \examples{
 if (interactive()) {
 x <- get_example_data()
-y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
+y <- list("QTL" = QTL_data(x[["QTL"]]),
+          "GWAS" = GWAS_data(x[["GWAS"]]),
           "DE" = DE_data(x[["DE"]]),
           "CAN" = CAN_data(x[["CAN"]]))
 
 chrom_length <- combine_chrom_length(y)
 
 z <- list(
+  apply_threshold(y[["QTL"]], score_thr = 4),
   apply_threshold(y[["GWAS"]], score_thr = 4),
   apply_threshold(y[["DE"]], score_thr = 1.3, log2fc_thr = 0.5),
   apply_threshold(y[["CAN"]])
