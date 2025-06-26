@@ -40,6 +40,10 @@
 #' @param label_padding Numeric, amount of padding around gene labels in the plot,
 #' as unit or number. Default value is 0.15
 #' (for \link[ggrepel]{geom_label_repel}).
+#' @param line_alpha Numeric between 0 and 1, transparency of the vertical lines
+#'   for genomic locations (points) across tracks. Default is 0.7.
+#' @param rect_alpha Numeric between 0 and 1, transparency of the shadows of
+#'   genomic regions (rectangles) across tracks. Default is 0.3.
 #' @param custom_aes Named list of plot aesthetics for custom data types. See
 #'   [hidecan_aes()] for information about the content of each element. Default
 #'   is `NULL` (only needed if there are `CUSTOM_data_thr` objects in `x` or to
@@ -48,13 +52,15 @@
 #' @examples
 #' if (interactive()) {
 #' x <- get_example_data()
-#' y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
+#' y <- list("QTL" = QTL_data(x[["QTL"]]),
+#'           "GWAS" = GWAS_data(x[["GWAS"]]),
 #'           "DE" = DE_data(x[["DE"]]),
 #'           "CAN" = CAN_data(x[["CAN"]]))
 #'
 #' chrom_length <- combine_chrom_length(y)
 #'
 #' z <- list(
+#'   apply_threshold(y[["QTL"]], score_thr = 4),
 #'   apply_threshold(y[["GWAS"]], score_thr = 4),
 #'   apply_threshold(y[["DE"]], score_thr = 1.3, log2fc_thr = 0.5),
 #'   apply_threshold(y[["CAN"]])
@@ -110,20 +116,23 @@ create_hidecan_plot <- function(x,
                                 point_size = 3,
                                 label_size = 3.5,
                                 label_padding = 0.15,
+                                line_alpha = 0.7,
+                                rect_alpha = 0.3,
                                 custom_aes = NULL){
 
   ## for devtools::check()
   position <- dataset <- score <- chromosome <- position_mb <- NULL
   position_mb_end <- data_type <- name <- log2FoldChange <- NULL
-  upper_limit_mb <- lower_limit_mb <- NULL
+  upper_limit_mb <- lower_limit_mb <- start_mb <- end_mb <- NULL
+  start <- end <- dataset_num <- NULL
 
   ## Checking x input
   x_types <- purrr::map_chr(x, \(.x) class(.x)[[1]])
 
-  accepted_types <- c("GWAS_data_thr", "DE_data_thr",
-                      "CAN_data_thr", "CUSTOM_data_thr")
+  accepted_types <- c("QTL_data_thr", "GWAS_data_thr", "DE_data_thr", "CAN_data_thr",
+                      "CUSTOM_data_thr")
   if (!all(unique(x_types) %in% accepted_types)) {
-    stop("Expecting a list of 'GWAS_data_thr', 'DE_data_thr', 'CAN_data_thr' ",
+    stop("Expecting a list of 'QTL_data_thr', 'GWAS_data_thr', 'DE_data_thr', 'CAN_data_thr' ",
          "and/or 'CUSTOM_data_thr' objects (see apply_threshold() function).")
   }
 
@@ -142,9 +151,12 @@ create_hidecan_plot <- function(x,
   ## data type
   plot_aes <- .get_plot_aes(aes_types, colour_genes_by_score, custom_aes)
 
+  data_type_as_rect <- purrr::map_lgl(plot_aes, \(x) purrr::pluck(x, "show_as_rect"))
+  data_type_as_rect <- names(data_type_as_rect)[data_type_as_rect]
   data_type_labels <- purrr::map_chr(plot_aes, \(x) purrr::pluck(x, "y_label"))
   data_type_colours <- purrr::map_chr(plot_aes, \(x) purrr::pluck(x, "line_colour"))
   data_type_shapes <- purrr::map_int(plot_aes, \(x) purrr::pluck(x, "point_shape"))
+  data_type_shapes[data_type_as_rect] <- 15
 
   ## Making y labels
   if (is.null(names(x))) {
@@ -152,6 +164,7 @@ create_hidecan_plot <- function(x,
   } else {
     names(x) <- paste0(names(x), " - ", data_type_labels[aes_types])
     names(x) <- sub("^ +- ", "", names(x))
+    names(x) <- sub("- ?$", "", names(x))
     names(x) <- make.unique(names(x), ", ")
   }
 
@@ -164,9 +177,14 @@ create_hidecan_plot <- function(x,
   toplot <- x |>
     purrr::map(\(.x) dplyr::mutate(.x, data_type = .get_aes_type(.x))) |>
     purrr::list_rbind(names_to = "dataset") |>
+    ## to avoid issues if providing only GWAS data so no start and end cols
+    dplyr::bind_rows(dplyr::tibble(start = numeric(), end = numeric())) |>
     dplyr::mutate(
       position_mb = position / 1e6,
-      dataset = factor(dataset, levels = datasets_levels)
+      start_mb = start / 1e6,
+      end_mb = end / 1e6,
+      dataset = factor(dataset, levels = datasets_levels),
+      dataset_num = as.numeric(dataset)
     )
 
   if (!colour_genes_by_score) {
@@ -199,13 +217,49 @@ create_hidecan_plot <- function(x,
     dplyr::rename(position_mb_end = position_mb) |>
     dplyr::mutate(position_mb = 0)
 
+  ## Making sure that the order of the "Position of" legends matches the order
+  ## in which the different data types appear in the y-axis
+  ## doing that before re-sizing chromosomes as it will affect the order of the
+  ## tracks
+  unique_data_types <- unique(aes_types)
+
+  ## the drawing order of the tracks is slightly different, all genomic regions
+  ## need to go first
+  drawing_data_types <- unique(c(data_type_as_rect, unique_data_types))
+
+  ## Check whether we need to add a new fill legend for each data type
+  new_legend <- drawing_data_types != "CAN_data_thr"
+  names(new_legend) <- drawing_data_types
+
   ## Handling chromosome limits
   if (!is.null(chrom_limits)) {
     chrom_limits_df <- .check_chrom_limits(chrom_limits, chrom_length, chroms)
 
     toplot <- toplot |>
-      dplyr::left_join(chrom_limits_df, by = "chromosome") |>
-      dplyr::filter(position_mb >= lower_limit_mb, position_mb <= upper_limit_mb) |>
+      dplyr::left_join(chrom_limits_df, by = "chromosome")
+
+    toplot <- dplyr::bind_rows(
+      ## first filtering points
+      toplot |>
+        dplyr::filter(
+          !(data_type %in% data_type_as_rect),
+          position_mb >= lower_limit_mb,
+          position_mb <= upper_limit_mb
+        ),
+
+      ## then filtering regions
+      toplot |>
+        dplyr::filter(
+          data_type %in% data_type_as_rect,
+          end_mb >= lower_limit_mb,
+          start_mb <= upper_limit_mb
+        ) |>
+        dplyr::mutate(
+          start_mb = purrr::map2_dbl(start_mb, lower_limit_mb, max),
+          end_mb = purrr::map2_dbl(end_mb, upper_limit_mb, min),
+          position_mb = (start_mb + end_mb) / 2
+        )
+    ) |>
       dplyr::select(-lower_limit_mb, -upper_limit_mb)
 
     toplot_chroms <- toplot_chroms |>
@@ -215,37 +269,88 @@ create_hidecan_plot <- function(x,
       dplyr::select(-lower_limit_mb, -upper_limit_mb)
   }
 
-  ## Making sure that the order of the "Position of" legends matches the order
-  ## in which the different data types appear in the y-axis
-  unique_data_types <- unique(aes_types)
+  ## Now re-ordering the observations so that smaller regions are shown
+  ## on top of the other ones
+  toplot <- toplot |>
+    dplyr::arrange(end - start)
 
   p <- toplot |>
     ggplot2::ggplot(ggplot2::aes(x = position_mb, y = dataset)) +
     ## Chromosome segments
-    ggplot2::geom_segment(data = toplot_chroms,
-                          ggplot2::aes(xend = position_mb_end, yend = dataset)) +
-    ggplot2::facet_wrap(~ chromosome, scales = "free_x", nrow = n_rows, ncol = n_cols) +
-    ## vertical position indicators
-    ggplot2::geom_vline(ggplot2::aes(xintercept = position_mb, colour = data_type),
-                        alpha = 0.7) +
+    ggplot2::geom_segment(
+      data = toplot_chroms,
+      ggplot2::aes(xend = position_mb_end, yend = dataset)
+    ) +
+    ggplot2::facet_wrap(
+      ~ chromosome,
+      scales = "free_x",
+      nrow = n_rows,
+      ncol = n_cols
+    ) +
     ## General colours and shapes
-    ggplot2::scale_colour_manual(values = data_type_colours[unique_data_types],
-                                 labels = data_type_labels[unique_data_types],
-                                 breaks = unique_data_types) +
-    ggplot2::scale_shape_manual(values = data_type_shapes[unique_data_types],
-                                labels = data_type_labels[unique_data_types],
-                                breaks = unique_data_types) +
-    ggplot2::guides(colour = ggplot2::guide_legend(title.position = "top",
-                                                   title.hjust = 0.5,
-                                                   override.aes = list(alpha = 1),
-                                                   order = 1),
-                    shape = ggplot2::guide_legend(order = 1))
+    ggplot2::scale_colour_manual(
+      values = data_type_colours[unique_data_types],
+      labels = data_type_labels[unique_data_types],
+      breaks = unique_data_types,
+      limits = unique_data_types,
+      drop = FALSE
+    ) +
+    ggplot2::scale_fill_manual(
+      values = data_type_colours[unique_data_types],
+      labels = data_type_labels[unique_data_types],
+      guide = "none"
+    ) +
+    ggplot2::scale_shape_manual(
+      values = data_type_shapes[unique_data_types],
+      labels = data_type_labels[unique_data_types],
+      breaks = unique_data_types,
+      limits = unique_data_types,
+      drop = FALSE
+    ) +
+    ggplot2::guides(
+      colour = ggplot2::guide_legend(
+        title.position = "top",
+        title.hjust = 0.5,
+        override.aes = list(alpha = 1),
+        order = 1
+      ),
+      shape = ggplot2::guide_legend(order = 1)
+    ) +
+    ## vertical position indicators for rectangles
+    ggplot2::geom_rect(
+      data = dplyr::filter(toplot, data_type %in% data_type_as_rect),
+      ggplot2::aes(
+        xmin = start_mb, xmax = end_mb, ymin = -Inf, ymax = Inf,
+        fill = data_type
+      ),
+      alpha = rect_alpha
+    )
 
-  ## Check whether we need to add a new fill legend for each data type
-  new_legend <- !(unique_data_types %in% c(unique_data_types[[1]], "CAN_data_thr"))
-  names(new_legend) <- unique_data_types
+  ## Need to add the genomic region tracks before adding the vertical lines
+  ## for the point tracks (but after showing their shadows)
+  for (i in data_type_as_rect) {
+    p <- .add_data_type(
+      p,
+      toplot,
+      i,
+      paes = plot_aes[[i]],
+      add_new_legend = new_legend[[i]],
+      point_size,
+      label_size,
+      label_padding
+    )
+  }
 
-  for (i in unique_data_types) {
+  p <- p +
+    ## vertical position indicators for points
+    ggplot2::geom_vline(
+      data = dplyr::filter(toplot, !(data_type %in% data_type_as_rect)),
+      ggplot2::aes(xintercept = position_mb, colour = data_type),
+      alpha = line_alpha,
+      show.legend = TRUE
+    )
+
+  for (i in setdiff(drawing_data_types, data_type_as_rect)) {
     p <- .add_data_type(
       p,
       toplot,
@@ -279,6 +384,10 @@ create_hidecan_plot <- function(x,
 #' Wrapper function to create a HIDECAN plot from GWAS results, DE results or
 #' candidate genes.
 #'
+#' @param qtl_list Data-frame or list of data-frames containing QTL mapping
+#'   results, each with at least a `chromosome`, `start`, `end`, and either
+#'   `padj` or `score` columns. If a named list, the names will be used in the
+#'   plot.
 #' @param gwas_list Data-frame or list of data-frames containing GWAS results,
 #'   each with at least a `chromosome`, `position` and either `padj` or `score`
 #'   columns. If a named list, the names will be used in the plot.
@@ -289,6 +398,9 @@ create_hidecan_plot <- function(x,
 #' @param can_list Data-frame or list of data-frames containing candidate genes,
 #'   each with at least a `chromosome`, `start`, `end` and `name` columns. If a
 #'   named list, the names will be used in the plot.
+#' @param score_thr_qtl Numeric, the score threshold for QTL mapping results
+#'   that will be used to select which markers will be plotted. Default value is
+#'   4.
 #' @param score_thr_gwas Numeric, the score threshold for GWAS results that will
 #'   be used to select which markers will be plotted. Default value is 4.
 #' @param score_thr_de Numeric, the score threshold for DE results that will be
@@ -312,9 +424,11 @@ create_hidecan_plot <- function(x,
 #'
 #' ## Typical example with one GWAs result table, one DE result table and
 #' ## one table of candidate genes
-#' hidecan_plot(gwas_list = x[["GWAS"]],
+#' hidecan_plot(qtl_list = x[["QTL"]],
+#'              gwas_list = x[["GWAS"]],
 #'              de_list = x[["DE"]],
 #'              can_list = x[["CAN"]],
+#'              score_thr_qtl = -log10(0.0001),
 #'              score_thr_gwas = -log10(0.0001),
 #'              score_thr_de = -log10(0.005),
 #'              log2fc_thr = 0,
@@ -331,9 +445,11 @@ create_hidecan_plot <- function(x,
 #'              log2fc_thr = 0)
 #'
 #' ## Set limits on all chromosomes (to "zoom in" to the 10-20Mb region)
-#' hidecan_plot(gwas_list = x[["GWAS"]],
+#' hidecan_plot(qtl_list = x[["QTL"]],
+#'              gwas_list = x[["GWAS"]],
 #'              de_list = x[["DE"]],
 #'              can_list = x[["CAN"]],
+#'              score_thr_qtl = -log10(0.0001),
 #'              score_thr_gwas = -log10(0.0001),
 #'              score_thr_de = -log10(0.005),
 #'              log2fc_thr = 0,
@@ -341,9 +457,11 @@ create_hidecan_plot <- function(x,
 #'              chrom_limits = c(10e6, 20e6))
 #'
 #' ## Set limits on some chromosomes only
-#' hidecan_plot(gwas_list = x[["GWAS"]],
+#' hidecan_plot(qtl_list = x[["QTL"]],
+#'              gwas_list = x[["GWAS"]],
 #'              de_list = x[["DE"]],
 #'              can_list = x[["CAN"]],
+#'              score_thr_qtl = -log10(0.0001),
 #'              score_thr_gwas = -log10(0.0001),
 #'              score_thr_de = -log10(0.005),
 #'              log2fc_thr = 0,
@@ -352,9 +470,11 @@ create_hidecan_plot <- function(x,
 #'                                   "ST4.03ch02" = c(15e6, 25e6)))
 #' }
 #' @export
-hidecan_plot <- function(gwas_list = NULL,
+hidecan_plot <- function(qtl_list = NULL,
+                         gwas_list = NULL,
                          de_list = NULL,
                          can_list = NULL,
+                         score_thr_qtl = 4,
                          score_thr_gwas = 4,
                          score_thr_de = 2,
                          log2fc_thr = 1,
@@ -371,17 +491,19 @@ hidecan_plot <- function(gwas_list = NULL,
                          point_size = 3,
                          label_size = 3.5,
                          label_padding = 0.15,
+                         line_alpha = 0.7,
+                         rect_alpha = 0.3,
                          custom_aes = NULL,
                          custom_list = NULL,
                          score_thr_custom = 0
 ){
 
   ## Input should either be NULL, a data-frame or a list
-  list_or_null <- list(gwas_list, de_list, can_list) |>
+  list_or_null <- list(qtl_list, gwas_list, de_list, can_list) |>
     purrr::map_lgl(\(.x) (is.list(.x) | is.null(.x)))
 
   if (!all(list_or_null)) {
-    stop("Arguments 'gwas_list', 'de_list' or 'can_list' should either be a data-frame or a list, or NULL.")
+    stop("Arguments 'qtl_list', 'gwas_list', 'de_list' or 'can_list' should either be a data-frame or a list, or NULL.")
   }
 
   ## Separate error message for custom input because don't want to confuse
@@ -391,6 +513,7 @@ hidecan_plot <- function(gwas_list = NULL,
   }
 
   ## If providing a single data-frame, turn into a list
+  if (is.data.frame(qtl_list)) qtl_list <- list(qtl_list)
   if (is.data.frame(gwas_list)) gwas_list <- list(gwas_list)
   if (is.data.frame(de_list)) de_list <- list(de_list)
   if (is.data.frame(can_list)) can_list <- list(can_list)
@@ -406,6 +529,9 @@ hidecan_plot <- function(gwas_list = NULL,
     return(res)
   }
 
+  qtl_list <- qtl_list |>
+    purrr::map(~ tryCatch(QTL_data(.x), error = eval(error_func("qtl_list"))))
+
   gwas_list <- gwas_list |>
     purrr::map(~ tryCatch(GWAS_data(.x), error = eval(error_func("gwas_list"))))
 
@@ -418,11 +544,11 @@ hidecan_plot <- function(gwas_list = NULL,
   custom_list <- custom_list |>
     purrr::map(~ tryCatch(CUSTOM_data(.x), error = eval(error_func("custom_list"))))
 
-  x <- c(gwas_list, de_list, can_list, custom_list)
+  x <- c(qtl_list, gwas_list, de_list, can_list, custom_list)
 
   if(length(x) == 0) {
-    stop("Should provide at least one non-empty list for 'gwas_list', 'de_list',",
-         " 'can_list' or 'custom_list' argument.")
+    stop("Should provide at least one non-empty list for 'qtl_list', 'gwas_list',",
+         " 'de_list', 'can_list' or 'custom_list' argument.")
   }
 
   ## if not provided, compute the chromosome length
@@ -431,20 +557,44 @@ hidecan_plot <- function(gwas_list = NULL,
   }
 
   ## Check threshold values
-  if(length(score_thr_gwas) != 1) stop("'score_thr_gwas' argument should be a single numeric value.")
-  if(!is.numeric(score_thr_gwas)) stop("'score_thr_gwas' argument should be a numeric value.")
+  if (length(score_thr_qtl) != 1) {
+    stop("'score_thr_qtl' argument should be a single numeric value.")
+  }
+  if (!is.numeric(score_thr_qtl)) {
+    stop("'score_thr_qtl' argument should be a numeric value.")
+  }
 
-  if(length(score_thr_de) != 1) stop("'score_thr_de' argument should be a single numeric value.")
-  if(!is.numeric(score_thr_de)) stop("'score_thr_de' argument should be a numeric value.")
+  if (length(score_thr_gwas) != 1){
+    stop("'score_thr_gwas' argument should be a single numeric value.")
+  }
+  if (!is.numeric(score_thr_gwas)) {
+    stop("'score_thr_gwas' argument should be a numeric value.")
+  }
 
-  if(length(log2fc_thr) != 1) stop("'log2fc_thr' argument should be a single numeric value.")
-  if(!is.numeric(log2fc_thr)) stop("'log2fc_thr' argument should be a numeric value.")
+  if (length(score_thr_de) != 1) {
+    stop("'score_thr_de' argument should be a single numeric value.")
+  }
+  if (!is.numeric(score_thr_de)) {
+    stop("'score_thr_de' argument should be a numeric value.")
+  }
 
-  if(length(score_thr_custom) != 1) stop("'score_thr_custom' argument should be a single numeric value.")
-  if(!is.numeric(score_thr_custom)) stop("'score_thr_custom' argument should be a numeric value.")
+  if (length(log2fc_thr) != 1) {
+    stop("'log2fc_thr' argument should be a single numeric value.")
+  }
+  if (!is.numeric(log2fc_thr)) {
+    stop("'log2fc_thr' argument should be a numeric value.")
+  }
+
+  if (length(score_thr_custom) != 1) {
+    stop("'score_thr_custom' argument should be a single numeric value.")
+  }
+  if (!is.numeric(score_thr_custom)) {
+    stop("'score_thr_custom' argument should be a numeric value.")
+  }
 
   ## Apply threshold to datasets
   score_thr <- c(
+    "QTL_data" = score_thr_qtl,
     "GWAS_data" = score_thr_gwas,
     "DE_data" = score_thr_de,
     "CAN_data" = 0,
@@ -472,6 +622,8 @@ hidecan_plot <- function(gwas_list = NULL,
                       point_size,
                       label_size,
                       label_padding,
+                      line_alpha,
+                      rect_alpha,
                       custom_aes)
 }
 
@@ -481,16 +633,22 @@ hidecan_plot <- function(gwas_list = NULL,
 #' Generates a list of the default aesthetics used for HIDECAN plots.
 #'
 #' @param colour_genes_by_score Logical, whether to colour the genes by score
-#' (`TRUE`) or by log2(fold-change) (`FALSE`). Default value is `TRUE`.
-#' @returns A named list, with one element per type of data (e.g. GWAS, DE, etc).
-#' Each element is itself a list with the following elements:
+#'   (`TRUE`) or by log2(fold-change) (`FALSE`). Default value is `TRUE`.
+#' @returns A named list, with one element per type of data (e.g. GWAS, DE,
+#'   etc). Each element is itself a list with the following elements:
 #' * `y_label`: prefix added to the name of a track on the y-axis of the plot.
+#' * `show_as_rect`: logical, whether the interval should be represented by a point
+#'   showing its mid-position (`FALSE`), or by a rectangle spanning its length
+#'   (`TRUE`).
 #' * `line_colour`: colour of the vertical line used to show the position of
-#'  elements of this type.
-#' * `point_shape`: shape used for the points of this type.
+#'   elements of this type.
+#' * `point_shape`: shape used for the points of this type. Non-applicable if
+#'   `show_as_rect` is `TRUE`.
 #' * `show_name`: whether a label with `name` value should be added to points of
-#'  this type.
+#'   this type.
 #' * `fill_scale`: fill scale to use for the points of this type.
+#' * `rect_width`: if `show_as_rect` is `TRUE`, relative half-width of the rectangles
+#'   (in terms of space between two tracks).
 #' @export
 hidecan_aes <- function(colour_genes_by_score = TRUE) {
   if (colour_genes_by_score) {
@@ -499,7 +657,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
       option = "viridis",
       guide = ggplot2::guide_colourbar(title.position = "top",
                                        title.hjust = 0.5,
-                                       order = 3)
+                                       order = 4)
     )
   } else {
     de_fill_scale <- ggplot2::scale_fill_gradient2(
@@ -509,13 +667,14 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
       high = "firebrick",
       guide = ggplot2::guide_colourbar(title.position = "top",
                                        title.hjust = 0.5,
-                                       order = 3)
+                                       order = 4)
     )
   }
 
   list(
     "GWAS_data_thr" = list(
       "y_label" = "GWAS peaks",
+      "show_as_rect" = FALSE,
       "line_colour" = "red",
       "point_shape" = 21,
       "show_name" = FALSE,
@@ -524,28 +683,51 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
         option = "plasma",
         guide = ggplot2::guide_colourbar(title.position = "top",
                                          title.hjust = 0.5,
-                                         order = 2))
+                                         order = 3)
+      ),
+      "rect_width" = 0.5
     ),
 
     "DE_data_thr" = list(
       "y_label" = "DE genes",
+      "show_as_rect" = FALSE,
       "line_colour" = "darkcyan",
       "point_shape" = 23,
       "show_name" = FALSE,
-      "fill_scale" = de_fill_scale
+      "fill_scale" = de_fill_scale,
+      "rect_width" = 0.5
     ),
 
     "CAN_data_thr" = list(
       "y_label" = "Candidate genes",
+      "show_as_rect" = FALSE,
       "line_colour" = "grey30",
       "point_shape" = 4,
       "show_name" = TRUE,
-      "fill_scale" = NULL
+      "fill_scale" = NULL,
+      "rect_width" = 0.5
     ),
 
+    "QTL_data_thr" = list(
+      "y_label" = "QTL regions",
+      "show_as_rect" = TRUE,
+      "line_colour" = "grey80",
+      "point_shape" = NA,
+      "show_name" = FALSE,
+      "fill_scale" = viridis::scale_fill_viridis(
+        "QTL region score",
+        option = "mako",
+        begin = 0.3,
+        guide = ggplot2::guide_colourbar(title.position = "top",
+                                         title.hjust = 0.5,
+                                         order = 2)
+      ),
+      "rect_width" = 0.5
+    ),
 
     "CUSTOM_data_thr" = list(
       "y_label" = "Custom track",
+      "show_as_rect" = FALSE,
       "line_colour" = "darkgoldenrod2",
       "point_shape" = 21,
       "show_name" = FALSE,
@@ -554,7 +736,9 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
         option = "rocket",
         guide = ggplot2::guide_colourbar(title.position = "top",
                                          title.hjust = 0.5,
-                                         order = 4))
+                                         order = 5)
+      ),
+    "rect_width" = 0.5
     )
   )
 }
@@ -603,7 +787,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
          call. = FALSE)
   }
 
-  return(default_aes)
+  return(default_aes[aes_types])
 }
 
 #' Check chromosomes to plot
@@ -728,7 +912,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
 #' @param label_size Numeric, size of the gene labels in the plot.
 #' @param label_padding Numeric, amount of padding around gene labels in the
 #'   plot, as unit or number.
-#' @returns Ggplot `p` to which the new data type has been added.
+#' @returns ggplot `p` to which the new data type has been added.
 .add_data_type <- function(p,
                            toplot,
                            i,
@@ -738,34 +922,58 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
                            label_size,
                            label_padding) {
   ## for devtools::check()
-  data_type <- name <- score <- NULL
+  data_type <- name <- score <- start_mb <- end_mb <- dataset_num <- NULL
 
   sub_data <- dplyr::filter(toplot, data_type == i)
 
   if (add_new_legend) p <- p + ggnewscale::new_scale_fill()
 
+  if (paes$show_as_rect) {
+    p <- p +
+      ggplot2::geom_rect(
+        data = sub_data,
+        mapping = ggplot2::aes(
+          xmin = start_mb,
+          xmax = end_mb,
+          ymin = dataset_num - paes$rect_width,
+          ymax = dataset_num + paes$rect_width,
+          fill = score
+        ),
+        colour = "black"
+      ) +
+      paes$fill_scale
+  } else {
+
+    if (is.null(paes$fill_scale)) {
+      scatter_mapping <- ggplot2::aes(shape = data_type)
+    } else {
+      scatter_mapping <- ggplot2::aes(shape = data_type, fill = score)
+    }
+
+    p <- p +
+      ggplot2::geom_point(
+        data = sub_data,
+        mapping = scatter_mapping,
+        size = point_size,
+        show.legend = TRUE
+      ) +
+      paes$fill_scale
+  }
+
   if (paes$show_name) {
     p <- p +
-      ggrepel::geom_label_repel(ggplot2::aes(label = name),
-                                data = sub_data,
-                                nudge_y = 0.5,
-                                na.rm = TRUE,
-                                size = label_size,
-                                label.padding = label_padding,
-                                alpha = 0.5)
+      ggrepel::geom_label_repel(
+        ggplot2::aes(label = name),
+        data = sub_data,
+        nudge_y = 0.5,
+        na.rm = TRUE,
+        size = label_size,
+        label.padding = label_padding,
+        alpha = 0.5
+      )
   }
 
-  if (is.null(paes$fill_scale)) {
-    scatter_mapping <- ggplot2::aes(shape = data_type)
-  } else {
-    scatter_mapping <- ggplot2::aes(shape = data_type, fill = score)
-  }
-
-  p <- p +
-    ggplot2::geom_point(data = sub_data,
-                        mapping = scatter_mapping,
-                        size = point_size) +
-    paes$fill_scale
+  p
 }
 
 # create_hidecan_plot_interactive <- function(x,

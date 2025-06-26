@@ -11,16 +11,22 @@ hidecan_aes(colour_genes_by_score = TRUE)
 (\code{TRUE}) or by log2(fold-change) (\code{FALSE}). Default value is \code{TRUE}.}
 }
 \value{
-A named list, with one element per type of data (e.g. GWAS, DE, etc).
-Each element is itself a list with the following elements:
+A named list, with one element per type of data (e.g. GWAS, DE,
+etc). Each element is itself a list with the following elements:
 \itemize{
 \item \code{y_label}: prefix added to the name of a track on the y-axis of the plot.
+\item \code{show_as_rect}: logical, whether the interval should be represented by a point
+showing its mid-position (\code{FALSE}), or by a rectangle spanning its length
+(\code{TRUE}).
 \item \code{line_colour}: colour of the vertical line used to show the position of
 elements of this type.
-\item \code{point_shape}: shape used for the points of this type.
+\item \code{point_shape}: shape used for the points of this type. Non-applicable if
+\code{show_as_rect} is \code{TRUE}.
 \item \code{show_name}: whether a label with \code{name} value should be added to points of
 this type.
 \item \code{fill_scale}: fill scale to use for the points of this type.
+\item \code{rect_width}: if \code{show_as_rect} is \code{TRUE}, relative half-width of the rectangles
+(in terms of space between two tracks).
 }
 }
 \description{

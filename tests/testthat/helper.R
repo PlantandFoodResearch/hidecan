@@ -10,6 +10,10 @@ test_get_can <- function() {
   readRDS(test_path("fixtures", "test_can.rds"))
 }
 
+test_get_qtl <- function() {
+  readRDS(test_path("fixtures", "test_qtl.rds"))
+}
+
 test_get_custom <- function() {
   readRDS(test_path("fixtures", "test_custom.rds"))
 }

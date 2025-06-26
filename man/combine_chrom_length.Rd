@@ -7,21 +7,25 @@
 combine_chrom_length(x)
 }
 \arguments{
-\item{x}{A list of \code{GWAS_data}, \code{DE_data}, \code{CAN_data} or \code{CUSTOM_data} objects.}
+\item{x}{A list of \code{GWAS_data}, \code{DE_data}, \code{CAN_data}, \code{QTL_data} or
+\code{CUSTOM_data} objects.}
 }
 \value{
 A tibble with two columns: \code{chromosome} (chromosome name) and
 \code{length} (chromosome length in base pair).
 }
 \description{
-Computes the length (in bp) of each chromosome from a list of GWAS and
-DE results as well as candidate gene lists.
+Computes the length (in bp) of each chromosome from a list of GWAS and DE
+results as well as candidate gene lists.
 }
 \examples{
 x <- get_example_data()
-y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
-          "DE" = DE_data(x[["DE"]]),
-          "CAN" = CAN_data(x[["CAN"]]))
+y <- list(
+  "GWAS" = GWAS_data(x[["GWAS"]]),
+  "DE" = DE_data(x[["DE"]]),
+  "CAN" = CAN_data(x[["CAN"]]),
+  "QTL" = QTL_data(x[["QTL"]])
+)
 
 combine_chrom_length(y)
 }

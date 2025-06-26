@@ -19,6 +19,8 @@ create_hidecan_plot(
   point_size = 3,
   label_size = 3.5,
   label_padding = 0.15,
+  line_alpha = 0.7,
+  rect_alpha = 0.3,
   custom_aes = NULL
 )
 }
@@ -74,6 +76,12 @@ Default value is 2. Will be set to \code{NULL} if \code{n_rows} is not \code{NUL
 as unit or number. Default value is 0.15
 (for \link[ggrepel]{geom_label_repel}).}
 
+\item{line_alpha}{Numeric between 0 and 1, transparency of the vertical lines
+for genomic locations (points) across tracks. Default is 0.7.}
+
+\item{rect_alpha}{Numeric between 0 and 1, transparency of the shadows of
+genomic regions (rectangles) across tracks. Default is 0.3.}
+
 \item{custom_aes}{Named list of plot aesthetics for custom data types. See
 \code{\link[=hidecan_aes]{hidecan_aes()}} for information about the content of each element. Default
 is \code{NULL} (only needed if there are \code{CUSTOM_data_thr} objects in \code{x} or to
@@ -89,13 +97,15 @@ and/or candidate genes.
 \examples{
 if (interactive()) {
 x <- get_example_data()
-y <- list("GWAS" = GWAS_data(x[["GWAS"]]),
+y <- list("QTL" = QTL_data(x[["QTL"]]),
+          "GWAS" = GWAS_data(x[["GWAS"]]),
           "DE" = DE_data(x[["DE"]]),
           "CAN" = CAN_data(x[["CAN"]]))
 
 chrom_length <- combine_chrom_length(y)
 
 z <- list(
+  apply_threshold(y[["QTL"]], score_thr = 4),
   apply_threshold(y[["GWAS"]], score_thr = 4),
   apply_threshold(y[["DE"]], score_thr = 1.3, log2fc_thr = 0.5),
   apply_threshold(y[["CAN"]])

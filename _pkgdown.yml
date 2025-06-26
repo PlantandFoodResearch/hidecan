@@ -32,6 +32,7 @@ reference:
 
 - title: "Constructors from tibbles"
   contents:
+  - QTL_data
   - GWAS_data
   - DE_data
   - CAN_data

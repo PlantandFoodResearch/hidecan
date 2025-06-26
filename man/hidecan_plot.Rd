@@ -5,9 +5,11 @@
 \title{Wrapper to create a HIDECAN plot}
 \usage{
 hidecan_plot(
+  qtl_list = NULL,
   gwas_list = NULL,
   de_list = NULL,
   can_list = NULL,
+  score_thr_qtl = 4,
   score_thr_gwas = 4,
   score_thr_de = 2,
   log2fc_thr = 1,
@@ -24,12 +26,19 @@ hidecan_plot(
   point_size = 3,
   label_size = 3.5,
   label_padding = 0.15,
+  line_alpha = 0.7,
+  rect_alpha = 0.3,
   custom_aes = NULL,
   custom_list = NULL,
   score_thr_custom = 0
 )
 }
 \arguments{
+\item{qtl_list}{Data-frame or list of data-frames containing QTL mapping
+results, each with at least a \code{chromosome}, \code{start}, \code{end}, and either
+\code{padj} or \code{score} columns. If a named list, the names will be used in the
+plot.}
+
 \item{gwas_list}{Data-frame or list of data-frames containing GWAS results,
 each with at least a \code{chromosome}, \code{position} and either \code{padj} or \code{score}
 columns. If a named list, the names will be used in the plot.}
@@ -42,6 +51,10 @@ plot.}
 \item{can_list}{Data-frame or list of data-frames containing candidate genes,
 each with at least a \code{chromosome}, \code{start}, \code{end} and \code{name} columns. If a
 named list, the names will be used in the plot.}
+
+\item{score_thr_qtl}{Numeric, the score threshold for QTL mapping results
+that will be used to select which markers will be plotted. Default value is
+4.}
 
 \item{score_thr_gwas}{Numeric, the score threshold for GWAS results that will
 be used to select which markers will be plotted. Default value is 4.}
@@ -98,6 +111,12 @@ Default value is 2. Will be set to \code{NULL} if \code{n_rows} is not \code{NUL
 as unit or number. Default value is 0.15
 (for \link[ggrepel]{geom_label_repel}).}
 
+\item{line_alpha}{Numeric between 0 and 1, transparency of the vertical lines
+for genomic locations (points) across tracks. Default is 0.7.}
+
+\item{rect_alpha}{Numeric between 0 and 1, transparency of the shadows of
+genomic regions (rectangles) across tracks. Default is 0.3.}
+
 \item{custom_aes}{Named list of plot aesthetics for custom data types. See
 \code{\link[=hidecan_aes]{hidecan_aes()}} for information about the content of each element. Default
 is \code{NULL} (only needed if there are \code{CUSTOM_data_thr} objects in \code{x} or to
@@ -124,9 +143,11 @@ x <- get_example_data()
 
 ## Typical example with one GWAs result table, one DE result table and
 ## one table of candidate genes
-hidecan_plot(gwas_list = x[["GWAS"]],
+hidecan_plot(qtl_list = x[["QTL"]],
+             gwas_list = x[["GWAS"]],
              de_list = x[["DE"]],
              can_list = x[["CAN"]],
+             score_thr_qtl = -log10(0.0001),
              score_thr_gwas = -log10(0.0001),
              score_thr_de = -log10(0.005),
              log2fc_thr = 0,
@@ -143,9 +164,11 @@ hidecan_plot(de_list = list("X vs Y" = x[["DE"]],
              log2fc_thr = 0)
 
 ## Set limits on all chromosomes (to "zoom in" to the 10-20Mb region)
-hidecan_plot(gwas_list = x[["GWAS"]],
+hidecan_plot(qtl_list = x[["QTL"]],
+             gwas_list = x[["GWAS"]],
              de_list = x[["DE"]],
              can_list = x[["CAN"]],
+             score_thr_qtl = -log10(0.0001),
              score_thr_gwas = -log10(0.0001),
              score_thr_de = -log10(0.005),
              log2fc_thr = 0,
@@ -153,9 +176,11 @@ hidecan_plot(gwas_list = x[["GWAS"]],
              chrom_limits = c(10e6, 20e6))
 
 ## Set limits on some chromosomes only
-hidecan_plot(gwas_list = x[["GWAS"]],
+hidecan_plot(qtl_list = x[["QTL"]],
+             gwas_list = x[["GWAS"]],
              de_list = x[["DE"]],
              can_list = x[["CAN"]],
+             score_thr_qtl = -log10(0.0001),
              score_thr_gwas = -log10(0.0001),
              score_thr_de = -log10(0.005),
              log2fc_thr = 0,

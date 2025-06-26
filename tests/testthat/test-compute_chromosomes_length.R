@@ -58,6 +58,27 @@ test_that("compute_chrom_length.CAN_data works", {
 
 })
 
+
+test_that("compute_chrom_length.QTL_data works", {
+  qtl_res <- test_get_qtl()
+
+  chr_length <- compute_chrom_length(qtl_res)
+
+  ## One value per chromosome
+  expect_equal(chr_length[["chromosome"]], sort(unique(qtl_res[["chromosome"]])))
+
+  ## Each value is the max position within the chromosome
+  manual_vals <- qtl_res[["chromosome"]] |>
+    unique() |>
+    sort() |>
+    purrr::map_dbl(~ max(c(max(qtl_res$start[qtl_res$chromosome == .x]),
+                           max(qtl_res$end[qtl_res$chromosome == .x]))))
+
+  expect_equal(chr_length[["length"]],
+               manual_vals)
+
+})
+
 test_that("compute_chrom_length.CUSTOM_data works", {
   custom_res <- test_get_custom()
 
