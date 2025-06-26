@@ -180,6 +180,7 @@ attr(x$METH, "aes_type") <- "METH"
 ## the aes_type attribute
 plot_aes$METH <- list(
   y_label = "DMRs",
+  show_as_rect = FALSE,
   line_colour = "purple",
   point_shape = 24,
   show_name = TRUE,
@@ -191,7 +192,8 @@ plot_aes$METH <- list(
       title.hjust = 0.5,
       order = 5
     )
-  )
+  ),
+  rect_width = 0.5
 )
 
 hidecan_plot(

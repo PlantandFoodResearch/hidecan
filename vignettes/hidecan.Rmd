@@ -17,6 +17,7 @@ library(tibble)
 library(dplyr)
 library(purrr)
 library(stringr)
+library(ggplot2)
 library(viridis)
 ```
 
@@ -26,7 +27,7 @@ library(hidecan)
 
 ## Input data
 
-The `hidecan` package takes as input tibbles (data-frames) of GWAS and DE results or candidate genes. The input data-frames should contain some mandatory columns, depending on the type of data.
+The `hidecan` package takes as input tibbles (data-frames) of QTL mapping, GWAS and DE results or candidate genes. The input data-frames should contain some mandatory columns, depending on the type of data. Note that for each type of results, the full list of tested regions/markers/genes should be passed to `hidecan`, not only the significant ones; the package will take care of selecting the significant results based on user-defined thresholds.
 
 A list of example input datasets can be obtained via the `get_example_data()` function:
 
@@ -36,6 +37,23 @@ x <- get_example_data()
 str(x, max.level = 1)
 ```
 
+### QTL mapping results
+
+QTL mapping results should be provided as a tibble or data-frame, with one row per QTL region. The data-frame should contain at least the following columns:
+
+-   `chromosome`: character column, giving the ID of the chromosome on which each region is located;
+
+-   `start` and `end`: numeric columns, giving the starting and end position of the region along the chromosome (in bp);
+
+-   either `score` or `padj`: numeric column, providing either the score (i.e. `-log10(p-value)`) or the adjusted p-value of the region If a `score` column is provided, the `padj` column will be ignored. If only a `padj` column is provided, a `score` column will be constructed as `-log10(padj)`. Note that this column could be used to represent the estimated effect of the region, for example.
+
+Any other column present in the data-frame will be ignored. An example of valid input is shown below:
+
+```{r example-data-qtl}
+head(x[["QTL"]])
+```
+
+
 ### GWAS results
 
 GWAS results should be provided as a tibble or data-frame, with one row per genetic marker. The data-frame should contain at least the following columns:
@@ -44,7 +62,7 @@ GWAS results should be provided as a tibble or data-frame, with one row per gene
 
 -   `position`: numeric column, the physical position along the chromosome (in base pairs - bp) of the marker;
 
--   either `score` or `padj`: numeric column, providing either the score (i.e. `-log10(p-value)`) or the adjusted p-value of the marker. If a `score` column is provided, the `padj` column will be ignored. If only a `padj` column is provided, a `score` column will be constructed as `-log10(padj)`.
+-   either `score` or `padj`: numeric column, providing either the score (i.e. `-log10(p-value)`) or the adjusted p-value of the region. If a `score` column is provided, the `padj` column will be ignored. If only a `padj` column is provided, a `score` column will be constructed as `-log10(padj)`.
 
 Any other column present in the data-frame will be ignored. An example of valid input is shown below:
 
@@ -92,13 +110,15 @@ head(x[["CAN"]])
 
 The `hidecan_plot()` function creates a HIDECAN plot. It takes as input the data-frames presented above, as well as the score and log2(fold-change) thresholds used to select the significant markers and genes.
 
-In this example, we only show markers with a score above 4, which corresponds to a p-value below $1\times10^{-4}$, and genes with a score above 1.3, which corresponds to a p-value of 0.05. We don't place any threshold on the log2(fold-change) of the genes:
+In this example, we only show QTL regions and markers with a score above 4, which corresponds to a p-value below $1\times10^{-4}$, and genes with a score above 1.3, which corresponds to a p-value of 0.05. We don't place any threshold on the log2(fold-change) of the genes:
 
-```{r hidecan-plot, fig.width = 10, fig.height = 10}
+```{r hidecan-plot, fig.width = 10, fig.height = 11}
 hidecan_plot(
+  qtl_list = x[["QTL"]],           ## data-frame of GWAS results  
   gwas_list = x[["GWAS"]],          ## data-frame of GWAS results          
   de_list = x[["DE"]],              ## data-frame of DE results              
-  can_list = x[["CAN"]],            ## data-frame of candidate genes            
+  can_list = x[["CAN"]],            ## data-frame of candidate genes             
+  score_thr_qtl = -log10(0.0001),   ## sign. threshold for QTL           
   score_thr_gwas = -log10(0.0001),  ## sign. threshold for GWAS
   score_thr_de = -log10(0.05),      ## sign. threshold for DE
   log2fc_thr = 0                    ## log2FC threshold for DE
@@ -118,7 +138,7 @@ hidecan_plot(
 
 ## Removing empty chromosomes
 
-By default, the HIDECAN plot shows all chromosomes present in the input data. However, it is possible that some of the chromosomes appear empty, as they do not contain any significant gene or marker, nor any candidate gene. In this case, it is possible to exclude such "empty" chromosomes from the HIDECAN plot, through the `remove_empty_chrom` argument. 
+By default, the HIDECAN plot shows all chromosomes present in the input data. However, it is possible that some of the chromosomes appear empty, as they do not contain any significant region, marker or gene, nor any candidate gene. In this case, it is possible to exclude such "empty" chromosomes from the HIDECAN plot, through the `remove_empty_chrom` argument. 
 
 We will demonstrate that by increasing the score threshold applied to the GWAS results, in order to get fewer significant markers. In this case, chromosomes 0, 6, 9 and 10 do not contain any significant marker of gene of interest:
 
@@ -147,11 +167,13 @@ hidecan_plot(
 
 It is possible to specify which chromosomes should be represented in the HIDECAN plot, via the `chroms` argument. For example, with the following command we restrict the plot to chromosomes 7 and 8:
 
-```{r hidecan-select-chroms, fig.width = 10, fig.height = 3}
+```{r hidecan-select-chroms, fig.width = 10, fig.height = 3.5}
 hidecan_plot(
+  qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],                    
   de_list = x[["DE"]],                          
-  can_list = x[["CAN"]],                  
+  can_list = x[["CAN"]], 
+  score_thr_qtl = -log10(0.0001),                  
   score_thr_gwas = -log10(0.0001),  
   score_thr_de = -log10(0.05),      
   log2fc_thr = 0,
@@ -160,13 +182,15 @@ hidecan_plot(
 ```
 
 
-We can also "zoom in" on some or all chromosomes, through the `chrom_limits` argument. To zoom in on all chromosomes at once, we pass to the `chrom_limits` argument an integer vector of length 2, which gives the lower and upper limits in bp to use. For example here, we focus on the 10-20Mb region of each chromosome:
+We can also "zoom in" on some or all chromosomes, through the `chrom_limits` argument. To zoom in on all chromosomes at once, we pass to the `chrom_limits` argument an integer vector of length 2, which gives the lower and upper limits in bp to use. In that case, the QTL regions will be cropped to these limits as well. For example here, we focus on the 10-20Mb region of each chromosome:
 
-```{r hidecan-chrom-limits-all-chrom, fig.width = 10, fig.height = 10}
+```{r hidecan-chrom-limits-all-chrom, fig.width = 10, fig.height = 11}
 hidecan_plot(
+  qtl_list = x[["QTL"]],   
   gwas_list = x[["GWAS"]],                    
   de_list = x[["DE"]],                          
-  can_list = x[["CAN"]],                  
+  can_list = x[["CAN"]],
+  score_thr_qtl = -log10(0.0001),
   score_thr_gwas = -log10(0.0001),  
   score_thr_de = -log10(0.05),      
   log2fc_thr = 0,
@@ -176,11 +200,13 @@ hidecan_plot(
 
 Alternatively, we can apply different limits to some of the chromosomes, by passing a named list to the argument. The names of the list should match the chromosomes name, and each element should be an integer vector of length 2 giving the lower and upper limits in bp to use for the corresponding chromosome. For example, we will focus on the 10-20Mb region for chromosome 1, and the 30-40Mb region for chromosome 5, and leave all other chromosomes as is:
 
-```{r hidecan-chrom-limits-some-chrom, fig.width = 10, fig.height = 10}
+```{r hidecan-chrom-limits-some-chrom, fig.width = 10, fig.height = 11}
 hidecan_plot(
+  qtl_list = x[["QTL"]], 
   gwas_list = x[["GWAS"]],                    
   de_list = x[["DE"]],                          
   can_list = x[["CAN"]],                  
+  score_thr_qtl = -log10(0.0001),                  
   score_thr_gwas = -log10(0.0001),  
   score_thr_de = -log10(0.05),      
   log2fc_thr = 0,
@@ -192,11 +218,13 @@ hidecan_plot(
 
 The two options `chroms` and `chrom_limits` can be used together:
 
-```{r hidecan-select-chroms-and-chrom-lims, fig.width = 10, fig.height = 3}
+```{r hidecan-select-chroms-and-chrom-lims, fig.width = 10, fig.height = 3.5}
 hidecan_plot(
+  qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],                    
   de_list = x[["DE"]],                          
-  can_list = x[["CAN"]],                  
+  can_list = x[["CAN"]],                   
+  score_thr_qtl = -log10(0.0001),                 
   score_thr_gwas = -log10(0.0001),  
   score_thr_de = -log10(0.05),      
   log2fc_thr = 0,
@@ -215,7 +243,8 @@ By default, in a HIDECAN plot, the points representing both significant markers 
 hidecan_plot(
   gwas_list = x[["GWAS"]],          
   de_list = x[["DE"]],              
-  can_list = x[["CAN"]],            
+  can_list = x[["CAN"]],              
+  score_thr_qtl = -log10(0.0001),          
   score_thr_gwas = -log10(0.0001),
   score_thr_de = -log10(0.05),
   log2fc_thr = 0,
@@ -225,9 +254,9 @@ hidecan_plot(
 
 Genes with a negative log2(fold-change) will be represented with a shade of blue, and genes with a positive log2(fold-change) will be represented with a shade of red.
 
-## More than one GWAS, DE or candidate gene list
+## More than one QTL, GWAS, DE or candidate gene list
 
-The `hidecan_plot()` function can take as an input lists of data-frames for GWAS results, DE results or candidate genes. This way, it is possible to visualise more than one GWAS or DE analyses at once, for example if investigating several traits at once or comparing more than two treatment groups.
+The `hidecan_plot()` function can take as an input lists of data-frames for QTL mapping, GWAS and DE results or candidate genes. This way, it is possible to visualise more than one QTL mapping, GWAS or DE analyses at once, for example if investigating several traits at once or comparing more than two treatment groups.
 
 For this example, we'll focus on chromosomes 7 and 8 (only for clarity of the plot):
 
@@ -276,6 +305,8 @@ hidecan_plot(
 )
 ```
 
+If you want to represent different sets of QTL regions which would be coloured by track rather than score, see the example at the end of the ["Controlling the aesthetics" section](hidecan.html#controlling-the-aesthetics-colours-point-shapes-labels-of-the-tracks).
+
 ## Defining chromosomes length
 
 By default, the `hidecan_plot()` function calculates the length of the different chromosomes based on the input data, by looking at the maximum position of genes and markers on each chromosome. However, it is also possible to pass on a tibble of chromosome length (in bp) through the `chrom_length` argument.
@@ -307,11 +338,13 @@ head(potato_chrom_length)
 ```
 
 
-```{r hidecan-chrom-length, fig.width = 10, fig.height = 10}
+```{r hidecan-chrom-length, fig.width = 10, fig.height = 11}
 hidecan_plot(
+  qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],          
   de_list = x[["DE"]],              
   can_list = x[["CAN"]],
+  score_thr_qtl = -log10(0.0001),
   score_thr_gwas = -log10(0.0001),
   score_thr_de = -log10(0.05),
   log2fc_thr = 0,
@@ -329,9 +362,11 @@ The `hidecan_plot()` function offers several arguments to control different aspe
 ```{r hidecan-nrows, fig.width = 10, fig.height = 8}
 ## Specifying the number of rows
 hidecan_plot(
+  qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],          
   de_list = x[["DE"]],              
-  can_list = x[["CAN"]],            
+  can_list = x[["CAN"]],             
+  score_thr_qtl = -log10(0.0001),           
   score_thr_gwas = -log10(0.0001),
   score_thr_de = -log10(0.05),
   log2fc_thr = 0,
@@ -339,12 +374,14 @@ hidecan_plot(
 )
 ```
 
-```{r hidecan-ncols, fig.width = 10, fig.height = 10}
+```{r hidecan-ncols, fig.width = 10, fig.height = 11}
 ## Specifying the number of columns
 hidecan_plot(
+  qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],          
   de_list = x[["DE"]],              
   can_list = x[["CAN"]],            
+  score_thr_qtl = -log10(0.0001),            
   score_thr_gwas = -log10(0.0001),
   score_thr_de = -log10(0.005),
   log2fc_thr = 0,
@@ -381,15 +418,19 @@ manhattan_plot(list("Trait A" = x[["GWAS"]],
 
 ## Controlling the aesthetics (colours, point shapes, labels) of the tracks
 
-The default look of the different data types (GWAS peaks, DE genes and candidate genes) in a HIDECAN plots is controlled by the arguments returned by `hidecan_aes()`. More specifically, the function controls:
+The default look of the different data types (QTL regions, GWAS peaks, DE genes and candidate genes) in a HIDECAN plots is controlled by the arguments returned by `hidecan_aes()`. More specifically, the function controls:
+
+- whether each track is represented as a point (the default for GWAS, DE and candidate genes tracks) or as a rectangle spanning a genomic region (the default for QTL track),
 
 - the label of each data type on the x-axis (e.g. 'GWAS peaks' for GWAS results),
 
-- the colour of the vertical lines used to showcase the position of markers or genes,
+- the colour of the vertical lines used to showcase the position of markers or genes, or of the vertical "shadow" used to showcase the position of genomic regions,
 
 - the shape of the points,
 
-- whether the name of the markers/genes are displayed (by default, will only show for candidate genes),
+- for genomic regions, the width of the box used to represent them,
+
+- whether the name of the regions/markers/genes are displayed (by default, will only show for candidate genes),
 
 - the colour palette used for the score or log2 fold-change of the points.
 
@@ -403,7 +444,7 @@ str(default_aes, max.level = 1)
 default_aes[[1]]
 ```
 
-As we can see above, the function returns a list of the default aesthetics to use for GWAS results (the `GWAS_data_thr` element), for DE results (`DE_data_thr` element), for candidate genes (`CAN_data_thr` element), and for custom tracks (`CUSTOM_data_thr` element - see the [Adding custom tracks](web_only/custom_tracks.html) article for more information). Each element is itself a list, containing the value for each attribute mentioned above.
+As we can see above, the function returns a list of the default aesthetics to use for QTL mapping results (the `QTL_data_thr` element), for GWAS results (the `GWAS_data_thr` element), for DE results (`DE_data_thr` element), for candidate genes (`CAN_data_thr` element), and for custom tracks (`CUSTOM_data_thr` element - see the [Adding custom tracks](web_only/custom_tracks.html) article for more information). Each element is itself a list, containing the value for each attribute mentioned above.
 
 Let's modify the label given to the GWAS peaks, and the colour palette used for DE score:
 
@@ -418,22 +459,74 @@ default_aes$DE_data_thr$fill_scale <- scale_fill_viridis(
   guide = ggplot2::guide_colourbar(
     title.position = "top",
     title.hjust = 0.5,
-    order = 3 # ensures this legend is shown after the one for GWAS scores
+    order = 4 # ensures this legend is shown after the one for GWAS scores
   )
 )
 ```
 
 We can use these modified values by passing this list to `hidecan_plot()` through its `custom_aes` argument:
 
-```{r use-custom-aes, fig.width = 10, fig.height = 10}
+```{r use-custom-aes, fig.width = 11, fig.height = 11}
 hidecan_plot(
+  qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],
   de_list = x[["DE"]],
-  can_list = x[["CAN"]],     
+  can_list = x[["CAN"]],        
+  score_thr_qtl = -log10(0.0001),  
   score_thr_gwas = -log10(0.0001),
   score_thr_de = -log10(0.05),
   log2fc_thr = 0,
   custom_aes = default_aes
+)
+```
+
+We can use this trick to represent different set of QTL regions, e.g. associated with different traits coloured by track rather than by their score. Let's start by generating two other random set of QTL regions:
+
+```{r generate-random-qtls}
+set.seed(356)
+qtl_1 <- x[["QTL"]]
+qtl_2 <- qtl_1 |> 
+  slice_sample(n = 3) |> 
+  mutate(
+    start = start + round(runif(3, min = -3, max = 3) * 1e6),
+    end = end + round(runif(3, min = -3, max = 3) * 1e6)
+  )
+qtl_3 <- qtl_1 |> 
+  slice_sample(n = 3) |> 
+  mutate(
+    start = start + round(runif(3, min = -3, max = 3) * 1e6),
+    end = end + round(runif(3, min = -3, max = 3) * 1e6)
+  )
+```
+
+The key is to give each set of QTL regions a score representing the colour we want to assign to them (here, we'll use a different colour for each trait):
+
+```{r add-qtls-score}
+qtl_list <- list(
+  "Trait 1" = qtl_1 |> mutate(score = 1),
+  "Trait 2" = qtl_2 |> mutate(score = 2),
+  "Trait 3" = qtl_3 |> mutate(score = 3)
+)
+```
+
+We can then create a specific colour palette for each trait:
+
+```{r show-hidecan-multiple-qtls, fig.width = 10}
+library(ggplot2)
+
+new_aes <- hidecan_aes()
+
+new_aes$QTL_data_thr$fill_scale <- scale_fill_gradientn(
+  colours = c("aliceblue", "cornflowerblue", "mediumslateblue"),
+  guide = "none"
+)
+
+hidecan_plot(
+  qtl_list = qtl_list,
+  score_thr_qtl = 0,                  ## to avoid removing QTLs based on score
+  chrom_length = potato_chrom_length,
+  remove_empty_chrom = TRUE,
+  custom_aes = new_aes
 )
 ```
 
@@ -443,9 +536,11 @@ hidecan_plot(
 If you are working on RStudio, you may encounter the following error:
 
 ```{r show-window-size-error, echo = FALSE, error = TRUE, fig.width = 1, fig.height = 1}
-hidecan_plot(gwas_list = x[["GWAS"]],
+hidecan_plot(qtl_list = x[["QTL"]],
+             gwas_list = x[["GWAS"]],
              de_list = x[["DE"]],
              can_list = x[["CAN"]],
+             score_thr_qtl = -log10(0.0001),
              score_thr_gwas = -log10(0.0001),
              score_thr_de = -log10(0.05),
              log2fc_thr = 0,
@@ -456,14 +551,16 @@ This is caused by the plotting window being too small. Try increasing the size o
 
 ```{r use-ggsave, eval = FALSE}
 p <- hidecan_plot(
+  qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],
   de_list = x[["DE"]],
   can_list = x[["CAN"]],
+  score_thr_qtl = -log10(0.0001),
   score_thr_gwas = -log10(0.0001),
   score_thr_de = -log10(0.05),
   log2fc_thr = 0,
   label_size = 2
 )
 
-ggplot2::ggsave("hidecan_plot.pdf", p, width = 10, height = 10)
+ggplot2::ggsave("hidecan_plot.pdf", p, width = 10, height = 11)
 ```
