@@ -674,7 +674,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
                                          title.hjust = 0.5,
                                          order = 3)
       ),
-      "rect_width" = NA
+      "rect_width" = 0.5
     ),
 
     "DE_data_thr" = list(
@@ -684,7 +684,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
       "point_shape" = 23,
       "show_name" = FALSE,
       "fill_scale" = de_fill_scale,
-      "rect_width" = NA
+      "rect_width" = 0.5
     ),
 
     "CAN_data_thr" = list(
@@ -694,7 +694,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
       "point_shape" = 4,
       "show_name" = TRUE,
       "fill_scale" = NULL,
-      "rect_width" = NA
+      "rect_width" = 0.5
     ),
 
     "QTL_data_thr" = list(
@@ -727,7 +727,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
                                          title.hjust = 0.5,
                                          order = 5)
       ),
-    "rect_width" = NA
+    "rect_width" = 0.5
     )
   )
 }

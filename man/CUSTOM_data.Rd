@@ -24,7 +24,12 @@ The input data should have one row per marker, and at least the
 following columns:
 \itemize{
 \item \code{chromosome}: character column, chromosome on which the feature is located.
-\item \code{position}: numeric, the physical position of the feature along the chromosome (in bp).
+\item \code{position}: numeric, the physical position of the feature along the chromosome (in bp) OR
+\item \code{start} and \code{end}: numeric, starting and end position of the feature
+(in bp). If there is no \code{position} column, it will be constructed as the
+middle value (mean) between \code{start} and \code{end}. If there is a \code{position}
+column but no \code{start} and/or \code{end} columns, these will be set to the values
+in the \code{position} column.
 \item \code{score}: numeric, score to be used for the genomic feature.
 }
 }

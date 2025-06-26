@@ -354,12 +354,22 @@ test_that("new_CUSTOM_data works", {
 
 
 test_that("CUSTOM_data works", {
-  data <- tibble::tibble(chromosome = LETTERS[1:5], position = 1:5, score = 1:5)
-
   ## Need the correct columns
   expect_error(
     CUSTOM_data(tibble::tibble(a = LETTERS[1:5], b = 1:5)),
-    "Input data-frame is missing the following columns: 'chromosome', 'position', 'score'."
+    "Input data-frame should have a 'start' and an 'end' column, as there is no 'position' column."
+  )
+
+  expect_error(
+    CUSTOM_data(tibble::tibble(a = LETTERS[1:5], b = 1:5, position = 1:5)),
+    "Input data-frame is missing the following columns: 'chromosome', 'score'."
+  )
+
+  expect_no_error(
+    CUSTOM_data(tibble::tibble(chromosome = LETTERS[1:5], position = 1:5, score = 1:5)),
+  )
+  expect_no_error(
+    CUSTOM_data(tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 1:5, score = 1:5)),
   )
 
   ## Checking correct input type
@@ -373,13 +383,27 @@ test_that("CUSTOM_data works", {
   )
 
   ## Correct input should trigger no error
-  expect_no_error(CUSTOM_data(data))
+  data_pos <- tibble::tibble(chromosome = LETTERS[1:5], position = 1:5, score = 1:5)
+  data_se <- tibble::tibble(chromosome = LETTERS[1:5], start = 1:5, end = 3:7, score = 1:5)
+  data_full <- tibble::tibble(
+    chromosome = LETTERS[1:5], position = 2:6, start = 1:5, end = 3:7, score = 1:5
+  )
+  expect_no_error(CUSTOM_data(data_pos))
+  expect_no_error(CUSTOM_data(data_se))
+  expect_no_error(CUSTOM_data(data_full))
 
   ## output should be equal to input
-  expect_equal(unclass(CUSTOM_data(data)), unclass(data))
+  expect_equal(unclass(CUSTOM_data(data_full)), unclass(data_full))
+  expect_equal(
+    unclass(CUSTOM_data(data_pos)),
+    data_pos |> dplyr::mutate(start = position, end = position) |> unclass()
+  )
+  expect_equal(
+    unclass(CUSTOM_data(data_se)),
+    data_se |> dplyr::mutate(position = (start + end) / 2) |> unclass()
+  )
 
-
-  data_2 <- as.data.frame(data)
+  data_2 <- as.data.frame(data_full)
   rownames(data_2) <- letters[1:5]
 
   ## By default, rownames of a data-frame should be ignored

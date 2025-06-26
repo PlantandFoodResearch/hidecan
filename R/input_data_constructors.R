@@ -105,7 +105,7 @@ new_DE_data <- function(dat){
 #' @returns A `DE_data` object, i.e. a tibble.
 validate_DE_data <- function(x){
 
-  ## A GWAS result table must at least contain these columns
+  ## A DE result table must at least contain these columns
   .check_cols(x, c("chromosome", "start", "end", "position", "score", "log2FoldChange"))
 
   if (!is.numeric(x[["position"]])) {
@@ -449,7 +449,13 @@ validate_CUSTOM_data <- function(x){
 #'
 #' * `chromosome`: character column, chromosome on which the feature is located.
 #'
-#' * `position`: numeric, the physical position of the feature along the chromosome (in bp).
+#' * `position`: numeric, the physical position of the feature along the chromosome (in bp) OR
+#'
+#' * `start` and `end`: numeric, starting and end position of the feature
+#' (in bp). If there is no `position` column, it will be constructed as the
+#' middle value (mean) between `start` and `end`. If there is a `position`
+#' column but no `start` and/or `end` columns, these will be set to the values
+#' in the `position` column.
 #'
 #' * `score`: numeric, score to be used for the genomic feature.
 #'
@@ -464,10 +470,37 @@ validate_CUSTOM_data <- function(x){
 #' CUSTOM_data(x[["GWAS"]])
 #' @export
 CUSTOM_data <- function(dat, keep_rownames_as = NULL){
+  ## for devtools::check
+  position <- start <- end <- NULL
+
   ## If the data is not a tibble, transform it
   if (!tibble::is_tibble(dat)) {
     dat <- tibble::as_tibble(dat, rownames = keep_rownames_as)
   }
+
+  ## If missing position column, construct it from start and end
+  if (!("position" %in% colnames(dat))) {
+
+    if (length(setdiff(c("start", "end"), colnames(dat)))) {
+      stop("Input data-frame should have a 'start' and an 'end' column, as there is no 'position' column.")
+    }
+    if (!is.numeric(dat[["start"]]) | !is.numeric(dat[["end"]])) {
+      stop("'start' and 'end' columns should contain numeric values.")
+    }
+
+    dat <- dat |>
+      dplyr::mutate(position = (start + end) / 2)
+  } else {
+    if (!("start" %in% colnames(dat))) {
+      dat <- dat |>
+        dplyr::mutate(start = position)
+    }
+    if (!("end" %in% colnames(dat))) {
+      dat <- dat |>
+        dplyr::mutate(end = position)
+    }
+  }
+
 
   dat <- new_CUSTOM_data(dat)
   validate_CUSTOM_data(dat)
