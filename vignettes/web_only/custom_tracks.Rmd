@@ -27,17 +27,17 @@ library(viridis)
 library(ggplot2)
 ```
 
-While hidecan was designed with the goal of representing GWAS and DE results with lists of candidate genes, in principle it can be used to visualise any genomic feature that can be mapped to a physical location on the genome; for example significant QTLs, HiC data etc. To facilitate this, it is possible to add one or more custom data types into a hidecan plot.
+While hidecan was designed with the goal of representing GWAS and DE results with lists of candidate genes, in principle it can be used to visualise any genomic feature that can be mapped to a physical location on the genome; for example significant methylation sites, transposable elements location, chromatin accessibility data etc. To facilitate this, it is possible to add one or more custom data types into a hidecan plot.
 
-## Adding one custom data type
+## Adding one custom data type -- genomic locations
 
-Let us start by simulating a new set of results -- for simplicity we'll assume that we have results from a QTL mapping on the same markers that were used for the GWAS analysis:
+Let us start by simulating a new set of results -- for simplicity we'll assume that we have results from a DNA methylation study on the same markers that were used for the GWAS analysis:
 
 ```{r simulating-qtl-results}
 x <- get_example_data()
 
 set.seed(586)
-x$QTL <- x$GWAS |> 
+x$METH <- x$GWAS |> 
   ## shuffling the scores around to get different "significant" markers
   mutate(score = sample(score, n(), replace = FALSE))
 ```
@@ -49,12 +49,12 @@ hidecan_plot(
   gwas_list = x[["GWAS"]],
   score_thr_gwas = -log10(0.0001),
   chroms = c("ST4.03ch01", "ST4.03ch02"),
-  custom_list = x[["QTL"]],
+  custom_list = x[["METH"]],
   score_thr_custom = -log10(0.0001)
 )
 ```
 
-Importantly, the data-frame that is passed to `custom_list` must contain at least the following columns: `chromosome`, `position` and `score`. If the genomic features you want to add are genes for example (with a start and end position) you need to calculate the `position` column yourself.
+Importantly, the data-frame that is passed to `custom_list` must contain at least the following columns: `chromosome`, `position` OR `start` and `end`, and `score`. If you provide a table with `start` and `end` columns but no `position` column, it will be computed as the mid-point between the start and end of the features.
 
 We can customise the labels and colours used for this custom track with the help of the `hidecan_aes()` function:
 
@@ -69,19 +69,19 @@ plot_aes[["CUSTOM_data_thr"]]
 In particular, we will change the name given to the track, as well as the name used for the legend:
 
 ```{r modify-aes}
-plot_aes$CUSTOM_data_thr$y_label <- "Signif. QTLs"
+plot_aes$CUSTOM_data_thr$y_label <- "Signif. methylation sites"
 
-plot_aes$CUSTOM_data_thr$fill_scale$name <- "QTL score"
+plot_aes$CUSTOM_data_thr$fill_scale$name <- "Methylation score"
 
 # We could also change the entire legend with:
 
 # default_aes$CUSTOM_data_thr$fill_scale <- scale_fill_viridis(
-#   "QTL score",
+#   "Methylation score",
 #   option = "inferno",
 #   guide = guide_colourbar(
 #     title.position = "top",
 #     title.hjust = 0.5,
-#     order = 4 # ensures this legend is shown after the one for DE scores
+#     order = 5 # ensures this legend is shown after the one for GWAS scores
 #   )
 # )
 ```
@@ -93,19 +93,19 @@ hidecan_plot(
   gwas_list = x[["GWAS"]],
   score_thr_gwas = -log10(0.0001),
   chroms = c("ST4.03ch01", "ST4.03ch02"),
-  custom_list = x[["QTL"]],
+  custom_list = x[["METH"]],
   score_thr_custom = -log10(0.0001),
   custom_aes = plot_aes
 )
 ```
  
  
-Note that, as for the other supported data types, we can pass more than one data-frame to `custom_list` to get several tracks of QTLs:
+Note that, as for the other supported data types, we can pass more than one data-frame to `custom_list` to get several tracks of methylated sites:
 
 ```{r two-qtl-results, fig.width = 10, fig.height = 3}
 ## Simulating a second set of QTL results
 set.seed(779)
-x$QTL2 <- x$QTL |> 
+x$METH2 <- x$METH |> 
   mutate(score = sample(score, n(), replace = FALSE))
 
 hidecan_plot(
@@ -114,8 +114,8 @@ hidecan_plot(
   score_thr_de = -log10(0.05),
   log2fc_thr = 0,
   chroms = c("ST4.03ch01", "ST4.03ch02"),
-  custom_list = list("Trait 1" = x[["QTL"]],
-                     "Trait 2" = x[["QTL2"]]),
+  custom_list = list("Condition 1" = x[["METH"]],
+                     "Condition 2" = x[["METH2"]]),
   score_thr_custom = -log10(0.0001),
   custom_aes = plot_aes
 )
@@ -126,7 +126,7 @@ By default, the values in the `score` column are shown as the points colour, but
 ```{r adding-names, fig.width = 10, fig.height = 3}
 ## Creating fake names for the markers
 set.seed(342)
-x$QTL <- x$QTL |> 
+x$METH <- x$METH |> 
   mutate(name = sample(LETTERS, n(), replace = TRUE))
 
 plot_aes2 <- plot_aes
@@ -138,54 +138,77 @@ hidecan_plot(
   gwas_list = x[["GWAS"]],
   score_thr_gwas = -log10(0.0001),
   chroms = c("ST4.03ch01", "ST4.03ch02"),
-  custom_list = x[["QTL"]],
+  custom_list = x[["METH"]],
   score_thr_custom = -log10(0.0001),
   custom_aes = plot_aes2
 )
 ```
 
+## Adding one custom data type -- genomic regions
+
+We can also add a track showcasing genomic regions, i.e. similar to QTL regions. As an example, let's say that we have a list of regions with low chromatin accessibility:
+
+```{r}
+x$CHA <- tibble(
+  chromosome = c("ST4.03ch01", "ST4.03ch01", "ST4.03ch02"),
+  start = c(25e6, 60e6, 5e6),
+  end = c(29e6, 62e6, 12e6),
+  score = c(6.3, 4.5, 5.2)
+)
+```
+
+We need to specify that these should be represented using rectangles spanning the length of the regions, rather than as points (as for GWAS or DE results). This is done via the `show_as_rect` argument in the aesthetics list:
+
+```{r, fig.width = 10, fig.height = 3}
+plot_aes_cha <- hidecan_aes()
+
+plot_aes_cha$CUSTOM_data_thr$show_as_rect <- TRUE
+
+## Customising other aspects of the new track
+plot_aes_cha$CUSTOM_data_thr$y_label <- "Low chromatin acc."
+plot_aes_cha$CUSTOM_data_thr$fill_scale$name <- "Accessibility score"
+plot_aes_cha$CUSTOM_data_thr$line_colour <- "firebrick"
+
+hidecan_plot(
+  gwas_list = x[["GWAS"]],
+  score_thr_gwas = -log10(0.0001),
+  chroms = c("ST4.03ch01", "ST4.03ch02"),
+  custom_list = x[["CHA"]],
+  score_thr_custom = -log10(0.0001),
+  custom_aes = plot_aes_cha
+)
+```
 
 ## Adding several custom data types
 
-It is also possible to add more than one custom data type. For example, let's say that we want to add information about differentially methylated regions to the plot. We'll use the example DE data to simulate our methylated dataset:
+It is also possible to add more than one custom data type. For example, let's combine our methylated bases and our low accessibility regions into one plot.
 
-```{r}
-set.seed(554)
-x$METH <- x$DE |> 
-  mutate(
-    position = (start + end) / 2, ## need to calculate the position of the regions
-    score = sample(-log10(padj), n(), replace = FALSE),
-    name = sample(letters, n(), replace = TRUE)
-  )
-```
-
-Importantly, the significance threshold encoded by the `score_thr_custom` argument of `hidecan_plot()` will be used for all custom datasets, so if we don't want to use the same significance threshold on our QTL and methylation data, we need to perform the filtering of significant features by hand before and then set the threshold to 0:
+Importantly, the significance threshold encoded by the `score_thr_custom` argument of `hidecan_plot()` will be used for all custom datasets, so if we don't want to use the same significance threshold on our methylation and chromatin accessibility data, we need to perform the filtering of significant features by hand before and then set the threshold to 0:
 
 ```{r apply-thr}
-x$QTL <- x$QTL |> 
+x$METH <- x$METH |> 
   filter(score >= -log10(0.0001))
 
-x$METH <- x$METH |> 
+x$CHA <- x$CHA |> 
   filter(score >= -log10(0.04))
 ```
-
 
 The key to specifying that the two custom datasets are different data types is to add to the new data-frame an argument called `aes_type`, which is simply a label that tells the function which aesthetics settings it should use from the list passsed to `custom_aes`. We will retain the aesthetics we have set for the QTL scores, and create new aesthetics for the methylation data:
 
 ```{r, fig.width = 10, fig.height = 3}
 ## Adding the aes_type attribute to the methylation data
-attr(x$METH, "aes_type") <- "METH"
+attr(x$CHA, "aes_type") <- "CHA"
 
 ## The name of the new element in the aesthetics list must match the value of
 ## the aes_type attribute
-plot_aes$METH <- list(
-  y_label = "DMRs",
-  show_as_rect = FALSE,
-  line_colour = "purple",
-  point_shape = 24,
-  show_name = TRUE,
+plot_aes$CHA <- list(
+  y_label = "Low chromatin acc.",
+  show_as_rect = TRUE,
+  line_colour = "dodgerblue4",
+  point_shape = 24, ## this doesn't matter as we are representing regions
+  show_name = FALSE,
   fill_scale = scale_fill_viridis(
-    "DM score",
+    "Accessibility score",
     option = "mako",
     guide = guide_colourbar(
       title.position = "top",
@@ -200,7 +223,7 @@ hidecan_plot(
   gwas_list = x[["GWAS"]],
   score_thr_gwas = -log10(0.0001),
   chroms = c("ST4.03ch01", "ST4.03ch02"),
-  custom_list = list(x[["QTL"]], x[["METH"]]),
+  custom_list = list(x[["METH"]], x[["CHA"]]),
   score_thr_custom = 0, ## no filtering, has been done manually
   custom_aes = plot_aes
 )

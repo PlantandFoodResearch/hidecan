@@ -50,7 +50,7 @@ The hidecan package works as follows:
 
 The wrapper function `hidecan_plot()` performs all of these steps. Its use is demonstrated below with an example dataset:
 
-```{r brief-example-hidecan-plot, fig.width = 10, fig.height = 11}
+```{r brief-example-hidecan-plot, fig.width = 10.5, fig.height = 11}
 library(hidecan)
 
 ## Getting an example dataset

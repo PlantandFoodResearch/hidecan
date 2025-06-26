@@ -112,7 +112,7 @@ The `hidecan_plot()` function creates a HIDECAN plot. It takes as input the data
 
 In this example, we only show QTL regions and markers with a score above 4, which corresponds to a p-value below $1\times10^{-4}$, and genes with a score above 1.3, which corresponds to a p-value of 0.05. We don't place any threshold on the log2(fold-change) of the genes:
 
-```{r hidecan-plot, fig.width = 10, fig.height = 11}
+```{r hidecan-plot, fig.width = 10.5, fig.height = 11}
 hidecan_plot(
   qtl_list = x[["QTL"]],           ## data-frame of GWAS results  
   gwas_list = x[["GWAS"]],          ## data-frame of GWAS results          
@@ -127,7 +127,7 @@ hidecan_plot(
 
 Note that it is possible to provide only a subset of the possible input data, e.g. only GWAS results and a list of candidate genes:
 
-```{r hidecan-plot-gwas-can-only, fig.width = 10, fig.height = 10}
+```{r hidecan-plot-gwas-can-only, fig.width = 10.5, fig.height = 10}
 hidecan_plot(
   gwas_list = x[["GWAS"]],          
   can_list = x[["CAN"]],            
@@ -142,7 +142,7 @@ By default, the HIDECAN plot shows all chromosomes present in the input data. Ho
 
 We will demonstrate that by increasing the score threshold applied to the GWAS results, in order to get fewer significant markers. In this case, chromosomes 0, 6, 9 and 10 do not contain any significant marker of gene of interest:
 
-```{r hidecan-plot-with-empty-chrom, fig.width = 10, fig.height = 10}
+```{r hidecan-plot-with-empty-chrom, fig.width = 10.5, fig.height = 10}
 ## Chromosomes 0, 6, 9 and 10 are empty
 hidecan_plot(
   gwas_list = x[["GWAS"]],          
@@ -153,7 +153,7 @@ hidecan_plot(
 
 By setting the `remove_empty_chrom` argument to `TRUE`, these chromosomes will be removed from the plot:
 
-```{r hidecan-plot-without-empty-chrom, fig.width = 10, fig.height = 8}
+```{r hidecan-plot-without-empty-chrom, fig.width = 10.5, fig.height = 8}
 hidecan_plot(
   gwas_list = x[["GWAS"]],          
   can_list = x[["CAN"]],            
@@ -167,7 +167,7 @@ hidecan_plot(
 
 It is possible to specify which chromosomes should be represented in the HIDECAN plot, via the `chroms` argument. For example, with the following command we restrict the plot to chromosomes 7 and 8:
 
-```{r hidecan-select-chroms, fig.width = 10, fig.height = 3.5}
+```{r hidecan-select-chroms, fig.width = 10.5, fig.height = 3.5}
 hidecan_plot(
   qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],                    
@@ -184,7 +184,7 @@ hidecan_plot(
 
 We can also "zoom in" on some or all chromosomes, through the `chrom_limits` argument. To zoom in on all chromosomes at once, we pass to the `chrom_limits` argument an integer vector of length 2, which gives the lower and upper limits in bp to use. In that case, the QTL regions will be cropped to these limits as well. For example here, we focus on the 10-20Mb region of each chromosome:
 
-```{r hidecan-chrom-limits-all-chrom, fig.width = 10, fig.height = 11}
+```{r hidecan-chrom-limits-all-chrom, fig.width = 10.5, fig.height = 11}
 hidecan_plot(
   qtl_list = x[["QTL"]],   
   gwas_list = x[["GWAS"]],                    
@@ -200,7 +200,7 @@ hidecan_plot(
 
 Alternatively, we can apply different limits to some of the chromosomes, by passing a named list to the argument. The names of the list should match the chromosomes name, and each element should be an integer vector of length 2 giving the lower and upper limits in bp to use for the corresponding chromosome. For example, we will focus on the 10-20Mb region for chromosome 1, and the 30-40Mb region for chromosome 5, and leave all other chromosomes as is:
 
-```{r hidecan-chrom-limits-some-chrom, fig.width = 10, fig.height = 11}
+```{r hidecan-chrom-limits-some-chrom, fig.width = 10.5, fig.height = 11}
 hidecan_plot(
   qtl_list = x[["QTL"]], 
   gwas_list = x[["GWAS"]],                    
@@ -218,7 +218,7 @@ hidecan_plot(
 
 The two options `chroms` and `chrom_limits` can be used together:
 
-```{r hidecan-select-chroms-and-chrom-lims, fig.width = 10, fig.height = 3.5}
+```{r hidecan-select-chroms-and-chrom-lims, fig.width = 10.5, fig.height = 3.5}
 hidecan_plot(
   qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],                    
@@ -239,7 +239,7 @@ hidecan_plot(
 
 By default, in a HIDECAN plot, the points representing both significant markers and DE genes are coloured according to their GWAS/DE score. However, it is possible to colour the DE genes by their log2(fold-change) value instead, by setting the `colour_genes_by_score` argument to `FALSE`:
 
-```{r hidecan-genes-colour-log2fc, fig.width = 10, fig.height = 10}
+```{r hidecan-genes-colour-log2fc, fig.width = 10.5, fig.height = 10}
 hidecan_plot(
   gwas_list = x[["GWAS"]],          
   de_list = x[["DE"]],              
@@ -283,7 +283,7 @@ gwas_2 <- gwas_1 |>
 
 We can pass both GWAS results data-frames to the `hidecan_plot()` function as a list:
 
-```{r hidecan-multiple-gwas-input, fig.width = 10, fig.height = 3}
+```{r hidecan-multiple-gwas-input, fig.width = 10.5, fig.height = 3}
 hidecan_plot(
   gwas_list = list(gwas_1, gwas_2),
   score_thr_gwas = -log10(0.0001),
@@ -295,7 +295,7 @@ hidecan_plot(
 
 By default, the two GWAS tracks will be given unique y-axis labels, as can be seen above. It is possible to customise this by naming the elements in the input list:
 
-```{r multiple-gwas-input-named, fig.width = 10, fig.height = 3}
+```{r multiple-gwas-input-named, fig.width = 10.5, fig.height = 3}
 hidecan_plot(
   gwas_list = list("Trait 1" = gwas_1, 
                    "Trait 2" = gwas_2),
@@ -338,7 +338,7 @@ head(potato_chrom_length)
 ```
 
 
-```{r hidecan-chrom-length, fig.width = 10, fig.height = 11}
+```{r hidecan-chrom-length, fig.width = 10.5, fig.height = 11}
 hidecan_plot(
   qtl_list = x[["QTL"]],
   gwas_list = x[["GWAS"]],          
@@ -359,7 +359,7 @@ Note that in this case we can't really see the difference with the computed chro
 
 The `hidecan_plot()` function offers several arguments to control different aspects of the HIDECAN plot. For example, it is possible to specify the number of rows or columns the plot should have, through the `n_rows` and `n_cols` arguments. Note that only one of these arguments will be considered (`n_rows` takes precedence):
 
-```{r hidecan-nrows, fig.width = 10, fig.height = 8}
+```{r hidecan-nrows, fig.width = 10.5, fig.height = 8}
 ## Specifying the number of rows
 hidecan_plot(
   qtl_list = x[["QTL"]],
@@ -374,7 +374,7 @@ hidecan_plot(
 )
 ```
 
-```{r hidecan-ncols, fig.width = 10, fig.height = 11}
+```{r hidecan-ncols, fig.width = 10.5, fig.height = 11}
 ## Specifying the number of columns
 hidecan_plot(
   qtl_list = x[["QTL"]],
@@ -511,7 +511,7 @@ qtl_list <- list(
 
 We can then create a specific colour palette for each trait:
 
-```{r show-hidecan-multiple-qtls, fig.width = 10}
+```{r show-hidecan-multiple-qtls, fig.width = 10.5}
 library(ggplot2)
 
 new_aes <- hidecan_aes()
@@ -562,5 +562,5 @@ p <- hidecan_plot(
   label_size = 2
 )
 
-ggplot2::ggsave("hidecan_plot.pdf", p, width = 10, height = 11)
+ggplot2::ggsave("hidecan_plot.pdf", p, width = 10.5, height = 11)
 ```
