@@ -210,13 +210,49 @@ create_hidecan_plot <- function(x,
     dplyr::rename(position_mb_end = position_mb) |>
     dplyr::mutate(position_mb = 0)
 
+  ## Making sure that the order of the "Position of" legends matches the order
+  ## in which the different data types appear in the y-axis
+  ## doing that before re-sizing chromosomes as it will affect the order of the
+  ## tracks
+  unique_data_types <- unique(aes_types)
+
+  ## the drawing order of the tracks is slightly different, all genomic regions
+  ## need to go first
+  drawing_data_types <- unique(c(data_type_as_rect, unique_data_types))
+
+  ## Check whether we need to add a new fill legend for each data type
+  new_legend <- drawing_data_types != "CAN_data_thr"
+  names(new_legend) <- drawing_data_types
+
   ## Handling chromosome limits
   if (!is.null(chrom_limits)) {
     chrom_limits_df <- .check_chrom_limits(chrom_limits, chrom_length, chroms)
 
     toplot <- toplot |>
-      dplyr::left_join(chrom_limits_df, by = "chromosome") |>
-      dplyr::filter(position_mb >= lower_limit_mb, position_mb <= upper_limit_mb) |>
+      dplyr::left_join(chrom_limits_df, by = "chromosome")
+
+    toplot <- dplyr::bind_rows(
+      ## first filtering points
+      toplot |>
+        dplyr::filter(
+          !(data_type %in% data_type_as_rect),
+          position_mb >= lower_limit_mb,
+          position_mb <= upper_limit_mb
+        ),
+
+      ## then filtering regions
+      toplot |>
+        dplyr::filter(
+          data_type %in% data_type_as_rect,
+          end_mb >= lower_limit_mb,
+          start_mb <= upper_limit_mb
+        ) |>
+        dplyr::mutate(
+          start_mb = purrr::map2_dbl(start_mb, lower_limit_mb, max),
+          end_mb = purrr::map2_dbl(end_mb, upper_limit_mb, min),
+          position_mb = (start_mb + end_mb) / 2
+        )
+    ) |>
       dplyr::select(-lower_limit_mb, -upper_limit_mb)
 
     toplot_chroms <- toplot_chroms |>
@@ -226,16 +262,10 @@ create_hidecan_plot <- function(x,
       dplyr::select(-lower_limit_mb, -upper_limit_mb)
   }
 
-  ## Making sure that the order of the "Position of" legends matches the order
-  ## in which the different data types appear in the y-axis
-  unique_data_types <- unique(aes_types)
-  ## the drawing order of the tracks is slightly different, all genomic regions
-  ## need to go first
-  drawing_data_types <- unique(c(data_type_as_rect, unique_data_types))
-
-  ## Check whether we need to add a new fill legend for each data type
-  new_legend <- drawing_data_types != "CAN_data_thr"
-  names(new_legend) <- drawing_data_types
+  ## Now re-ordering the observations so that smaller regions are shown
+  ## on top of the other ones
+  toplot <- toplot |>
+    dplyr::arrange(end - start)
 
   p <- toplot |>
     ggplot2::ggplot(ggplot2::aes(x = position_mb, y = dataset)) +
@@ -729,7 +759,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
 #' @returns Named list of plot aesthetics.
 .get_plot_aes <- function(aes_types, colour_genes_by_score, custom_aes) {
 
-  default_aes <- hidecan_aes(colour_genes_by_score)[aes_types]
+  default_aes <- hidecan_aes(colour_genes_by_score)
 
   if (!is.null(custom_aes)) {
     default_aes <- c(
@@ -746,7 +776,7 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
          call. = FALSE)
   }
 
-  return(default_aes)
+  return(default_aes[aes_types])
 }
 
 #' Check chromosomes to plot
