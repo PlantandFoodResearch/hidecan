@@ -164,6 +164,7 @@ create_hidecan_plot <- function(x,
   } else {
     names(x) <- paste0(names(x), " - ", data_type_labels[aes_types])
     names(x) <- sub("^ +- ", "", names(x))
+    names(x) <- sub("- ?$", "", names(x))
     names(x) <- make.unique(names(x), ", ")
   }
 
