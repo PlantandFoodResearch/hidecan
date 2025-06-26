@@ -1,4 +1,4 @@
-# hidecan 1.2.0.0
+# hidecan 1.2.0
 
 ### Added option to display QTL regions
 

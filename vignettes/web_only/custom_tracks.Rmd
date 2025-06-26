@@ -103,7 +103,7 @@ hidecan_plot(
 Note that, as for the other supported data types, we can pass more than one data-frame to `custom_list` to get several tracks of methylated sites:
 
 ```{r two-qtl-results, fig.width = 10, fig.height = 3}
-## Simulating a second set of QTL results
+## Simulating a second set of methylation data
 set.seed(779)
 x$METH2 <- x$METH |> 
   mutate(score = sample(score, n(), replace = FALSE))

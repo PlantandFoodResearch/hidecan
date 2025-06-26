@@ -305,7 +305,7 @@ hidecan_plot(
 )
 ```
 
-If you want to represent different sets of QTL regions which would be coloured by track rather than score, see the example at the end of the ["Controlling the aesthetics" section](hidecan.html#controlling-the-aesthetics-colours-point-shapes-labels-of-the-tracks).
+If you want to represent different sets of QTL regions which would be coloured by track rather than score, see the example at the end of the ["Controlling the aesthetics"](hidecan.html#controlling-the-aesthetics-colours-point-shapes-labels-of-the-tracks) section.
 
 ## Defining chromosomes length
 
