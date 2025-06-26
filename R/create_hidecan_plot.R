@@ -40,6 +40,10 @@
 #' @param label_padding Numeric, amount of padding around gene labels in the plot,
 #' as unit or number. Default value is 0.15
 #' (for \link[ggrepel]{geom_label_repel}).
+#' @param line_alpha Numeric between 0 and 1, transparency of the vertical lines
+#'   for genomic locations (points) across tracks. Default is 0.7.
+#' @param rect_alpha Numeric between 0 and 1, transparency of the shadows of
+#'   genomic regions (rectangles) across tracks. Default is 0.3.
 #' @param custom_aes Named list of plot aesthetics for custom data types. See
 #'   [hidecan_aes()] for information about the content of each element. Default
 #'   is `NULL` (only needed if there are `CUSTOM_data_thr` objects in `x` or to
@@ -112,6 +116,8 @@ create_hidecan_plot <- function(x,
                                 point_size = 3,
                                 label_size = 3.5,
                                 label_padding = 0.15,
+                                line_alpha = 0.7,
+                                rect_alpha = 0.3,
                                 custom_aes = NULL){
 
   ## for devtools::check()
@@ -316,7 +322,7 @@ create_hidecan_plot <- function(x,
         xmin = start_mb, xmax = end_mb, ymin = -Inf, ymax = Inf,
         fill = data_type
       ),
-      alpha = 0.3
+      alpha = rect_alpha
     )
 
   ## Need to add the genomic region tracks before adding the vertical lines
@@ -339,7 +345,7 @@ create_hidecan_plot <- function(x,
     ggplot2::geom_vline(
       data = dplyr::filter(toplot, !(data_type %in% data_type_as_rect)),
       ggplot2::aes(xintercept = position_mb, colour = data_type),
-      alpha = 0.7,
+      alpha = line_alpha,
       show.legend = TRUE
     )
 
@@ -484,6 +490,8 @@ hidecan_plot <- function(qtl_list = NULL,
                          point_size = 3,
                          label_size = 3.5,
                          label_padding = 0.15,
+                         line_alpha = 0.7,
+                         rect_alpha = 0.3,
                          custom_aes = NULL,
                          custom_list = NULL,
                          score_thr_custom = 0
@@ -613,6 +621,8 @@ hidecan_plot <- function(qtl_list = NULL,
                       point_size,
                       label_size,
                       label_padding,
+                      line_alpha,
+                      rect_alpha,
                       custom_aes)
 }
 
@@ -917,19 +927,6 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
 
   if (add_new_legend) p <- p + ggnewscale::new_scale_fill()
 
-  if (paes$show_name) {
-    p <- p +
-      ggrepel::geom_label_repel(
-        ggplot2::aes(label = name),
-        data = sub_data,
-        nudge_y = 0.5,
-        na.rm = TRUE,
-        size = label_size,
-        label.padding = label_padding,
-        alpha = 0.5
-      )
-  }
-
   if (paes$show_as_rect) {
     p <- p +
       ggplot2::geom_rect(
@@ -960,6 +957,19 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
         show.legend = TRUE
       ) +
       paes$fill_scale
+  }
+
+  if (paes$show_name) {
+    p <- p +
+      ggrepel::geom_label_repel(
+        ggplot2::aes(label = name),
+        data = sub_data,
+        nudge_y = 0.5,
+        na.rm = TRUE,
+        size = label_size,
+        label.padding = label_padding,
+        alpha = 0.5
+      )
   }
 
   p

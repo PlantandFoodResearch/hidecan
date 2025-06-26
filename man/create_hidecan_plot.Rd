@@ -19,6 +19,8 @@ create_hidecan_plot(
   point_size = 3,
   label_size = 3.5,
   label_padding = 0.15,
+  line_alpha = 0.7,
+  rect_alpha = 0.3,
   custom_aes = NULL
 )
 }
@@ -73,6 +75,12 @@ Default value is 2. Will be set to \code{NULL} if \code{n_rows} is not \code{NUL
 \item{label_padding}{Numeric, amount of padding around gene labels in the plot,
 as unit or number. Default value is 0.15
 (for \link[ggrepel]{geom_label_repel}).}
+
+\item{line_alpha}{Numeric between 0 and 1, transparency of the vertical lines
+for genomic locations (points) across tracks. Default is 0.7.}
+
+\item{rect_alpha}{Numeric between 0 and 1, transparency of the shadows of
+genomic regions (rectangles) across tracks. Default is 0.3.}
 
 \item{custom_aes}{Named list of plot aesthetics for custom data types. See
 \code{\link[=hidecan_aes]{hidecan_aes()}} for information about the content of each element. Default
