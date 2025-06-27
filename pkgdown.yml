@@ -1,5 +1,5 @@
 pandoc: 3.1.11
-pkgdown: 2.1.1
+pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   web_only/custom_tracks: web_only/custom_tracks.html
@@ -7,7 +7,7 @@ articles:
   hidecan-step-by-step: hidecan-step-by-step.html
   hidecan: hidecan.html
   web_only/shiny-app: web_only/shiny-app.html
-last_built: 2025-03-21T03:24Z
+last_built: 2025-06-26T23:58Z
 urls:
   reference: https://plantandfoodresearch.github.io/hidecan/reference
   article: https://plantandfoodresearch.github.io/hidecan/articles

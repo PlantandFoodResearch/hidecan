@@ -16,6 +16,7 @@
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/DE_data.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/GWAS_data.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/GWAS_data_from_gwaspoly.html</loc></url>
+<url><loc>https://plantandfoodresearch.github.io/hidecan/reference/QTL_data.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/apply_threshold.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/combine_chrom_length.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/compute_chrom_length.html</loc></url>
@@ -38,10 +39,12 @@
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/new_CUSTOM_data.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/new_DE_data.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/new_GWAS_data.html</loc></url>
+<url><loc>https://plantandfoodresearch.github.io/hidecan/reference/new_QTL_data.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/run_hidecan_shiny.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/validate_CAN_data.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/validate_CUSTOM_data.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/validate_DE_data.html</loc></url>
 <url><loc>https://plantandfoodresearch.github.io/hidecan/reference/validate_GWAS_data.html</loc></url>
+<url><loc>https://plantandfoodresearch.github.io/hidecan/reference/validate_QTL_data.html</loc></url>
 </urlset>
 
