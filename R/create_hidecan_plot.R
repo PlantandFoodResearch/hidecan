@@ -672,6 +672,23 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
   }
 
   list(
+    "QTL_data_thr" = list(
+      "y_label" = "QTL regions",
+      "show_as_rect" = TRUE,
+      "line_colour" = "grey80",
+      "point_shape" = 24,
+      "show_name" = FALSE,
+      "fill_scale" = viridis::scale_fill_viridis(
+        "QTL region score",
+        option = "mako",
+        begin = 0.3,
+        guide = ggplot2::guide_colourbar(title.position = "top",
+                                         title.hjust = 0.5,
+                                         order = 2)
+      ),
+      "rect_width" = 0.5
+    ),
+
     "GWAS_data_thr" = list(
       "y_label" = "GWAS peaks",
       "show_as_rect" = FALSE,
@@ -705,23 +722,6 @@ hidecan_aes <- function(colour_genes_by_score = TRUE) {
       "point_shape" = 4,
       "show_name" = TRUE,
       "fill_scale" = NULL,
-      "rect_width" = 0.5
-    ),
-
-    "QTL_data_thr" = list(
-      "y_label" = "QTL regions",
-      "show_as_rect" = TRUE,
-      "line_colour" = "grey80",
-      "point_shape" = NA,
-      "show_name" = FALSE,
-      "fill_scale" = viridis::scale_fill_viridis(
-        "QTL region score",
-        option = "mako",
-        begin = 0.3,
-        guide = ggplot2::guide_colourbar(title.position = "top",
-                                         title.hjust = 0.5,
-                                         order = 2)
-      ),
       "rect_width" = 0.5
     ),
 
