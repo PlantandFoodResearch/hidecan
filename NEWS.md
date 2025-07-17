@@ -1,3 +1,7 @@
+# hidecan 1.2.0.9000
+
+- In `hidecan_aes()` the default point shape for QTL regions is now 24. It was previously `NA` which would cause the regions to not appear in the plot when setting `show_as_rect` to `FALSE` for the QTL tracks.
+
 # hidecan 1.2.0
 
 ### Added option to display QTL regions
